@@ -142,6 +142,16 @@ svg text{font-family:'Plus Jakarta Sans',sans-serif}
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
+    <div class="card" id="cardPrev">
+        <h2>Prevenção de inundações <span class="nota">uso interno · níveis a partir da chuva observada em Braga, 2022-26</span></h2>
+        <div class="ctl">
+          <label>Locais (ficheiro privado): <input type="file" id="filePrev" accept=".json"></label>
+          <button id="btnPrevLimpa" style="display:none">Remover</button>
+          <label><input type="checkbox" id="chkPrev" checked> Mostrar no mapa</label>
+        </div>
+        <div id="prevJan" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0"></div>
+        <div id="prevLista" class="aviso-geral"><div class="vazio">Carregue o ficheiro prevencao_inundacoes.json (fica só neste navegador).</div></div>
+      </div>
     </div>
 
     <div style="display:grid;gap:8px">
@@ -240,7 +250,7 @@ mapa.createPane('li');mapa.getPane('li').style.zIndex=255;
 mapa.createPane('risco');mapa.getPane('risco').style.zIndex=300;
 mapa.createPane('agua');mapa.getPane('agua').style.zIndex=350;
 mapa.createPane('apri');mapa.getPane('apri').style.zIndex=360;
-const gApri=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa);
+const gApri=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
 let gLimite=null;
 const WMS='https://view.eumetsat.int/geoserver/wms';
 let lyrSat=null,lyrLi=null,satOffset=0,playTimer=null;
@@ -501,7 +511,7 @@ async function carregarRio(){
 /* ============================== DESENHO ============================== */
 function corNivel(n){return['#10b981','#fbbf24','#f43f5e'][n]}
 function dataAtual(){return S.calc&&S.calc[S.ponto]?S.calc[S.ponto]:null}
-function desenharTudo(){desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos()}
+function desenharTudo(){desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev()}
 function desenharKpis(){
   const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');
   const cel=(t,v,s,c)=>`<div class="kpi"><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
@@ -637,6 +647,39 @@ function calcularOficial(){ // freguesias atravessadas por troços ARPSI ou com 
 desenharApri();
 
 /* ============================== ARRANQUE ============================== */
+
+/* ===== Prevenção de inundações (uso interno) =====
+   Os locais NÃO estão neste ficheiro (o site é público): carregam-se de um ficheiro JSON guardado só neste navegador (localStorage).
+   Níveis: chuva prevista em 24 h (consenso ou P90, conforme o cenário) vs. chuva diária observada nos dias com inundação (Ifprotec SMPC x estação de Braga, 2022-26). */
+const NIVP=['Sem ação','Atenção','Alerta','Crítico'],CORP=['#475569','#fbbf24','#fb923c','#f43f5e'];
+S.prev=null;S.prevJan=0;
+function carregarPrev(){try{const t=localStorage.getItem('smpc_prev');if(t)S.prev=JSON.parse(t)}catch(e){}}
+function janelasPrev(){const C=dataAtual();if(!C)return null;const X=C.blocos;
+  return[[0,4,'Próximas 24 h'],[4,8,'24 a 48 h']].map(([a,b,n])=>{const v=X.slice(a,b).map(valChuva);const mm=sum(v),m6=Math.max(...v);
+    const N=S.prev?.niveis||{atencao:15,alerta:30,critico:50};let nv=mm>=N.critico?3:mm>=N.alerta?2:mm>=N.atencao?1:0;if(m6>=30&&nv<2)nv=2;return{n,mm,m6,nv}})}
+function desenharPrev(){
+  gPrev.clearLayers();const el=$('prevJan'),li=$('prevLista');if(!el)return;
+  $('btnPrevLimpa').style.display=S.prev?'':'none';
+  const J=janelasPrev();
+  if(!J){el.innerHTML='';li.innerHTML='<div class="vazio">A aguardar a previsão…</div>';return}
+  el.innerHTML=J.map((j,i)=>`<button data-i="${i}" style="border:2px solid ${CORP[j.nv]};background:${i===S.prevJan?CORP[j.nv]+'44':'transparent'};color:inherit;border-radius:8px;padding:4px 10px;cursor:pointer"><b>${j.n}</b>: ${j.mm.toFixed(0)} mm · ${NIVP[j.nv]}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{S.prevJan=+b.dataset.i;desenharPrev()});
+  if(!S.prev){li.innerHTML='<div class="vazio">Carregue o ficheiro prevencao_inundacoes.json (fica só neste navegador).</div>';return}
+  const w=J[S.prevJan],N=S.prev.niveis;
+  const ativos=S.prev.locais.map(l=>({l,lim:l.limiar||N.alerta})).map(o=>({...o,on:w.mm>=o.lim||(w.nv>=3&&o.l.dias>=3)}));
+  ativos.forEach(o=>{if(!$('chkPrev').checked)return;
+    L.circleMarker([o.l.lat,o.l.lon],{radius:o.on?6+Math.min(6,o.l.dias/4):3,color:o.on?CORP[Math.max(1,w.nv)]:'#64748b',weight:2,fillColor:o.on?CORP[Math.max(1,w.nv)]:'#64748b',fillOpacity:o.on?.7:.3})
+      .bindPopup(`<b>${esc(o.l.morada||o.l.freguesia)}</b><br>${esc(o.l.freguesia)}<br>${o.l.dias} dias com inundação (2022-26)<br>Limiar do local: ${o.l.limiar?o.l.limiar+' mm/dia':'sem limiar próprio (usa Alerta '+N.alerta+' mm)'}${o.l.nota?'<br><i>'+esc(o.l.nota)+'</i>':''}`).addTo(gPrev)});
+  const on=ativos.filter(o=>o.on).sort((a,b)=>b.l.dias-a.l.dias);
+  li.innerHTML=`<div style="margin-bottom:4px"><b>${NIVP[w.nv]}</b> (${w.n}: ${w.mm.toFixed(0)} mm, máx. ${w.m6.toFixed(0)} mm em 6 h). Níveis: Atenção ≥ ${N.atencao}, Alerta ≥ ${N.alerta}, Crítico ≥ ${N.critico} mm.</div>`+
+   (w.nv===0?'<div class="vazio">Nenhum local atinge o limiar.</div>':`<div>${on.length} local(is) a vigiar/limpar:</div><ol style="margin:4px 0 0 18px;padding:0">${on.slice(0,12).map(o=>`<li>${esc(o.l.morada||'(sem morada)')} · ${esc(o.l.freguesia)} · ${o.l.dias} dias${o.l.limiar?' · limiar '+o.l.limiar+' mm':''}</li>`).join('')}</ol>${on.length>12?'<div class="nota">+'+(on.length-12)+' no mapa</div>':''}`)+
+   '<div class="nota" style="margin-top:4px">Limiares calculados com chuva observada; a previsão tem erro. Indicador de apoio, não substitui avaliação do SMPC.</div>'}
+$('filePrev').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const j=JSON.parse(await f.text());if(!Array.isArray(j.locais)||!j.niveis)throw new Error('formato inválido');S.prev=j;try{localStorage.setItem('smpc_prev',JSON.stringify(j))}catch(_){}desenharPrev()}catch(err){alert('Ficheiro inválido: '+err.message)}e.target.value=''};
+$('btnPrevLimpa').onclick=()=>{S.prev=null;try{localStorage.removeItem('smpc_prev')}catch(_){}desenharPrev()};
+$('chkPrev').onchange=()=>$('chkPrev').checked?gPrev.addTo(mapa):mapa.removeLayer(gPrev);
+$('chkPrev').addEventListener('change',desenharPrev);
+carregarPrev();
+desenharPrev();
 criarSat();
 carregarFreguesias().then(carregarAgua);
 carregarOcorrencias();carregarIfp();carregarAvisos();carregarModelos();carregarRio();
