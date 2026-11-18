@@ -66,6 +66,11 @@ td.r,th.r{text-align:right}
 .aviso{border-left:4px solid var(--ambar);background:var(--card2);padding:5px 8px;border-radius:6px;margin-bottom:4px;font-size:11px}
 .aviso.orange{border-color:var(--laranja)}.aviso.red{border-color:var(--vermelho)}.aviso.yellow{border-color:var(--ambar)}
 .aviso b{font-size:11.5px}
+#faixaAvisos{display:none;flex-wrap:wrap;gap:6px;padding:6px 14px;background:#0b1220;border-bottom:1px solid var(--linha)}
+#faixaAvisos.on{display:flex}
+.fx{border-left:5px solid var(--ambar);background:var(--card2);padding:4px 9px;border-radius:6px;font-size:12px;cursor:pointer;line-height:1.35}
+.fx.orange{border-color:var(--laranja)}.fx.red{border-color:var(--vermelho)}
+.fx b{font-size:12.5px}.fx .mono{color:#94a3b8;font-size:10.5px}
 .oc{display:grid;grid-template-columns:50px 1fr;gap:6px;padding:3px 0;border-bottom:1px solid var(--linha);cursor:pointer;font-size:11px}
 .oc:hover{background:#0d1a30}
 .oc .hr{color:var(--suave)}.oc .nt{font-weight:700}.oc .es{color:var(--suave);font-size:10px}
@@ -136,6 +141,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <span><i class="dot load" id="e-hid"></i>Linhas de água <b id="t-hid">…</b></span>
   </div>
 </header>
+<div id="faixaAvisos" role="region" aria-label="Avisos IPMA em vigor"></div>
 
 <main>
   <section class="kpis" id="kpis"></section>
@@ -209,7 +215,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="grafRaj"></div>
       </div>
       <div class="card">
-        <h2>Avisos IPMA em vigor <span class="nota">Agitação marítima não considerada (não se aplica a Braga)</span></h2>
+        <h2 id="cardAvisos">Avisos IPMA em vigor <span class="nota">amarelo, laranja e vermelho, todos os tipos · agitação marítima não considerada (não se aplica a Braga)</span></h2>
         <div id="avisos"><div class="vazio">A carregar…</div></div>
       </div>
       <div class="card">
@@ -575,7 +581,7 @@ async function carregarAvisos(){
   }catch(e){
     if(S.avisosGAS){S.avisos=S.avisosGAS;S.avisosOK=true;estado('av','load','via CENTCOM')}else estado('av','err','erro')}
   const agora=localNaive(new Date());S.avisos=S.avisos.filter(a=>a.fim.slice(0,16)>agora);
-  desenharAvisos();desenharTudo();
+  desenharAvisos();desenharTudo();verificarAvisosIpma();
 }
 
 /* ============================== CAUDAIS ============================== */
@@ -655,8 +661,25 @@ function desenharTabela(){
   $('tabela').innerHTML=h;
   $('notaTab').innerHTML=`Janela ${S.modelos.inicio.replace('T',' ')} a ${S.modelos.fim.replace('T',' ')} (hora local). Total 48 h: <b>${C.total48.cons.toFixed(0)} mm</b> (${C.total48.min.toFixed(0)} a ${C.total48.max.toFixed(0)}; P90 ${C.total48.p90.toFixed(0)}). Máximo em 24 h: <b>${C.max24.cons.toFixed(0)} mm</b> (${C.max24.min.toFixed(0)} a ${C.max24.max.toFixed(0)}). Prontidão: aviso laranja ou superior, chuva ≥ ${CFG.LIM.proChuva} mm/6 h ou P(30 mm/6 h) ≥ 15%. Vigilância: aviso amarelo, chuva ≥ ${CFG.LIM.vigChuva} mm/6 h, rajada P90 ≥ ${CFG.LIM.vigRaj} km/h ou P(CAPE ≥ 500) ≥ 30%. Falhas: ${S.modelos.falhas.length?esc(S.modelos.falhas.join('; ')):'nenhuma'}.`;
 }
+const NIV_IPMA={yellow:1,orange:2,red:3},NOME_IPMA={yellow:'amarelo',orange:'laranja',red:'vermelho'};
+function avisosOrd(){return avisosRel().filter(a=>NIV_IPMA[a.nivel]).sort((a,b)=>NIV_IPMA[b.nivel]-NIV_IPMA[a.nivel]||String(a.inicio).localeCompare(String(b.inicio)))}
+function desenharFaixa(){
+  const f=$('faixaAvisos');if(!f)return;const av=avisosOrd();
+  f.classList.toggle('on',av.length>0);
+  f.innerHTML=av.map(a=>`<div class="fx ${a.nivel}" title="Ver detalhe"><b>Aviso ${NOME_IPMA[a.nivel]} · ${esc(a.tipo)}</b> <span class="mono">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join('');
+  f.onclick=()=>{const c=$('cardAvisos');if(c)c.scrollIntoView({behavior:'smooth',block:'center'})}}
+function verificarAvisosIpma(){
+  if(!S.avisosOK)return;
+  const agora=localNaive(new Date());let reg={};try{reg=JSON.parse(localStorage.getItem('smpc_alerta_ipma')||'{}')}catch(e){}
+  const k=a=>`${a.tipo}|${a.inicio.slice(0,16)}|${a.fim.slice(0,16)}`;
+  const novos=avisosOrd().filter(a=>!(reg[k(a)]>=NIV_IPMA[a.nivel]));
+  novos.forEach(a=>{reg[k(a)]=NIV_IPMA[a.nivel];
+    mostrarAlerta('Aviso IPMA',`<b>Aviso IPMA ${NOME_IPMA[a.nivel]}: ${esc(a.tipo)}</b><br>${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} a ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}${a.texto?'<br>'+esc(String(a.texto).slice(0,220)):''}`)});
+  for(const q in reg){const fim=q.split('|')[2];if(fim&&fim<agora.slice(0,16))delete reg[q]}
+  try{localStorage.setItem('smpc_alerta_ipma',JSON.stringify(reg))}catch(e){}}
 function desenharAvisos(){
-  const av=avisosRel();
+  desenharFaixa();
+  const av=avisosOrd();
   $('avisos').innerHTML=av.length?av.map(a=>`<div class="aviso ${a.nivel}"><b>${esc(a.tipo)} · ${{yellow:'amarelo',orange:'laranja',red:'vermelho'}[a.nivel]||a.nivel}</b><br>${esc(a.texto)}<br><span class="mono" style="color:#94a3b8">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join(''):(S.avisosOK?'<div class="vazio">Sem avisos IPMA para Braga (excluída a agitação marítima).</div>':'<div class="vazio">A carregar…</div>');
 }
 function desenharOc(){
