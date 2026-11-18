@@ -443,7 +443,7 @@ async function carregarIfp(){
   try{
     const j=await getJSON(`${CFG.IFPROTEC}?_=${Date.now()}`,30000);
     if(j.erro)throw new Error(j.erro);
-    S.ifp=j.ocorrencias||[];S.ifpRes={total:j.total||0,outras:j.outras||0,porFreg:j.outrasPorFreguesia||{}};
+    S.ifp=j.ocorrencias||[];S.ifpRes={total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,porFreg:j.outrasPorFreguesia||{}};
     estado('ifp','ok',fmtHM(new Date(j.atualizado||Date.now())));
   }catch(e){estado('ifp','err','erro: '+e.message)}
   desenharRisco();
@@ -454,9 +454,9 @@ function desenharIfp(){
   if(!CFG.IFPROTEC){r.textContent='';l.innerHTML='<div class="vazio">Ligação ao Ifprotec por configurar.</div>';return}
   const R=S.ifpRes;
   if(R){const pf=Object.entries(R.porFreg||{}).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n,c])=>`${esc(n.replace(/^Uni[aã]o das freguesias de\s+/i,'UF '))} (${c})`).join(' · ');
-    r.innerHTML=`Hoje: <b>${R.total}</b> ocorrências registadas; <b>${S.ifp.length}</b> com detalhe aqui.`+(R.outras?` As outras ${R.outras} (saúde e restantes naturezas) só contam no total${pf?': '+pf:''}.`:'')}
+    r.innerHTML=`Hoje: <b>${R.total}</b> ocorrências registadas; <b>${S.ifp.length}</b> em despacho ou em curso`+(R.enc?` (mais ${R.enc} já encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (saúde e restantes naturezas) só contam no total${pf?': '+pf:''}.`:'')}
   const lista=[...S.ifp].sort((a,b)=>String(b.data).localeCompare(String(a.data)));
-  if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências deste tipo hoje.</div>';return}
+  if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências em despacho ou em curso.</div>';return}
   l.innerHTML=lista.map((o,i)=>{const enc=/encerrad/i.test(o.estado||'');const fr=freguesiaDe(o);
     return `<div class="oc" data-i="${i}" style="${enc?'opacity:.6':''}"><div class="hr mono">${o.data?fmtHM(new Date(o.data)):'--:--'}</div><div><span class="nt">${esc(o.natureza||'')}</span><div class="es"><b style="color:${corEnt(o.entidadeNome)}">${esc(o.entidadeNome||'')}</b> · ${esc(o.estado||'')} · ${fr?esc(fr):'freguesia não indicada'}${o.operacionais?' · '+o.operacionais+' operac.':''}${o.lat==null?' · sem localização':''}</div></div></div>`}).join('');
   l.querySelectorAll('.oc').forEach(e=>e.onclick=()=>{const o=lista[+e.dataset.i];if(o.lat!=null)mapa.flyTo([o.lat,o.lon],14)});
