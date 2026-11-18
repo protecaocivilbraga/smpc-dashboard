@@ -152,10 +152,11 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
             <option value="off">Desligado</option>
           </select></label>
         <label><input type="checkbox" id="chkLi"> Descargas elétricas (LI)</label>
+        <label title="Radar de precipitação (composição de radares, RainViewer). Resolução ~1 km, últimas 2 h"><input type="checkbox" id="chkRadar"> Radar de chuva</label>
         <label>Opacidade <input type="range" id="opSat" min="0" max="100" value="45" style="width:80px"></label>
         <button id="btnPlay" title="Animar as últimas 3 h">▶ Animar</button>
         <input type="range" id="selTempo" min="0" max="18" value="0" style="width:120px" title="Recuar no tempo (10 min por passo)">
-        <span class="sat-info mono" id="satHora"></span>
+        <span class="sat-info mono" id="satHora"></span> <span class="sat-info mono" id="radarHora"></span>
       </div>
       <div class="ctl">
         <label><input type="checkbox" id="chkFreg" checked> Risco por freguesia</label>
@@ -243,6 +244,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <p class="aviso-geral">
       <b>Previsão:</b> ensembles Open-Meteo (ECMWF IFS ENS e AIFS, GFS, ICON-EPS, UKMO, GEM). O consenso é a mediana das medianas dos 6 modelos; o intervalo é o mínimo e o máximo entre modelos; o cenário elevado é a mediana dos P90.
       <b>Avisos:</b> IPMA (api.ipma.pt), área BRG.
+      <b>Radar:</b> composição de radares (RainViewer), estimativa da precipitação, não substitui o radar do IPMA nem mede a chuva no local; fora do limite de zoom 7 a imagem é ampliada.<br>
       <b>Satélite:</b> EUMETSAT View (Meteosat Terceira Geração, FCI e LI), imagem real, não é previsão.
       <b>Ocorrências:</b> Fogos.pt (dados ANEPC) através do intermediário do CENTCOM/BSB; apoio à consciência situacional, não substitui o sistema de despacho.
       <b>ARPSI e cheias históricas:</b> APA, Diretiva 2007/60/CE (3.º ciclo, proposta em consulta pública), incorporados como cópia de 18/11/2026. <b>Linhas de água:</b> OpenStreetMap (Overpass). <b>Freguesias:</b> geoapi.pt.
@@ -297,6 +299,7 @@ mapa.createPane('rotulos');mapa.getPane('rotulos').style.zIndex=450;mapa.getPane
 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{pane:'rotulos',maxZoom:16}).addTo(mapa);
 mapa.createPane('sat');mapa.getPane('sat').style.zIndex=250;
 mapa.createPane('li');mapa.getPane('li').style.zIndex=255;
+mapa.createPane('radar');mapa.getPane('radar').style.zIndex=258;
 mapa.createPane('risco');mapa.getPane('risco').style.zIndex=300;
 mapa.createPane('agua');mapa.getPane('agua').style.zIndex=350;
 mapa.createPane('apri');mapa.getPane('apri').style.zIndex=360;
@@ -323,8 +326,33 @@ function criarSat(){
     const tl=t?{time:new Date(Math.floor(new Date(t).getTime()/300000)*300000).toISOString().slice(0,19)+'.000Z'}:{_:Math.floor(Date.now()/300000)};
     lyrLi=L.tileLayer.wms(WMS,{layers:'mtg_fd:li_afa',format:'image/png',transparent:true,version:'1.3.0',pane:'li',opacity:.95,...tl}).addTo(mapa);
   }
+  if(typeof criarRadar==='function'&&$('chkRadar').checked)criarRadar();
   $('satHora').textContent=t?('há '+(satOffset*10+30)+' min · '+t.slice(11,16)+' UTC'):'mais recente (≈ há 30 min)';
 }
+
+// Radar de precipitação (RainViewer): quadros de 10 min, últimas ~2 h; sincroniza com o recuo no tempo do satélite
+let lyrRadar=null,radarFrames=[],radarHost='',radarTs=0;
+async function carregarRadarMeta(){
+  if(Date.now()-radarTs<240000&&radarFrames.length)return;
+  try{
+    const r=await fetch('https://api.rainviewer.com/public/weather-maps.json',{cache:'no-store'});
+    const d=await r.json();radarHost=d.host;radarFrames=(d.radar&&d.radar.past)||[];radarTs=Date.now();
+  }catch(e){radarFrames=[]}
+}
+async function criarRadar(){
+  if(lyrRadar){mapa.removeLayer(lyrRadar);lyrRadar=null}
+  if(!$('chkRadar').checked){$('radarHora').textContent='';return}
+  await carregarRadarMeta();
+  if(!radarFrames.length){$('radarHora').textContent='radar indisponível';return}
+  // satOffset em passos de 10 min; 0 = mais recente
+  const i=Math.max(0,radarFrames.length-1-Math.min(satOffset,radarFrames.length-1));
+  const f=radarFrames[i];
+  lyrRadar=L.tileLayer(radarHost+f.path+'/256/{z}/{x}/{y}/2/1_0.png',{pane:'radar',opacity:.7,maxNativeZoom:7,maxZoom:16,attribution:'Radar © RainViewer'}).addTo(mapa);
+  const h=new Date(f.time*1000);
+  $('radarHora').textContent='radar '+String(h.getHours()).padStart(2,'0')+':'+String(h.getMinutes()).padStart(2,'0')+(i===radarFrames.length-1?' (mais recente)':'');
+}
+$('chkRadar').onchange=criarRadar;
+setInterval(()=>{if($('chkRadar').checked&&satOffset===0&&!playTimer){radarTs=0;criarRadar()}},300000);
 $('selSat').onchange=criarSat;$('chkLi').onchange=criarSat;
 $('opSat').oninput=()=>{if(lyrSat)lyrSat.setOpacity($('opSat').value/100)};
 $('selTempo').oninput=e=>{satOffset=+e.target.value;criarSat()};
