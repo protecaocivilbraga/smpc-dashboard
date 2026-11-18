@@ -225,7 +225,7 @@ const CFG={
   NOMES:{ecmwf_ifs025:'ECMWF ENS',ecmwf_aifs025:'ECMWF AIFS',gfs025:'GFS ENS',icon_seamless_eps:'ICON EPS',ukmo_global_ensemble_20km:'UKMO ENS',gem_global:'GEM ENS'},
   HORAS:48,BLOCO:6,
   LIM:{vigChuva:10,proChuva:20,vigAcc24:30,proAcc24:50,vigRaj:60,proP30:.15,vigCape:.30},
-  ATUALIZAR:{oc:60,ifp:60,av:300,mod:1800,sat:600,rio:10800},
+  ATUALIZAR:{oc:30,ifp:30,av:300,mod:1800,sat:600,rio:10800},
   RELACIONADAS:/inunda|queda de [aá]rvore|movimento de massa|limpeza de via|deslizamento|[aá]gua|vento|estrutura|cheia|galeria|aluimento|desab/i
 };
 /* Snapshot de 18/11/2026: APA, Diretiva 2007/60/CE. ARPSI 3.º ciclo (proposta em consulta pública) e eventos de cheia históricos (avaliação preliminar do risco), recorte para Braga.
@@ -455,6 +455,7 @@ async function carregarOcorrencias(){
     S.ocorr=(j.ocorrencias||[]).filter(o=>String(o.dico).padStart(4,'0')===CFG.DICO);
     S.resumo=j.resumoHoje||null;S.avisosGAS=j.avisosIpma||null;
     estado('oc',j.desatualizado?'load':'ok',fmtHM(new Date(j.atualizado||Date.now()))+(j.desatualizado?' (desatualizado)':''));
+    verificarNovasFogos();
   }catch(e){estado('oc','err','erro: '+e.message)}
   desenharOc();desenharRisco();desenharKpis();
 }
@@ -674,6 +675,13 @@ function mostrarAlerta(tit,html){
   $('alertaItens').innerHTML=ALERTA.itens.join('');$('alertaOv').classList.add('on');beep();
   if(!document.title.startsWith('⚠'))document.title='⚠ '+document.title}
 $('alertaOk').onclick=()=>{ALERTA.itens=[];$('alertaOv').classList.remove('on');document.title=document.title.replace(/^⚠ /,'')};
+let fogosVistas=null;
+function verificarNovasFogos(){
+  const chave=o=>String(o.id??`${o.inicio}|${o.natureza}|${o.localidade||o.freguesia||''}`);
+  const ids=new Set((S.ocorr||[]).map(chave));
+  if(fogosVistas===null){fogosVistas=ids;return}
+  const novas=(S.ocorr||[]).filter(o=>!fogosVistas.has(chave(o)));fogosVistas=new Set([...fogosVistas,...ids]);
+  novas.forEach(o=>mostrarAlerta('Nova ocorrência (Fogos.pt)',`<b>Nova ocorrência (Fogos.pt): ${esc(o.natureza||'')}</b><br>${esc(o.estado||'')} · ${esc(o.freguesia||'')}${o.localidade?' · '+esc(o.localidade):''}${o.operacionais?' · '+o.operacionais+' operac.':''}`))}
 let ifpVistas=null;
 function verificarNovasIfp(){
   const ids=new Set((S.ifp||[]).map(o=>String(o.id)));
