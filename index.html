@@ -2,7 +2,15 @@
 <html lang="pt-PT">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c1424">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CCOM Braga">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Centro de Coordenação Operacional Municipal · Apoio à Decisão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,7 +38,8 @@ main{padding:8px 12px 14px;display:grid;gap:8px}
 .kpi .v{font-size:19px;font-weight:800;margin-top:1px;line-height:1.1}
 .kpi .s{font-size:9.5px;color:var(--suave);margin-top:1px}
 .grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:8px;align-items:start}
-@media(max-width:1000px){.grid{grid-template-columns:1fr}}
+@media(max-width:1000px){.grid{grid-template-columns:minmax(0,1fr)}}
+.grid>*,main>*{min-width:0}.card{max-width:100%}.ctl input[type=file]{max-width:100%}
 .card{background:var(--card);border:1px solid var(--linha);border-radius:10px;padding:8px 10px}
 .card h2{margin:0 0 5px;font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:var(--suave);font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h2 .nota{font-size:9.5px;text-transform:none;letter-spacing:0;font-weight:500;color:var(--cinza)}
@@ -79,6 +88,35 @@ svg text{font-family:'Plus Jakarta Sans',sans-serif}
 #alertaBox .it{border-top:1px solid #334155;padding:8px 0;font-size:14px}
 #alertaBox .it b{color:#fff}#alertaBox .it .h{color:#94a3b8;font-size:12px}
 #alertaBox button{margin-top:10px;background:#f43f5e;color:#fff;border:0;border-radius:8px;padding:8px 16px;font-size:14px;cursor:pointer}
+
+/* ===== Telemóvel / aplicação instalada ===== */
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
+@media(max-width:720px){
+  html,body{font-size:14px}
+  header{padding:calc(8px + env(safe-area-inset-top)) 10px 6px;gap:4px 10px}
+  header h1{font-size:14px;line-height:1.25}header h1 small{display:none}
+  #relogio{font-size:20px;margin-left:auto}
+  .estados{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;width:100%;max-width:100%;min-width:0;flex:1 1 100%;margin-left:0;font-size:11px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  main{padding:8px 8px 18px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #prevJan button{flex:1 1 100%;text-align:left}
+  .kpi{min-height:62px}.kpi .t{font-size:10px}.kpi .v{font-size:21px}.kpi .s{font-size:11px}
+  .card{padding:10px}.card h2{font-size:12px}.card h2 .nota{font-size:11px}
+  #mapa{height:56vh;min-height:320px}
+  .ctl{gap:8px 14px;font-size:13px}.ctl label{padding:4px 0}.ctl input[type=checkbox]{width:18px;height:18px}
+  .ctl select,.ctl button,.ctl input[type=file]{font-size:13px;padding:6px 8px}
+  .blocos{grid-template-columns:repeat(4,1fr);gap:5px}.bl{padding:6px 2px}.bl .d{font-size:11px}.bl .h{font-size:12px}.bl .mm{font-size:16px}.bl .n{font-size:9.5px}
+  table{font-size:13px;display:block;overflow-x:auto;-webkit-overflow-scrolling:touch}th{font-size:11px}th,td{padding:6px 5px;white-space:nowrap}
+  .oc{grid-template-columns:54px 1fr;font-size:13px;padding:7px 0}.oc .es{font-size:12px}
+  .rank{font-size:13px}.rank .sub{font-size:12px}.pill{font-size:11px;padding:1px 8px}
+  .aviso{font-size:13px;padding:8px 10px}.aviso b{font-size:13.5px}
+  .legenda,.aviso-geral{font-size:11.5px}.vazio{font-size:13px}
+  #prevLista li{margin:3px 0}
+  .leaflet-tooltip{font-size:13px}.leaflet-popup-content{font-size:13px}
+  #alertaBox{width:94%;padding:14px}#alertaBox .it{font-size:15px}#alertaBox button{width:100%;padding:12px;font-size:16px}
+  #fileGj,label:has(#fileGj){display:none}
+  .card:has(#mapa){display:flex;flex-direction:column}.card:has(#mapa)>h2{order:-2}#mapa{order:-1;margin-bottom:8px}.card:has(#mapa) .aviso-geral{display:none}
+}
 </style>
 </head>
 <body>
@@ -746,5 +784,6 @@ setInterval(carregarModelos,CFG.ATUALIZAR.mod*1000);
 setInterval(()=>{if(!playTimer&&satOffset===0)criarSat()},CFG.ATUALIZAR.sat*1000);
 setInterval(carregarRio,CFG.ATUALIZAR.rio*1000);
 </script>
+<script>if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
 </body>
 </html>
