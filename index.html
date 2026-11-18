@@ -138,7 +138,7 @@ svg text{font-family:'Plus Jakarta Sans',sans-serif}
       <p class="aviso-geral">O risco por freguesia é um <b>indicador relativo</b>: combina o nível de precipitação previsto com a suscetibilidade da freguesia. Esta sobe para <b>alta</b> quando a freguesia tem um troço ARPSI ou uma cheia histórica da APA (dados oficiais, snapshot de 18/11/2026); nas restantes usa a densidade de linhas de água (OpenStreetMap). Não substitui a cartografia oficial de zonas inundáveis (PMEPCB, PGRI). Os níveis Normal, Vigilância e Prontidão são propostas a validar pelo CorMPC.</p>
     </div>
     <div class="card" id="cardIfp">
-        <h2>Ocorrências SMPC e bombeiros <span class="nota">Ifprotec · hoje · só proteção civil, meteorologia e vias</span></h2>
+        <h2>Ocorrências SMPC e bombeiros <span class="nota">Ifprotec · SMPC: últimas 24 h · Bombeiros: enquanto ativas · só proteção civil, meteorologia e vias</span></h2>
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
@@ -449,10 +449,16 @@ async function carregarIfp(){
   try{
     const j=await getJSON(`${CFG.IFPROTEC}?_=${Date.now()}`,30000);
     if(j.erro)throw new Error(j.erro);
-    S.ifp=j.ocorrencias||[];S.ifpRes={total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,emCurso:(j.emCurso!=null?j.emCurso:null),porFreg:j.outrasPorFreguesia||{}};
+    S.ifp=j.ocorrencias||[];S.ifpRes={horas:j.horas||24,total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,emCurso:(j.emCurso!=null?j.emCurso:null),porFreg:j.outrasPorFreguesia||{}};
     estado('ifp','ok',fmtHM(new Date(j.atualizado||Date.now())));
   }catch(e){estado('ifp','err','erro: '+e.message)}
   desenharRisco();desenharKpis();
+}
+function diaOc(o){ // '' se for de hoje; 'ontem' ou 'dd/mm' se for de outro dia
+  if(!o.data)return '';const h=new Date(),pad=n=>String(n).padStart(2,'0');
+  const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  const d0=String(o.data).slice(0,10),hoje=iso(h),ont=iso(new Date(h.getTime()-864e5));
+  return d0===hoje?'':d0===ont?'ontem':d0.slice(8,10)+'/'+d0.slice(5,7);
 }
 function desenharIfp(){
   gIfp.clearLayers();
@@ -460,11 +466,11 @@ function desenharIfp(){
   if(!CFG.IFPROTEC){r.textContent='';l.innerHTML='<div class="vazio">Ligação ao Ifprotec por configurar.</div>';return}
   const R=S.ifpRes;
   if(R){const pf=Object.entries(R.porFreg||{}).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n,c])=>`${esc(n.replace(/^Uni[aã]o das freguesias de\s+/i,'UF '))} (${c})`).join(' · ');
-    r.innerHTML=`Hoje: <b>${R.total}</b> ocorrências registadas; <b>${S.ifp.length}</b> em despacho ou em curso`+(R.enc?` (mais ${R.enc} já encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (saúde e restantes naturezas) só contam no total${pf?': '+pf:''}.`:'')}
+    r.innerHTML=`<b>${R.total}</b> ocorrências (SMPC nas últimas ${R.horas||24} h, bombeiros enquanto ativas); <b>${S.ifp.length}</b> com detalhe aqui`+(R.enc?` (mais ${R.enc} encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (saúde e restantes naturezas) só contam no total${pf?': '+pf:''}.`:'')}
   const lista=[...S.ifp].sort((a,b)=>String(b.data).localeCompare(String(a.data)));
-  if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências em despacho ou em curso.</div>';return}
+  if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências ativas nem do SMPC nas últimas 24 h.</div>';return}
   l.innerHTML=lista.map((o,i)=>{const enc=/encerrad/i.test(o.estado||'');const fr=freguesiaDe(o);
-    return `<div class="oc" data-i="${i}" style="${enc?'opacity:.6':''}"><div class="hr mono">${o.data?fmtHM(new Date(o.data)):'--:--'}</div><div><span class="nt">${esc(o.natureza||'')}</span><div class="es"><b style="color:${corEnt(o.entidadeNome)}">${esc(o.entidadeNome||'')}</b> · ${esc(o.estado||'')} · ${fr?esc(fr):'freguesia não indicada'}${o.operacionais?' · '+o.operacionais+' operac.':''}${o.lat==null?' · sem localização':''}</div></div></div>`}).join('');
+    return `<div class="oc" data-i="${i}" style="${enc?'opacity:.6':''}"><div class="hr mono">${o.data?fmtHM(new Date(o.data)):'--:--'}${diaOc(o)?`<span style="display:block;font-size:9px;color:#64748b">${diaOc(o)}</span>`:''}</div><div><span class="nt">${esc(o.natureza||'')}</span><div class="es"><b style="color:${corEnt(o.entidadeNome)}">${esc(o.entidadeNome||'')}</b> · ${esc(o.estado||'')} · ${fr?esc(fr):'freguesia não indicada'}${o.operacionais?' · '+o.operacionais+' operac.':''}${o.lat==null?' · sem localização':''}</div></div></div>`}).join('');
   l.querySelectorAll('.oc').forEach(e=>e.onclick=()=>{const o=lista[+e.dataset.i];if(o.lat!=null)mapa.flyTo([o.lat,o.lon],14)});
   lista.forEach(o=>{if(o.lat==null||o.lon==null)return;const enc=/encerrad/i.test(o.estado||'');
     L.circleMarker([o.lat,o.lon],{radius:7,color:'#0b1220',weight:2,fillColor:corEnt(o.entidadeNome),fillOpacity:enc?.45:.95,pane:'agua'})
@@ -513,7 +519,7 @@ function desenharKpis(){
   h+=cel('Avisos IPMA',av.length||'0',av.length?`mais alto: ${['','amarelo','laranja','vermelho'][top]}`:'sem avisos para Braga',top>=2?'c2':top==1?'c1':'c0');
   const relI=S.ifp.filter(o=>CFG.RELACIONADAS.test(o.natureza||'')).length;
   const nI=S.ifpRes?(S.ifpRes.emCurso!=null?S.ifpRes.emCurso:S.ifp.length):null;
-  h+=CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
+  h+=CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em resolução, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
   if(S.rio&&S.rio.daily){const r=S.rio.daily.river_discharge;const hoje=r[0],mx=Math.max(...r),i=r.indexOf(mx);
     h+=cel('Caudal modelado (pico 7 d)',mx.toFixed(1)+' m³/s',`${S.rio.daily.time[i].slice(8,10)}/${S.rio.daily.time[i].slice(5,7)} · hoje ${hoje.toFixed(1)}`)}
   k.innerHTML=h;
