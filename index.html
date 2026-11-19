@@ -150,6 +150,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 .btnRel{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer}
 
 #relBox button.sec{background:#334155}
+.chuvaNum{font:600 9px/14px system-ui;color:#0f172a;text-align:center;text-shadow:0 0 2px #fff,0 0 2px #fff}
 </style>
 </head>
 <body>
@@ -195,6 +196,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       </div>
       <div class="ctl">
         <label><input type="checkbox" id="chkFreg" checked> Risco por freguesia</label>
+        <label title="Chuva acumulada prevista no horizonte escolhido (24/48/72 h ou bloco), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva" checked> Chuva prevista (mm)</label>
         <label><input type="checkbox" id="chkAgua" checked> Linhas de água</label>
         <label><input type="checkbox" id="chkOc" checked> Ocorrências (Ifprotec)</label>
         <label><input type="checkbox" id="chkFogos" checked> Fogos.pt</label>
@@ -207,6 +209,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       </div>
       <div id="mapa"></div>
       <div class="legenda">
+        <span id="legChuva" class="mono"></span>
         <span><i style="background:#10b98155"></i>Risco baixo</span>
         <span><i style="background:#fbbf2488"></i>Atenção (Vigilância)</span>
         <span><i style="background:#f43f5eaa"></i>Elevado (Prontidão)</span>
@@ -364,10 +367,11 @@ L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_D
 mapa.createPane('sat');mapa.getPane('sat').style.zIndex=250;
 mapa.createPane('li');mapa.getPane('li').style.zIndex=255;
 mapa.createPane('radar');mapa.getPane('radar').style.zIndex=258;
+mapa.createPane('chuva');mapa.getPane('chuva').style.zIndex=280;mapa.getPane('chuva').style.pointerEvents='none';
 mapa.createPane('risco');mapa.getPane('risco').style.zIndex=300;
 mapa.createPane('agua');mapa.getPane('agua').style.zIndex=350;
 mapa.createPane('apri');mapa.getPane('apri').style.zIndex=360;
-const gApri=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
+const gApri=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gChuva=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
 let gLimite=null;
 const WMS='https://view.eumetsat.int/geoserver/wms';
 let lyrSat=null,lyrLi=null,satOffset=0,playTimer=null;
@@ -430,6 +434,33 @@ $('chkAgua').onchange=()=>$('chkAgua').checked?gAgua.addTo(mapa):mapa.removeLaye
 $('chkApri').onchange=()=>$('chkApri').checked?gApri.addTo(mapa):mapa.removeLayer(gApri);
 $('chkOc').onchange=()=>$('chkOc').checked?gIfp.addTo(mapa):mapa.removeLayer(gIfp);
 $('chkFogos').onchange=()=>$('chkFogos').checked?gOc.addTo(mapa):mapa.removeLayer(gOc);
+
+/* ---------- Camada de chuva prevista (grelha), acompanha o horizonte ---------- */
+const GRELHA={n:4,m:3,la:[41.465,41.615],lo:[-8.525,-8.295]};
+const CHUVA_ESC=[[0,'#e2e8f0',0],[1,'#bae6fd',.35],[5,'#38bdf8',.5],[10,'#2563eb',.55],[20,'#7c3aed',.6],[40,'#c026d3',.65],[80,'#be123c',.7]];
+function corChuva(mm){let c=CHUVA_ESC[0];for(const e of CHUVA_ESC)if(mm>=e[0])c=e;return c}
+async function carregarGrelha(){
+  try{
+    const la=[],lo=[],c=[];
+    for(let j=0;j<GRELHA.m;j++)for(let i=0;i<GRELHA.n;i++){la.push((GRELHA.la[0]+(GRELHA.la[1]-GRELHA.la[0])*(j+.5)/GRELHA.m).toFixed(4));lo.push((GRELHA.lo[0]+(GRELHA.lo[1]-GRELHA.lo[0])*(i+.5)/GRELHA.n).toFixed(4))}
+    const d=await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${la.join(',')}&longitude=${lo.join(',')}&hourly=precipitation&forecast_days=4&timezone=${TZ}`,30000);
+    const arr=Array.isArray(d)?d:[d];S.grelha={la,lo,time:arr[0].hourly.time,pr:arr.map(x=>x.hourly.precipitation)};
+  }catch(e){S.grelha=null}
+  desenharChuva()}
+function desenharChuva(){
+  gChuva.clearLayers();const lg=$('legChuva');if(lg)lg.textContent='';
+  if(!$('chkChuva').checked||!S.grelha||!S.blocos)return;
+  const nB=S.hor==='b'?1:Math.min(S.blocos.length,(+S.hor||24)/CFG.BLOCO),k0=S.hor==='b'?S.sel:0;
+  const ini=S.blocos[k0].ini,fim=S.blocos[Math.min(S.blocos.length-1,k0+nB-1)].fim,T=S.grelha.time;
+  const i0=T.indexOf(ini),i1=T.indexOf(fim);if(i0<0)return;const e=i1<0?T.length:i1;
+  const N=GRELHA.n,M=GRELHA.m,dla=(GRELHA.la[1]-GRELHA.la[0])/M,dlo=(GRELHA.lo[1]-GRELHA.lo[0])/N,V=S.grelha.pr.map(p=>{let mm=0;for(let t=i0;t<e;t++)mm+=p[t]||0;return mm});
+  const mx=Math.max(...V),Z=(i,j)=>V[Math.max(0,Math.min(M-1,j))*N+Math.max(0,Math.min(N-1,i))],F=5;
+  const bil=(u,v)=>{const i=Math.floor(u),j=Math.floor(v),fu=u-i,fv=v-j;return Z(i,j)*(1-fu)*(1-fv)+Z(i+1,j)*fu*(1-fv)+Z(i,j+1)*(1-fu)*fv+Z(i+1,j+1)*fu*fv};
+  for(let j=0;j<M*F;j++)for(let i=0;i<N*F;i++){const mm=bil((i+.5)/F-.5,(j+.5)/F-.5),[,cor,op]=corChuva(mm),la0=GRELHA.la[0]+j*dla/F,lo0=GRELHA.lo[0]+i*dlo/F;
+    L.rectangle([[la0,lo0],[la0+dla/F,lo0+dlo/F]],{pane:'chuva',stroke:false,fillColor:cor,fillOpacity:op*.8,interactive:false}).addTo(gChuva)}
+  V.forEach((mm,i)=>{const la=+S.grelha.la[i],lo=+S.grelha.lo[i];L.marker([la,lo],{pane:'chuva',interactive:false,icon:L.divIcon({className:'chuvaNum',html:mm.toFixed(mm<10?1:0),iconSize:[30,14],iconAnchor:[15,7]})}).addTo(gChuva)});
+  if(lg)lg.textContent=`Chuva prevista ${S.hor==='b'?'no bloco':'nas próximas '+S.hor+' h'} (mm, máx. ${mx.toFixed(0)}): 0 · 1 · 5 · 10 · 20 · 40 · 80+`}
+$('chkChuva').onchange=()=>{desenharChuva()};
 $('selHor').onchange=e=>{S.hor=e.target.value;desenharTudo()};
 $('selCen').onchange=e=>{S.cen=e.target.value;desenharTudo()};
 $('selPonto').onchange=e=>{S.ponto=e.target.value;desenharTudo()};
@@ -483,7 +514,7 @@ async function carregarModelos(){
     }
   }
   await Promise.all(tarefas);
-  S.modelos=out;S.blocos=blocos;
+  S.modelos=out;S.blocos=blocos;carregarGrelha();
   const nOK=Object.values(out.pontos['Braga (centro)']||{}).length;
   estado('mod',nOK>=4?'ok':(nOK?'load':'err'),nOK?`${nOK}/6 modelos · ${fmtHM(out.gerado)}`:'sem dados');
   calcular();desenharTudo();
@@ -656,7 +687,7 @@ async function carregarRio(){
 /* ============================== DESENHO ============================== */
 function corNivel(n){return['#10b981','#fbbf24','#f43f5e'][n]}
 function dataAtual(){return S.calc&&S.calc[S.ponto]?S.calc[S.ponto]:null}
-function desenharTudo(){desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao()}
+function desenharTudo(){desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao()}
 function desenharKpis(){
   const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');
   const cel=(t,v,s,c)=>`<div class="kpi"><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
@@ -765,6 +796,9 @@ function desenharRisco(){
   let kRef=k0,Hm=-1,aMax=0;
   for(let k=k0;k<k0+nB&&k<X.length;k++){const nv=nivelCheia(X,k),a=acc24(X,k);if(nv>Hm||(nv===Hm&&a>aMax))kRef=k;Hm=Math.max(Hm,nv);aMax=Math.max(aMax,a)}
   const H=Math.max(0,Hm),b=S.blocos[kRef];
+  let mmH=0,m6H=0;for(let k=k0;k<k0+nB&&k<X.length;k++){const v=valChuva(X[k]);mmH+=v;m6H=Math.max(m6H,v)}
+  S.mmHor={mm:mmH,m6:m6H};
+  {const e=$('blocoSel');if(e)e.textContent=(S.hor==='b'?'Bloco':'Próximas '+S.hor+' h')+': '+mmH.toFixed(0)+' mm acumulados · máx. '+m6H.toFixed(0)+' mm/6 h'}
   const nota=[];if(!S.freg)nota.push('freguesias indisponíveis');if(!S.agua)nota.push('linhas de água indisponíveis (susceptibilidade neutra)');
   $('notaMapa').textContent=nota.join(' · ');
   const lista=[];
@@ -778,7 +812,7 @@ function desenharRisco(){
       const motivo=`${S.hor==='b'?'Precipitação do bloco':'Pior precipitação nas próximas '+S.hor+' h'}: ${NOMEN[H]}; ${of?(of.arpsi?'troço ARPSI da APA; ':'')+(of.evento?'cheia histórica registada pela APA; ':''):''}linhas de água: ${['','densidade baixa','densidade média','densidade alta'][s]}${hh.d?`; histórico SMPC: ${hh.d} dias com inundação (2022-26)${hh.l?`, costuma reagir a partir de ~${hh.l} mm/24 h`:''}`:''}${gat?'; limiar histórico da freguesia atingido':''}${inu?'; ocorrência de inundação em curso':''}`;
       lista.push({nome:f.nome,r,s,H,inu,of,dens:S.susc[i]?.dens,hd:hh.d,hl:hh.l,gat,a24});
       const cor=['#10b981','#fbbf24','#f43f5e'][r];
-      L.geoJSON({type:'Feature',geometry:f.geom},{pane:'risco',style:{color:'#0b1220',weight:1,fillColor:cor,fillOpacity:[.14,.35,.5][r]}}).bindTooltip(`<b>${esc(f.nome)}</b><br>Risco: ${NOMEN[r]}<br><span style="color:#94a3b8">${motivo}</span>`,{sticky:true}).addTo(gFreg);
+      L.geoJSON({type:'Feature',geometry:f.geom},{pane:'risco',style:{color:'#0b1220',weight:1,fillColor:cor,fillOpacity:Math.min(.7,[.12,.3,.45][r]*.5+Math.min(1,mmH/50)*[.3,.3,.3][r]+(r?0:Math.min(1,mmH/50)*.1))}}).bindTooltip(`<b>${esc(f.nome)}</b><br>Risco: ${NOMEN[r]}<br>Chuva prevista (${S.hor==='b'?'bloco':S.hor+' h'}): ${mmH.toFixed(0)} mm · máx. ${m6H.toFixed(0)} mm/6 h<br><span style="color:#94a3b8">${motivo}</span>`,{sticky:true}).addTo(gFreg);
     });
   }
   if(S.agua){
@@ -924,7 +958,7 @@ function relDados(){
     let oc=null;if(S.ifpRes){const m={};(S.ifp||[]).forEach(o=>{const n=o.natureza||'Outras';m[n]=(m[n]||0)+1});oc={total:S.ifpRes.emCurso!=null?S.ifpRes.emCurso:(S.ifp||[]).length,por:Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6)}}
     return{agora,emitido:`${new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric'}).format(agora)} às ${fmtHM(agora)}`,
       janela:`${dm(S.blocos[0].ini)} ${hh(S.blocos[0].ini)}h a ${dm(S.blocos[X.length-1].fim)} ${hh(S.blocos[X.length-1].fim)}h`,
-      nivAuto,blocos,periodos,av,freg,fregTodas,oc,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
+      nivAuto,blocos,periodos,av,freg,fregTodas,oc,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
   }finally{S.cen=cen0;S.hor=hor0}
 }
 function relResumo(d){
@@ -997,6 +1031,7 @@ function relPdf(d,o){
   T('Emitido a '+d.emitido,W-M,24.5,{align:'right'});
   y=35;doc.setTextColor(100,116,139).setFontSize(8);T('Proposta de nível a validar pelo CorMPC · não substitui os avisos do IPMA nem da ANEPC',M,y);y+=5;
   doc.setFillColor(...COR[n]).roundedRect(M,y,CW,9,1.5,1.5,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(11);T('NÍVEL PROPOSTO: '+NOMEN[n].toUpperCase()+(o.n!=null?' (definido pelo CorMPC)':''),M+4,y+6.1);y+=14;doc.setTextColor(30,41,59);
+  {const hg=relGraficos(doc,d,M,y,CW);y+=hg+3}
   sec('Mensagem-chave');relResumo(d).forEach(l=>par(l,true));
   {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));par(relAtualiza(d,o))}}
   sec(`Previsão por blocos de 6 h (${d.horas} h)`);
@@ -1005,7 +1040,7 @@ function relPdf(d,o){
     body:d.blocos.map(b=>[b.rot,Math.round(b.mm),`${Math.round(b.min)} a ${Math.round(b.max)}`,Math.round(b.raj),NOMEN[b.n],b.conf||'']).map(r=>r.map(c=>san(c))),
     columnStyles:{1:{halign:'right'},2:{halign:'center'},3:{halign:'right'}},
     didParseCell:h=>{if(h.section==='body'&&h.column.index===4){const v=d.blocos[h.row.index].n;h.cell.styles.fillColor=v===2?[254,202,202]:v===1?[254,240,199]:[209,250,229];h.cell.styles.fontStyle='bold'}}});
-  y=doc.lastAutoTable.finalY+2;doc.setFont('helvetica','normal').setFontSize(7.5).setTextColor(100,116,139);
+  y=doc.lastAutoTable.finalY+2;falta(16);doc.setFont('helvetica','normal').setFontSize(7.5).setTextColor(100,116,139);
   const ls=doc.splitTextToSize(san('Chuva mediana dos modelos por bloco de 6 h (intervalo entre modelos). Prontidão: aviso IPMA laranja ou superior, '+CFG.LIM.proChuva+' mm ou mais no bloco, ou probabilidade de 30 mm em 6 h igual ou superior a 15%. Vigilância: aviso amarelo, '+CFG.LIM.vigChuva+' mm ou mais, rajada P90 de '+CFG.LIM.vigRaj+' km/h ou mais, ou probabilidade de instabilidade forte igual ou superior a 30%. Para além das 48 h a previsão é uma tendência.'),CW);ls.forEach(l=>{T(l,M,y+3);y+=3.2});y+=3;doc.setTextColor(30,41,59);
   sec('Avisos IPMA em vigor');
   if(!d.av.length)par('Neste momento, sem avisos meteorológicos ativos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true));
@@ -1023,6 +1058,48 @@ function relPdf(d,o){
     T('Município de Braga / SMPC · Rua do Ferraz, 4700-380 Braga · Tel. +351 253 20 28 61 · protecao.civil@cm-braga.pt',M,290.2);
     T(`A PREVENÇÃO COMEÇA EM CADA UM DE NÓS · ${p}/${np}`,W-M,293.4,{align:'right'})}
   return doc}
+
+
+/* Mini-gráficos do início do relatório (vetor): semáforo, chuva, rajada, caudal */
+function relGraficos(doc,d,x0,y0,CW){
+  const gap=4,w=(CW-gap)/2,h=33,CN=[[16,185,129],[245,158,11],[220,38,38]],INK=[30,41,59],GR=[100,116,139];
+  const nb=d.blocos.length,dias=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const quadro=(x,y,t)=>{doc.setDrawColor(203,213,225).setLineWidth(.2).roundedRect(x,y,w,h,1.2,1.2);doc.setFont('helvetica','bold').setFontSize(7.6).setTextColor(...INK);doc.text(san(t),x+2,y+4)};
+  const ptx=(t,x,y,o)=>doc.text(san(t),x,y,o);
+  const eixoBlocos=(x,y,iw)=>{doc.setFont('helvetica','normal').setFontSize(4.8).setTextColor(...GR);d.blocos.forEach((b,i)=>{const cx=x+(i+.5)*iw/nb,m=b.rot.match(/^(\S+) (\S+) · (\d+)/);if(!m)return;if(i%2===0)ptx(m[3],cx,y,{align:'center'});if(b.rot&&(i===0||m[3]==='04'||m[3]==='01'||m[3]==='00'))ptx(m[1]+' '+m[2].slice(0,5),cx,y+3,{align:'center'})})};
+  const barras=(x,y,tit,vals,cores,fmt,ref,rotRef,unid)=>{
+    quadro(x,y,tit);const ix=x+7,iw=w-10,iy=y+8,ih=h-17,mx=Math.max(...vals,ref||0,1)*1.18;
+    doc.setDrawColor(226,232,240).setLineWidth(.15).line(ix,iy+ih,ix+iw,iy+ih);doc.line(ix,iy,ix,iy+ih);
+    doc.setFont('helvetica','normal').setFontSize(5).setTextColor(...GR);ptx(String(Math.round(mx)),ix-1,iy+1.5,{align:'right'});ptx('0',ix-1,iy+ih,{align:'right'});
+    const bw=iw/vals.length;vals.forEach((v,i)=>{const bh=v/mx*ih;doc.setFillColor(...cores[i]).rect(ix+i*bw+bw*.12,iy+ih-bh,bw*.76,bh,'F');if(v>0){doc.setFontSize(4.8).setTextColor(...INK);ptx(fmt(v),ix+(i+.5)*bw,iy+ih-bh-.8,{align:'center'})}});
+    if(ref){const ry=iy+ih-ref/mx*ih;doc.setDrawColor(220,38,38).setLineWidth(.2).setLineDashPattern([1,1],0).line(ix,ry,ix+iw,ry).setLineDashPattern([],0);doc.setFontSize(4.8).setTextColor(220,38,38);ptx(rotRef,ix+iw,ry-.6,{align:'right'})}
+    return{ix,iw,iy,ih,bw}};
+  // 1) semáforo
+  quadro(x0,y0,'Semáforo por bloco de 6 h');
+  {const ix=x0+2,iw=w-4,iy=y0+7.5,ch=11,cw=iw/nb;
+    d.blocos.forEach((b,i)=>{doc.setFillColor(...CN[b.n]).rect(ix+i*cw+.2,iy,cw-.4,ch,'F');doc.setFont('helvetica','bold').setFontSize(5.4).setTextColor(255,255,255);ptx(['N','V','P'][b.n],ix+(i+.5)*cw,iy+ch/2+1.1,{align:'center'})});
+    eixoBlocos(ix,iy+ch+3,iw);
+    doc.setFont('helvetica','normal').setFontSize(5).setTextColor(...GR);ptx('N: Normal · V: Vigilância · P: Prontidão',x0+2,y0+h-2.2)}
+  // 2) chuva
+  const c2=barras(x0+w+gap,y0,'Chuva por bloco de 6 h (mm, consenso)',d.blocos.map(b=>b.mm),d.blocos.map(b=>CN[b.n]),v=>String(Math.round(v)),20,'20 mm');
+  eixoBlocos(c2.ix,c2.iy+c2.ih+3,c2.iw);
+  // 3) rajada
+  const y2=y0+h+gap;
+  const c3=barras(x0,y2,'Rajada máxima por bloco (km/h, P90)',d.blocos.map(b=>b.raj),d.blocos.map(b=>b.raj>=60?CN[2]:b.raj>=45?CN[1]:[100,116,139]),v=>String(Math.round(v)),60,'60 km/h');
+  eixoBlocos(c3.ix,c3.iy+c3.ih+3,c3.iw);
+  // 4) caudal
+  if(d.rio&&d.rio.q.length){const q=d.rio.q,mxq=d.rio.mx.length?d.rio.mx:q;
+    quadro(x0+w+gap,y2,'Caudal modelado (m3/s, ponto da grelha)');
+    const ix=x0+w+gap+7,iw=w-10,iy=y2+8,ih=h-17,m=Math.max(...q,...mxq,.1)*1.2,bw=iw/q.length;
+    doc.setDrawColor(226,232,240).setLineWidth(.15).line(ix,iy+ih,ix+iw,iy+ih);doc.line(ix,iy,ix,iy+ih);
+    doc.setFont('helvetica','normal').setFontSize(5).setTextColor(...GR);ptx(m<10?m.toFixed(1):String(Math.round(m)),ix-1,iy+1.5,{align:'right'});ptx('0',ix-1,iy+ih,{align:'right'});
+    q.forEach((v,i)=>{const bh=v/m*ih,dt=new Date(d.rio.t[i]+'T12:00:00'),lab=dias[dt.getDay()]+' '+d.rio.t[i].slice(8,10);
+      doc.setFillColor(56,189,248).rect(ix+i*bw+bw*.15,iy+ih-bh,bw*.7,bh,'F');
+      const my=iy+ih-(mxq[i]||v)/m*ih;doc.setDrawColor(30,64,175).setLineWidth(.4).line(ix+i*bw+bw*.1,my,ix+(i+1)*bw-bw*.1,my);
+      doc.setFontSize(4.8).setTextColor(...INK);ptx(v<10?v.toFixed(1):String(Math.round(v)),ix+(i+.5)*bw,iy+ih-bh-.8,{align:'center'});doc.setTextColor(...GR);ptx(lab,ix+(i+.5)*bw,iy+ih+3,{align:'center'})});
+    doc.setFontSize(5).setTextColor(...GR);ptx('Barra: caudal diario; traco: maximo do ensemble',x0+w+gap+2,y2+h-2.2)}
+  else{quadro(x0+w+gap,y2,'Caudal modelado');doc.setFont('helvetica','normal').setFontSize(7).setTextColor(...GR);ptx('Sem dados de caudal.',x0+w+gap+2,y2+h/2)}
+  doc.setTextColor(...INK);return 2*h+gap}
 
 /* Mapa de risco por freguesia (só limites e nível), desenhado em vetor no PDF */
 function relMapa(doc,d,x0,y0,W,Hmax,falta){
