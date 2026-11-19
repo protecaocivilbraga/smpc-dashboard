@@ -25,14 +25,16 @@
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--fundo);color:var(--texto);font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:12px}
 .mono{font-family:'JetBrains Mono',ui-monospace,monospace}
-header{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:6px 14px;border-bottom:1px solid var(--linha);background:linear-gradient(180deg,#0c1424,#070b12)}
-header h1{margin:0;font-size:15px;font-weight:800;letter-spacing:.2px}
+header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:4px 14px;align-items:center;padding:6px 14px;border-bottom:1px solid var(--linha);background:linear-gradient(180deg,#0c1424,#070b12)}
+header h1{margin:0;font-size:14px;font-weight:800;letter-spacing:.2px}
 header h1 small{display:block;font-size:9.5px;font-weight:500;color:var(--suave);letter-spacing:.3px;margin-top:2px}
-.estados{display:flex;flex-wrap:wrap;gap:3px 10px;margin-left:auto;font-size:10px;color:var(--suave);order:5;flex:1 1 100%;justify-content:flex-end}
+.estados{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:10px;color:var(--suave);grid-column:1/-1;justify-content:flex-end}
+.hleft{display:flex;align-items:center;gap:16px;min-width:0;flex-wrap:nowrap}.hleft>div:first-child{min-width:0}.hbtns{flex:none}.hbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.hbtns .btnRel{white-space:nowrap;text-align:center;margin:0!important}
+#relPills{justify-self:end}
 .estados span{display:inline-flex;align-items:center;gap:5px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--cinza)}
 .dot.ok{background:var(--verde)}.dot.err{background:var(--vermelho)}.dot.load{background:var(--ambar)}
-#relPainel{display:flex;align-items:center;gap:10px;margin-left:auto}
+#relPainel{display:flex;align-items:center;gap:10px;justify-self:center}
 .rpil{display:flex;flex-direction:column;gap:3px}
 .pil{display:flex;align-items:center;gap:6px;background:#0d1526;border:1px solid #1e2b47;border-radius:999px;padding:2px 12px 2px 9px;font-size:9.5px;color:var(--suave);cursor:pointer;font-family:inherit;min-width:150px}
 .pil span{letter-spacing:.8px;font-weight:600}.pil b{margin-left:auto;color:#f8fafc;font-size:10.5px;font-weight:700}
@@ -111,7 +113,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
   html,body{font-size:14px}
   header{padding:calc(8px + env(safe-area-inset-top)) 10px 6px;gap:4px 10px}
   header h1{font-size:14px;line-height:1.25}header h1 small{display:none}
-  #relPainel{margin-left:auto;gap:8px}.rpil{display:none}.hora .hh{font-size:24px}.hora .dsem{font-size:9px;letter-spacing:1px}
+  header{grid-template-columns:minmax(0,1fr) auto}.hleft{grid-column:1/-1}#relPainel{justify-self:end;gap:8px}#relPills{display:none}.hora .hh{font-size:24px}.hora .dsem{font-size:9px;letter-spacing:1px}
   .estados{flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;width:100%;max-width:100%;min-width:0;flex:1 1 100%;margin-left:0;font-size:11px;padding-bottom:2px;-webkit-overflow-scrolling:touch}
   main{padding:8px 8px 18px}
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -236,14 +238,29 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 </head>
 <body>
 <header>
-  <div>
-    <h1>Centro de Coordenação Operacional Municipal - Apoio à Decisão
-      <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
+  <div class="hleft">
+    <div>
+      <h1>CENTRO DE COORDENAÇÃO OPERACIONAL MUNICIPAL <span style="white-space:nowrap">– Apoio à Decisão</span>
+        <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
+    </div>
+    <div class="hbtns">
+    <button class="btnRel" id="btnAn" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;">Briefing ANEPC</button>
+    <button class="btnRel" id="btnCt" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
+    <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
+    <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
+    </div>
   </div>
-  <button class="btnRel" id="btnAn" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;margin-left:14px">Briefing ANEPC</button>
-  <button class="btnRel" id="btnCt" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
-  <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
-  <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
+  <div id="relPainel">
+    <div class="cal"><span id="calMes">---</span><b id="calDia">--</b></div>
+    <div class="hora"><div class="hh"><span id="hhH">--</span><i id="hhC">:</i><span id="hhM">--</span><small id="hhS">--</small></div><div class="dsem" id="dSem">&nbsp;</div></div>
+  </div>
+  <div id="relPills">
+    <div class="rpil">
+      <button class="pil" id="pilDados" title="Hora da última atualização bem-sucedida dos dados" type="button"><i class="dot ok"></i><span>DADOS</span><b id="pilDadosV">--:--</b></button>
+      <button class="pil" id="pilEcra" title="Manter o ecrã sempre ligado (clique para alternar)" type="button"><i class="dot" id="pilEcraD"></i><span>ECRÃ</span><b id="pilEcraV">…</b></button>
+      <button class="pil" id="pilSom" title="Som nos alertas (clique para ligar/desligar; é preciso ter clicado na página uma vez)" type="button"><i class="dot" id="pilSomD"></i><span>SOM</span><b id="pilSomV">…</b></button>
+    </div>
+  </div>
   <div class="estados">
     <span><i class="dot load" id="e-oc"></i>Ocorrências <b id="t-oc">…</b></span>
     <span><i class="dot load" id="e-ifp"></i>Ifprotec <b id="t-ifp">…</b></span>
@@ -252,15 +269,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <span><i class="dot load" id="e-sat"></i>Satélite <b id="t-sat">…</b></span>
     <span><i class="dot load" id="e-rio"></i>Caudais <b id="t-rio">…</b></span>
     <span><i class="dot load" id="e-hid"></i>Linhas de água <b id="t-hid">…</b></span>
-  </div>
-  <div id="relPainel">
-    <div class="rpil">
-      <button class="pil" id="pilDados" title="Hora da última atualização bem-sucedida dos dados" type="button"><i class="dot ok"></i><span>DADOS</span><b id="pilDadosV">--:--</b></button>
-      <button class="pil" id="pilEcra" title="Manter o ecrã sempre ligado (clique para alternar)" type="button"><i class="dot" id="pilEcraD"></i><span>ECRÃ</span><b id="pilEcraV">…</b></button>
-      <button class="pil" id="pilSom" title="Som nos alertas (clique para ligar/desligar; é preciso ter clicado na página uma vez)" type="button"><i class="dot" id="pilSomD"></i><span>SOM</span><b id="pilSomV">…</b></button>
-    </div>
-    <div class="cal"><span id="calMes">---</span><b id="calDia">--</b></div>
-    <div class="hora"><div class="hh"><span id="hhH">--</span><i id="hhC">:</i><span id="hhM">--</span><small id="hhS">--</small></div><div class="dsem" id="dSem">&nbsp;</div></div>
   </div>
 </header>
 <div id="faixaMun" role="region" aria-label="Estado de prontidão do Município"></div>
