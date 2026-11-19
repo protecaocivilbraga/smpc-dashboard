@@ -346,6 +346,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <div class="rc">
       <p class="rn">Texto proposto a partir da previsão do painel. <b>Reveja antes de enviar.</b> O painel não envia nada: copie e cole no canal de avisos ou no grupo.</p>
       <label>Nível a comunicar<select id="msgNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select><span class="mono" id="msgNivelAuto"></span></label>
+      <div id="msgSug" class="reservado" style="display:none;background:#fbbf2422;border-color:#fbbf2466;color:#fde68a"></div>
       <label>CCOM<select id="msgCcom"><option value="mon">Não ativado: monitorização</option><option value="ativo">CCOM ativado</option><option value="nd">Não referir</option></select></label>
       <label id="msgPerL" style="display:none">Período de ativação<input id="msgPer" placeholder="ex.: das 09h às 20h de 20/11"></label>
       <label>Nota adicional (opcional)<textarea id="msgNota" rows="2"></textarea></label>
@@ -371,6 +372,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <label>Nível a comunicar
         <select id="relNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select>
         <span class="mono" id="relNivelAuto"></span></label>
+      <div id="relSug" class="reservado" style="display:none;background:#fbbf2422;border-color:#fbbf2466;color:#fde68a"></div>
       <div class="rck"><label><input type="checkbox" id="relFreg" checked> Mapa das freguesias</label><label><input type="checkbox" id="relOc" checked> Ocorrências em curso</label><label><input type="checkbox" id="relMed" checked> Efeitos e medidas</label><label><input type="checkbox" id="relBol"> Briefing CCOS Cávado (reservado)</label><label><input type="checkbox" id="relAv"> Aviso Planoclima</label></div>
       <label>Informação CCOM
         <select id="relCcom"><option value="mon">Não ativado: mantém-se a monitorização e a avaliação da situação</option><option value="ativo">CCOM ativado</option><option value="nd">Não incluir</option></select></label>
@@ -1239,6 +1241,22 @@ function avGuardar(A){BOL.av=A;try{localStorage.setItem(AVK,JSON.stringify(A))}c
 function bolGuardar(B){BOL.d=B;try{localStorage.setItem(BOLK,JSON.stringify(B))}catch(e){}bolDesenhar();bolAtualizaOpc()}
 function bolCarregar(){try{const a=localStorage.getItem(BOLK);if(a)BOL.d=JSON.parse(a);const b=localStorage.getItem(AVK);if(b)BOL.av=JSON.parse(b)}catch(e){}}
 function bolAtualizaOpc(){['relBol','msgBol'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.d;e.dataset.t=1}});['relAv','msgAv'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.av;e.dataset.t=1}})}
+/* ---------- sugestão de nível a partir do aviso Planoclima (nunca aplicada sozinha) ---------- */
+function avNivelTexto(A){const t=String(A.corpo||'').replace(/\s+/g,' ');let rate=0,acc6=0,raj=0;
+  for(const m of t.matchAll(/taxas?\s*>?\s*(\d+)\s*mm\s*\/\s*h/gi))rate=Math.max(rate,+m[1]);
+  for(const m of t.matchAll(/(\d+)\s*mm\s*em\s*(\d+)\s*h/gi)){const mm=+m[1],h=+m[2];if(h<=6)acc6=Math.max(acc6,mm)}
+  for(const m of t.matchAll(/rajadas?\s*(?:até|de|superiores a)?\s*(\d+)\s*km\s*\/\s*h/gi))raj=Math.max(raj,+m[1]);
+  const L=CFG.LIM;let n=0;if(acc6>=L.vigChuva||rate>=10||raj>=L.vigRaj)n=1;if(acc6>=L.proChuva||rate>=15)n=2;
+  return{n,rate,acc6,raj}}
+function avSugestao(d){const A=BOL.av;if(!A||!d)return null;const ia=avIdade(A);if(ia==null||ia>48)return null;
+  const x=avNivelTexto(A);if(x.n<=d.nivAuto)return null;
+  const coincide=d.nivAuto>=1||d.av.length>0;if(!coincide)return null;
+  const sug=Math.min(2,d.nivAuto+1),bits=[];if(x.rate)bits.push('>'+x.rate+' mm/h');if(x.acc6)bits.push('até '+x.acc6+' mm em ≤6 h');if(x.raj)bits.push('rajadas até '+x.raj+' km/h');
+  return{n:sug,txt:`A Planoclima (${avDataTxt(A).split(' ')[0]||'aviso recente'}) indica ${bits.join(', ')} e o painel já tem ${d.nivAuto>=1?'nível '+NOMEN[d.nivAuto]:'aviso do IPMA'}: sugere-se subir para ${NOMEN[sug]}. Decide o CorMPC.`}}
+function sugDesenhar(selId,boxId,d,aoAplicar){const b=$(boxId);if(!b)return;const g=avSugestao(d);
+  if(!g||+$(selId).value===g.n){b.style.display='none';b.innerHTML='';return}
+  b.style.display='';b.innerHTML=`<span>${esc(g.txt)}</span> <button type="button" class="lk">Aplicar sugestão</button>`;
+  b.querySelector('button').onclick=()=>{$(selId).value=String(g.n);aoAplicar()}}
 /* ---------- quadro no painel ---------- */
 function bolDesenhar(){
   const el=$('bolCorpo');if(!el)return;$('btnBolLimpa').style.display=BOL.d?'':'none';$('btnAvLimpa').style.display=BOL.av?'':'none';
@@ -1501,7 +1519,7 @@ function relRefrescar(manterTexto){
   clearTimeout(REL.t);REL.t=setTimeout(()=>{
     const d=relDados(),av=$('relAviso');if(!d){av.textContent='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
     REL.d=d;const o=relOpc(),n=relNivel(d,o);
-    $('relNivelAuto').textContent=`automático: ${NOMEN[d.nivAuto]}`;
+    $('relNivelAuto').textContent=`automático: ${NOMEN[d.nivAuto]}`;sugDesenhar('relNivel','relSug',d,()=>relRefrescar(false));
     $('relAssunto').value=relAssunto(d,n);
     if(!REL.editado||!manterTexto)$('relCorpo').value=relEmail(d,o);
     try{const doc=relPdf(d,o);REL.pdf=doc.output('blob');if(REL.url)URL.revokeObjectURL(REL.url);REL.url=URL.createObjectURL(REL.pdf);$('relPdf').src=REL.url;av.textContent='';$('relAbrir').href=REL.url}
@@ -1566,7 +1584,7 @@ function msgEnt(d,o,tipo){
   L.push('',`🔄 Próxima atualização até ${msgAtual(d,o)}, ou antes se a situação o justificar.`,'Relatório completo em PDF por email.');return L.join('\n')}
 function msgGerar(){
   const d=relDados(),t=$('msgTxt');if(!d){t.value='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
-  const o=msgOpc();$('msgBolL').style.display=$('msgAvL').style.display=MSG.tab==='ccom'?'':'none';$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];
+  const o=msgOpc();$('msgBolL').style.display=$('msgAvL').style.display=MSG.tab==='ccom'?'':'none';$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];sugDesenhar('msgNivel','msgSug',d,msgGerar);
   t.value=MSG.tab==='pop'?msgPop(d,o):MSG.tab==='sms'?msgSms(d,o):msgEnt(d,o,MSG.tab);MSG.edit=false;msgConta()}
 function msgConta(){
   const t=$('msgTxt').value,c=$('msgCont');$('msgWa').style.display=MSG.tab==='sms'?'none':'';

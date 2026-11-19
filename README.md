@@ -14,3 +14,5 @@ Quadro "Briefing técnico-operacional CCOS Cávado" no painel: carrega-se o PDF 
 
 - Estados de prontidão (DIOPS, DECIR, DIONRBQ, DIRACAERO, DCDFCI-PNPG) e estados de alerta do SFN estão desenhados a cores; são lidos pela cor das caixas. Confirmar sempre no documento original.
 - Entra no relatório PDF e no email (opções "Briefing CCOS Cávado" e "Aviso Planoclima") e na mensagem **Entidades · grupos CCOM e Agentes de PC**. Nunca nas mensagens à população (WhatsApp e SMS).
+
+O aviso da Planoclima nunca altera o nível sozinho. Se tiver menos de 48 h, ultrapassar os limiares do painel e coincidir com um nível já proposto ou com um aviso do IPMA, aparece uma sugestão de subir um nível nos diálogos "Relatório" e "Mensagens", com o botão "Aplicar sugestão".
