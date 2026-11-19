@@ -258,7 +258,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
           <select id="selSat">
             <option value="mtg_fd:rgb_geocolour">GeoColour (imagem real)</option>
             <option value="mtg_fd:ir105_hrfi">Infravermelho 10,5 µm</option>
-            <option value="off">Desligado</option>
+            <option value="off" selected>Desligado</option>
           </select></label>
         <label><input type="checkbox" id="chkLi"> Descargas elétricas (LI)</label>
         <label title="Radar de precipitação (composição de radares, RainViewer). Resolução ~1 km, últimas 2 h"><input type="checkbox" id="chkRadar"> Radar de chuva</label>
@@ -312,6 +312,15 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
+      <div class="card">
+        <h2>Ocorrências em curso ANEPC <span class="nota">Fogos.pt (ANEPC) via CENTCOM · concelho de Braga</span></h2>
+        <div id="resumoHoje" class="aviso-geral" style="margin-bottom:6px"></div>
+        <div id="ocLista"><div class="vazio">A carregar…</div></div>
+      </div>
+      <div class="card">
+        <h2>Freguesias a vigiar <span class="nota" id="notaRank"></span></h2>
+        <div class="rank" id="rank"><div class="vazio">A carregar…</div></div>
+      </div>
     </div>
 
     <div style="display:grid;gap:8px">
@@ -322,32 +331,18 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="grafRaj"></div>
       </div>
       <div class="card">
+        <h2>Caudal modelado <span class="nota">GloFAS via Open-Meteo · grelha de 5 km · indicativo</span></h2>
+        <div id="rio"><div class="vazio">A carregar…</div></div>
+      </div>
+      <div class="card">
         <h2 id="cardAvisos">Avisos IPMA em vigor e previstos <span class="nota">emitidos para o concelho, mesmo que comecem mais tarde · amarelo, laranja e vermelho, todos os tipos · agitação marítima não considerada (não se aplica a Braga)</span></h2>
         <div id="avisos"><div class="vazio">A carregar…</div></div>
       </div>
-      <div class="card">
-        <h2>Freguesias a vigiar <span class="nota" id="notaRank"></span></h2>
-        <div class="rank" id="rank"><div class="vazio">A carregar…</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div class="card">
-      <h2>Previsão por bloco <span class="nota">Braga (centro) · consenso e intervalo entre 6 modelos</span>
-        <select id="selPonto" style="margin-left:auto;background:#0d1526;color:#f8fafc;border:1px solid #1e2b47;border-radius:6px;padding:3px 6px"></select></h2>
-      <div style="overflow:auto"><table id="tabela"></table></div>
-      <p class="aviso-geral" id="notaTab"></p>
-    </div>
-    <div style="display:grid;gap:8px">
-      <div class="card">
-        <h2>Ocorrências em curso <span class="nota">Fogos.pt (ANEPC) via CENTCOM · concelho de Braga</span></h2>
-        <div id="resumoHoje" class="aviso-geral" style="margin-bottom:6px"></div>
-        <div id="ocLista"><div class="vazio">A carregar…</div></div>
-      </div>
-      <div class="card">
-        <h2>Caudal modelado <span class="nota">GloFAS via Open-Meteo · grelha de 5 km · indicativo</span></h2>
-        <div id="rio"><div class="vazio">A carregar…</div></div>
+        <div class="card">
+        <h2>Previsão por bloco <span class="nota">Braga (centro) · consenso e intervalo entre 6 modelos</span>
+          <select id="selPonto" style="margin-left:auto;background:#0d1526;color:#f8fafc;border:1px solid #1e2b47;border-radius:6px;padding:3px 6px"></select></h2>
+        <div style="overflow:auto"><table id="tabela"></table></div>
+        <p class="aviso-geral" id="notaTab"></p>
       </div>
     </div>
   </section>
@@ -373,7 +368,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <div class="rc">
       <p class="rn">Anexe o PDF do briefing (ou cole o texto). O painel procura o estado de prontidão e propõe-o; <b>confirme os campos</b> antes de guardar. Fica guardado só neste navegador.</p>
       <label>Anexar PDF do briefing<input type="file" id="anPdf" accept=".pdf,application/pdf"></label>
-      <label>Estado do dispositivo<select id="anEst"><option value="">Sem estado determinado</option><option value="Normal">Normal</option><option value="Alerta Especial · Nível Azul">Alerta Especial · Nível Azul</option><option value="Alerta Especial · Nível Amarelo">Alerta Especial · Nível Amarelo</option><option value="Alerta Especial · Nível Laranja">Alerta Especial · Nível Laranja</option><option value="Alerta Especial · Nível Vermelho">Alerta Especial · Nível Vermelho</option><option value="Sobreaviso">Sobreaviso</option><option value="Prontidão">Prontidão</option><option value="__o">Outro (escrever abaixo)</option></select></label>
+      <label>Estado do dispositivo<select id="anEst"><option value="">Sem estado determinado</option><option value="Normal">Normal</option><option value="Prontidão · Nível I">Prontidão · Nível I</option><option value="Prontidão · Nível II">Prontidão · Nível II</option><option value="Prontidão · Nível III">Prontidão · Nível III</option><option value="Prontidão · Nível IV">Prontidão · Nível IV</option><option value="Prontidão">Prontidão (nível por indicar)</option><option value="__o">Outro (escrever abaixo)</option></select></label>
       <label id="anOutL" style="display:none">Estado (texto livre)<input id="anOut" placeholder="ex.: Prontidão reforçada"></label>
       <label>Origem e emissão<input id="anOrig" placeholder="ex.: CCOSR Cávado, briefing de 19/11 11h"></label>
       <label>Período de vigência<input id="anPer" placeholder="ex.: desde 19/11 18h até 22/11 12h"></label>
@@ -1304,25 +1299,31 @@ function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onlo
 /* ============ Briefing CCOSR / ANEPC: estado de prontidão determinado (só neste navegador) ============ */
 const AN={pdfUrl:null,pdfNome:''};
 try{S.anepc=JSON.parse(localStorage.getItem('smpc_anepc')||'null')}catch(e){S.anepc=null}
-const anCor=e=>{e=(e||'').toLowerCase();return/vermelho/.test(e)?'#dc2626':/laranja/.test(e)?'#f97316':/amarelo|sobreaviso/.test(e)?'#f59e0b':/azul/.test(e)?'#3b82f6':/prontid/.test(e)?'#f97316':/normal/.test(e)?'#10b981':'#94a3b8'};
+const anCor=e=>{e=String(e||'');const m=e.match(/N[íi]vel\s+(IV|III|II|I)\b/);if(m)return{I:'#3b82f6',II:'#f59e0b',III:'#f97316',IV:'#dc2626'}[m[1]];return/prontid/i.test(e)?'#f97316':/normal/i.test(e)?'#10b981':'#94a3b8'};
+const ROM={1:'I',2:'II',3:'III',4:'IV'};
+function anNiveis(x){const r=new Set(),re=/(?:[Nn][íi]vel|[Pp]rontid[ãa]o)\W{0,12}(IV|III|II|I|[1-4])(?![A-Za-zÀ-ÿ0-9])/g;let m;while((m=re.exec(x)))r.add(ROM[m[1]]||m[1]);return[...r]}
 function anExtrair(t){
-  const T=t.replace(/ /g,' ').replace(/[ \t]+/g,' '),fr=T.split(/(?<=[.!?])\s+|\n+/).map(x=>x.trim()).filter(Boolean),res={est:'',nota:'',per:''};
-  const niv=x=>{const m=x.match(/\b(azul|amarelo|laranja|vermelho)\b/i);return m?m[1][0].toUpperCase()+m[1].slice(1).toLowerCase():''};
-  let f=fr.find(x=>/alerta\s+especial/i.test(x)&&niv(x));
-  if(f){res.est='Alerta Especial · Nível '+niv(f);res.nota=f}
-  else if((f=fr.find(x=>/n[íi]vel\s+(azul|amarelo|laranja|vermelho)/i.test(x)&&/(alerta|prontid|dispositivo|ccosr|anepc)/i.test(x)))){res.est='Alerta Especial · Nível '+niv(f.match(/n[íi]vel\s+(azul|amarelo|laranja|vermelho)/i)[0]);res.nota=f}
+  const T0=t.replace(/ /g,' ').replace(/[ \t]+/g,' '),T=T0.replace(/([^.!?:;\n])\n(?=[a-zà-ÿ0-9(])/g,'$1 '),fr=T.split(/(?<=[.!?])\s+|\n+/).map(x=>x.trim()).filter(Boolean),res={est:'',nota:'',per:''};
+  const um=x=>{const n=anNiveis(x);return n.length===1?n[0]:''};
+  let f=fr.find(x=>/prontid[ãa]o/i.test(x)&&um(x))||fr.find(x=>um(x)&&/(ccosr|anepc|dispositivo|estado)/i.test(x));
+  if(f){res.est='Prontidão · Nível '+um(f);res.nota=f}
   else if((f=fr.find(x=>/prontid[ãa]o/i.test(x)))){res.est='Prontidão';res.nota=f}
-  else if((f=fr.find(x=>/sobreaviso/i.test(x)))){res.est='Sobreaviso';res.nota=f}
   if(res.nota.length>400)res.nota=res.nota.slice(0,400)+' [...]';
-  const m=T.match(/(?:desde|a partir d[aeo]s?|entre)\s[^.]{0,40}?\d{1,2}[h:][^.]{0,70}(?:at[ée]|e)\s[^.]{0,50}?\d{1,2}[h:]?[^.\n]{0,25}/i);if(m)res.per=m[0].trim();
+  const m=T.match(/(?:desde|a partir d[aeo]s?|entre)\s+(?:as\s+|às\s+)?\d{1,2}\s?[h:][^\n]{0,260}/i);
+  if(m){let p=m[0];const k=p.search(/\.(\s|$)/);if(k>0)p=p.slice(0,k);res.per=p.trim()}
   const o=T.match(/(CCOSR[^.\n]{0,40}|Comando Sub-?[Rr]egional[^.\n]{0,40})/i);if(o)res.orig=o[1].trim();
   return res}
+// migração: texto já guardado com a leitura antiga (sem nível / período cortado)
+(function(){const a=S.anepc;if(!a||!a.texto)return;const r=anExtrair(a.texto);let mud=false;
+  if(r.est&&/N[íi]vel/.test(r.est)&&!/N[íi]vel/.test(a.est)){a.est=r.est;if(r.nota)a.nota=r.nota;mud=true}
+  if(r.per&&a.per&&r.per.length>a.per.length&&r.per.startsWith(a.per.slice(0,30))){a.per=r.per;mud=true}
+  if(mud)try{localStorage.setItem('smpc_anepc',JSON.stringify(a))}catch(e){}})();
 function anMarca(){
   const e=$('faixaAnepc');if(!e)return;const a=S.anepc;
   if(!a||!a.est){e.className='';e.innerHTML='';return}
   const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16),cor=anCor(a.est);
   e.style.setProperty('--anc',cor);e.className='on';
-  e.innerHTML=`<span>Estado do dispositivo ANEPC/CCOSR:</span> <span class="anE">${esc(a.est)}</span>${exp?' <span class="ex">(expirado)</span>':''}${a.per?` <span class="mono">${esc(a.per)}</span>`:''}${a.orig?` <span class="mono ex">${esc(a.orig)}</span>`:''}${a.nota?`<span style="flex-basis:100%;font-size:12px;color:#cbd5e1">${esc(a.nota.length>260?a.nota.slice(0,260)+'…':a.nota)}</span>`:''}`}
+  e.innerHTML=`<span>Estado do dispositivo ANEPC/CCOSR:</span> <span class="anE">${esc(a.est)}</span>${exp?' <span class="ex">(expirado)</span>':''}${a.per?` <span class="mono" style="white-space:normal;overflow-wrap:anywhere">${esc(a.per)}</span>`:''}${a.orig?` <span class="mono ex">${esc(a.orig)}</span>`:''}${a.nota?`<span style="flex-basis:100%;font-size:12px;color:#cbd5e1">${esc(a.nota)}</span>`:''}`}
 function anPreencher(r){if(r.est){$('anEst').value=r.est}if(r.orig&&!$('anOrig').value)$('anOrig').value=r.orig;if(r.per&&!$('anPer').value)$('anPer').value=r.per;if(r.nota&&!$('anNota').value)$('anNota').value=r.nota;$('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'}
 function anAbrir(){const a=S.anepc;$('anOv').classList.add('on');
   if(a&&!$('anOrig').dataset.on){$('anOrig').dataset.on=1;const lista=[...$('anEst').options].map(o=>o.value);if(lista.includes(a.est))$('anEst').value=a.est;else{$('anEst').value='__o';$('anOut').value=a.est}$('anOrig').value=a.orig||'';$('anPer').value=a.per||'';$('anNota').value=a.nota||'';$('anTxt').value=a.texto||'';$('anAte').value=a.ate||''}
