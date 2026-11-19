@@ -78,11 +78,6 @@ td.r,th.r{text-align:right}
 .oc .hr{color:var(--suave)}.oc .nt{font-weight:700}.oc .es{color:var(--suave);font-size:10px}
 .oc.rel .nt{color:var(--azul)}
 .vazio{color:var(--cinza);font-size:11px;padding:4px 0}
-.bolg{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 6px}.bolt{font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--suave);font-weight:700;margin-bottom:3px}
-.bolc{display:inline-block;border:2px solid;border-radius:8px;padding:2px 8px;margin:0 5px 4px 0;font-size:11px}
-.bolt2{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}.bolt2 th{text-align:left;vertical-align:top;color:var(--suave);font-weight:600;padding:3px 10px 3px 0;width:26%;border-top:1px solid var(--linha)}.bolt2 td{padding:3px 0;border-top:1px solid var(--linha)}
-#cardBol details summary{cursor:pointer;color:var(--suave);font-size:11px}#cardBol textarea{width:100%;background:var(--card2);color:var(--texto);border:1px solid var(--linha);border-radius:6px;padding:4px 6px;font:inherit;font-size:11px}
-.reservado{background:#f43f5e22;border:1px solid #f43f5e66;color:#fecdd3;border-radius:6px;padding:3px 8px;font-size:10.5px;margin:2px 0 6px}
 .legenda{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:10px;color:var(--suave);margin-top:4px}
 .legenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-2px}
 .aviso-geral{font-size:10px;color:var(--cinza);line-height:1.5}
@@ -180,6 +175,28 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 
 #msgBox button.sec{background:#334155}
 #msgFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#msgBox{width:min(900px,97vw);height:min(92vh,820px)}#msgBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#msgBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#msgBox .tabs button{background:#1e293b;border:1px solid #334155}#msgBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#msgTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#msgCont{font-size:11px;color:#94a3b8}#msgCont.mau{color:#fbbf24}#msgBox .rp{padding:10px 14px;gap:8px}
+#ctOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}
+#ctOv.on{display:flex}
+#ctBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(1180px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#ctBox .rh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #334155}
+#ctBox h3{margin:0;font-size:15px}
+#ctBox .rg{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:0;flex:1;min-height:0}
+#ctBox .rc{padding:10px 14px;overflow:auto;border-right:1px solid #334155;display:grid;gap:8px;align-content:start}
+#ctBox .rp{display:flex;flex-direction:column;min-height:0}
+#ctBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#ctBox input:not([type=checkbox]):not([type=radio]),#ctBox textarea,#ctBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:5px 7px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
+#ctBox .rck{display:flex;flex-wrap:wrap;gap:4px 14px}#ctBox .rck label,#ctBox .ro{display:flex;align-items:center;gap:6px;color:#e2e8f0}
+#ctBox .rb{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#ctBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:7px 12px;font-size:12px;cursor:pointer}
+#ctBox button.lk{background:none;color:#60a5fa;padding:0 0 0 6px;font-size:11px;text-decoration:underline}
+#ctBox a{color:#60a5fa;font-size:11px}
+#ctBox fieldset{border:1px solid #475569;border-radius:8px;padding:8px 10px;display:grid;gap:6px}
+#ctBox legend{font-size:11px;color:#fbbf24;padding:0 4px}
+#ctBox .rn{font-size:11px;color:#94a3b8;margin:0}
+@media(max-width:800px){#ctBox{height:96vh}#ctBox .rg{grid-template-columns:1fr;overflow:auto}#ctBox .rc{overflow:visible;border-right:0}#ctBox .rp{min-height:320px}#relPdf{min-height:320px}}
+#ctBox button.sec{background:#334155}
+#ctFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#ctBox{width:min(900px,97vw);height:min(92vh,820px)}#ctBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#ctBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#ctBox .tabs button{background:#1e293b;border:1px solid #334155}#ctBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#ctTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#ctCont{font-size:11px;color:#94a3b8}#ctCont.mau{color:#fbbf24}#ctBox .rp{padding:10px 14px;gap:8px}
+#ctBox table{border-collapse:collapse;width:100%;font-size:12px}#ctBox th,#ctBox td{border-bottom:1px solid #1e2b47;padding:3px 5px;text-align:left}#ctBox td input{width:70px!important;padding:2px 4px!important}#ctBox tr.nc td{color:#64748b}#ctTab{overflow:auto;flex:1}#ctBox .rp{overflow:auto}
 </style>
 </head>
 <body>
@@ -189,6 +206,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
   </div>
   <div class="mono" id="relogio">--:--:--</div>
+  <button class="btnRel" id="btnCt" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
   <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
   <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
   <div class="estados">
@@ -309,22 +327,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </section>
 
-  <section class="card" id="cardBol">
-    <h2>Briefing técnico-operacional CCOS Cávado <span class="nota">estados de prontidão, planos ativados, ocorrências · uso interno</span></h2>
-    <div class="reservado"><b>RESERVADO.</b> O boletim destina-se às entidades do SIOPS. Os dados ficam só neste navegador (nunca no repositório) e só entram no relatório e na mensagem para as entidades (grupos CCOM e Agentes de PC), nunca nos avisos à população.</div>
-    <div class="ctl">
-      <label>Boletim (PDF): <input type="file" id="fileBol" accept=".pdf,application/pdf"></label>
-      <button id="btnBolLimpa" style="display:none">Remover</button>
-      <label>Aviso Planoclima: <input type="file" id="fileAv" accept=".msg,.eml,.txt"></label>
-      <button id="btnAvLimpa" style="display:none">Remover</button>
-      <span id="bolMsg" class="nota" role="status"></span>
-    </div>
-    <div id="bolCorpo"></div>
-    <details style="margin-top:6px"><summary>Colar o texto do aviso (por exemplo, recebido por WhatsApp)</summary>
-      <textarea id="avTxt" rows="4" placeholder="Cole aqui o texto do aviso da Planoclima"></textarea>
-      <div class="ctl" style="margin-top:4px"><label>Data e hora de receção (opcional) <input type="datetime-local" id="avData" style="background:var(--card2);color:var(--texto);border:1px solid var(--linha);border-radius:6px;padding:2px 6px"></label><button id="btnAvTxt">Guardar aviso</button></div></details>
-  </section>
-
   <section class="card">
     <h2>Fontes e limitações</h2>
     <p class="aviso-geral">
@@ -340,20 +342,38 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 </main>
 
 
+<div id="ctOv" role="dialog" aria-modal="true" aria-labelledby="ctTit"><div id="ctBox">
+  <div class="rh"><h3 id="ctTit">Previsão meteorológica contratada</h3><button id="ctFecha" title="Fechar (Esc)">×</button></div>
+  <div class="rg">
+    <div class="rc">
+      <p class="rn">Cole o texto do email e/ou anexe o PDF. O painel extrai a chuva (mm) e a rajada (km/h) por período e mistura-os com o consenso dos modelos, com o peso que escolher. <b>Confirme os valores no quadro</b> antes de aplicar. Fica guardado só neste navegador.</p>
+      <label>Fornecedor<input id="ctNome" value="Previsão dedicada"></label>
+      <label>Emitida em<input id="ctEmit" placeholder="ex.: 19/11/2026 08:00"></label>
+      <label>Peso da previsão contratada no consenso<select id="ctPeso"><option value="50">50 % (metade-metade)</option><option value="75" selected>75 % (previsão contratada domina)</option><option value="90">90 % (quase só a contratada)</option></select></label>
+      <label>Anexar PDF<input type="file" id="ctPdf" accept=".pdf,application/pdf"></label>
+      <label>Texto do email / do PDF<textarea id="ctTxt" rows="12" spellcheck="false" placeholder="Cole aqui o texto da previsão"></textarea></label>
+      <label class="ro"><input type="checkbox" id="ctUsar" checked> Usar nos cálculos</label>
+      <label class="ro"><input type="checkbox" id="ctDiv"> Incluir um excerto do texto no relatório PDF</label>
+    </div>
+    <div class="rp">
+      <div id="ctInfo" class="rn"></div>
+      <div id="ctTab"></div>
+      <div class="rb"><button id="ctExtrai" class="sec">Extrair valores do texto</button><button id="ctAplica">Aplicar e atualizar previsões</button><button id="ctRemove" class="sec">Remover</button></div>
+      <div id="ctMsg" class="rn" role="status"></div>
+    </div>
+  </div>
+</div></div>
 <div id="msgOv" role="dialog" aria-modal="true" aria-labelledby="msgTit"><div id="msgBox">
   <div class="rh"><h3 id="msgTit">Mensagens de aviso (SMS e WhatsApp)</h3><button id="msgFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
     <div class="rc">
       <p class="rn">Texto proposto a partir da previsão do painel. <b>Reveja antes de enviar.</b> O painel não envia nada: copie e cole no canal de avisos ou no grupo.</p>
       <label>Nível a comunicar<select id="msgNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select><span class="mono" id="msgNivelAuto"></span></label>
-      <div id="msgSug" class="reservado" style="display:none;background:#fbbf2422;border-color:#fbbf2466;color:#fde68a"></div>
       <label>CCOM<select id="msgCcom"><option value="mon">Não ativado: monitorização</option><option value="ativo">CCOM ativado</option><option value="nd">Não referir</option></select></label>
       <label id="msgPerL" style="display:none">Período de ativação<input id="msgPer" placeholder="ex.: das 09h às 20h de 20/11"></label>
       <label>Nota adicional (opcional)<textarea id="msgNota" rows="2"></textarea></label>
       <label>Próxima atualização<select id="msgAt"><option value="6">6 horas</option><option value="12">12 horas</option><option value="24" selected>24 horas</option><option value="36">36 horas</option><option value="48">48 horas</option></select></label>
       <label class="ro"><input type="checkbox" id="msgSemAc" checked> SMS sem acentos (cabem mais caracteres)</label>
-      <label class="ro" id="msgBolL"><input type="checkbox" id="msgBol"> Incluir briefing CCOS Cávado (reservado, só entidades)</label>
-      <label class="ro" id="msgAvL"><input type="checkbox" id="msgAv"> Incluir aviso Planoclima (só entidades)</label>
     </div>
     <div class="rp">
       <div class="tabs" id="msgTabs"><button data-t="pop" class="on">População · WhatsApp</button><button data-t="sms">População · SMS</button><button data-t="ccom">Entidades · grupos CCOM e Agentes de PC</button></div>
@@ -372,8 +392,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <label>Nível a comunicar
         <select id="relNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select>
         <span class="mono" id="relNivelAuto"></span></label>
-      <div id="relSug" class="reservado" style="display:none;background:#fbbf2422;border-color:#fbbf2466;color:#fde68a"></div>
-      <div class="rck"><label><input type="checkbox" id="relFreg" checked> Mapa das freguesias</label><label><input type="checkbox" id="relOc" checked> Ocorrências em curso</label><label><input type="checkbox" id="relMed" checked> Efeitos e medidas</label><label><input type="checkbox" id="relBol"> Briefing CCOS Cávado (reservado)</label><label><input type="checkbox" id="relAv"> Aviso Planoclima</label></div>
+      <div class="rck"><label><input type="checkbox" id="relFreg" checked> Mapa das freguesias</label><label><input type="checkbox" id="relOc" checked> Ocorrências em curso</label><label><input type="checkbox" id="relMed" checked> Efeitos e medidas</label></div>
       <label>Informação CCOM
         <select id="relCcom"><option value="mon">Não ativado: mantém-se a monitorização e a avaliação da situação</option><option value="ativo">CCOM ativado</option><option value="nd">Não incluir</option></select></label>
       <label id="relPerL" style="display:none">Período de ativação (e local, se quiser)<input id="relCcomPer" placeholder="ex.: das 09h de 20/11 às 20h, no Quartel dos Bombeiros Sapadores"></label>
@@ -594,8 +613,8 @@ const frac=(l,f)=>l.length?l.filter(f).length/l.length:0;
 function pool(P,k,c){const o=[];for(const R of Object.values(P)){const x=R.blocos[k][c];if(c==='cape')o.push(...x);else if(x)o.push(...x.m)}return o}
 function calcular(){
   S.calc={};
-  for(const [pn,P] of Object.entries(S.modelos.pontos)){
-    const ms=Object.keys(P);if(!ms.length)continue;const nb=S.blocos.length;const X=[];
+  for(const [pn,P0] of Object.entries(S.modelos.pontos)){
+    const P=contrP(P0),ms=Object.keys(P);if(!ms.length)continue;const nb=S.blocos.length;const X=[];
     for(let k=0;k<nb;k++){
       const v=ms.map(m=>P[m].blocos[k].chuva?.med).filter(x=>x!=null),v90=ms.map(m=>P[m].blocos[k].chuva?.p90).filter(x=>x!=null);
       const c=med(v),tol=Math.max(3,.4*c),conc=v.filter(x=>Math.abs(x-c)<=tol).length;
@@ -608,7 +627,14 @@ function calcular(){
     }
     const tot={},m24={};
     const agg=(c)=>{const vv=ms.map(m=>P[m][c]?.med).filter(x=>x!=null);const all=ms.flatMap(m=>P[m][c]?.m||[]);return{cons:med(vv),min:Math.min(...vv),max:Math.max(...vv),p90:q(all,.9)}};
-    S.calc[pn]={blocos:X,total48:agg('total48'),max24:agg('max24')};
+    let T48=agg('total48'),M24=agg('max24');
+    const cc=S.contr;if(cc&&cc.usar&&S.blocos){const a=Math.min(.9,Math.max(0,(+cc.peso||75)/100)),mix=(x,y)=>(1-a)*x+a*y,pv=[];
+      X.forEach((x,k)=>{const b=ctBloco(k);pv.push(b);if(!b)return;x.modeloMm=x.chuva;x.prov=b.mm;
+        x.chuva=mix(x.chuva,b.mm);x.p90=Math.max(x.chuva,mix(x.p90,b.mm));x.min=Math.min(x.min,b.mm);x.max=Math.max(x.max,b.mm);x.p30=mix(x.p30,b.mm>=30?1:0);
+        if(b.raj!=null){x.raj=mix(x.raj,b.raj);x.raj90=mix(x.raj90,b.raj);x.pRaj60=mix(x.pRaj60,b.raj>=60?1:0)}});
+      if(pv.slice(0,8).length===8&&pv.slice(0,8).every(Boolean)){const v=pv.slice(0,8).map(b=>b.mm),t=v.reduce((u,w)=>u+w,0);let m=0;for(let i=0;i<=4;i++)m=Math.max(m,v.slice(i,i+4).reduce((u,w)=>u+w,0));
+        T48={cons:mix(T48.cons,t),min:Math.min(T48.min,t),max:Math.max(T48.max,t),p90:Math.max(mix(T48.cons,t),mix(T48.p90,t))};M24={cons:mix(M24.cons,m),min:Math.min(M24.min,m),max:Math.max(M24.max,m),p90:Math.max(mix(M24.cons,m),mix(M24.p90,m))}}}
+    S.calc[pn]={blocos:X,total48:T48,max24:M24};
   }
 }
 function sobrepoe(w,b){return w.inicio.slice(0,16)<b.fim&&w.fim.slice(0,16)>b.ini}
@@ -758,7 +784,7 @@ async function carregarRio(){
 /* ============================== DESENHO ============================== */
 function corNivel(n){return['#10b981','#fbbf24','#f43f5e'][n]}
 function dataAtual(){return S.calc&&S.calc[S.ponto]?S.calc[S.ponto]:null}
-function desenharTudo(){desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao()}
+function desenharTudo(){desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao();ctMarca()}
 function desenharKpis(){
   const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');
   const cel=(t,v,s,c)=>`<div class="kpi"><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
@@ -994,307 +1020,8 @@ $('filePrev').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{cons
 $('btnPrevLimpa').onclick=()=>{S.prev=null;try{localStorage.removeItem('smpc_prev')}catch(_){}desenharPrev()};
 $('chkPrev').onchange=()=>$('chkPrev').checked?gPrev.addTo(mapa):mapa.removeLayer(gPrev);
 $('chkPrev').addEventListener('change',desenharPrev);
-/* ===== Boletim CCOS + Aviso Planoclima: leitura só no navegador (nada é enviado nem fica no repositório) ===== */
-const BOL={d:null,av:null};
-const BOLK='smpc_bol',AVK='smpc_aviso';
-const PDFJS_V='3.11.174',PDFJS_U='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/'+PDFJS_V+'/';
-function carregarPdfJs(){
-  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
-  return new Promise((ok,ko)=>{const s=document.createElement('script');s.src=PDFJS_U+'pdf.min.js';
-    s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_U+'pdf.worker.min.js';ok(window.pdfjsLib)};
-    s.onerror=()=>ko(new Error('não foi possível carregar a biblioteca de leitura de PDF (sem rede?)'));document.head.appendChild(s)})}
-
-/* --- cores da página 1: níveis de prontidão (cinzentos) e estados SFN (cores) --- */
-const PRONT_LUM=[[255,'N'],[191,'I'],[128,'II'],[64,'III'],[13,'IV']];
-const SFN_COR=[[[0,176,80],'Risco Baixo'],[[0,112,192],'Risco Moderado'],[[255,255,0],'Risco Alto'],[[237,125,49],'Risco Elevado'],[[255,0,0],'Risco Extremo']];
-function amostra(ctx,x,y){ // média e nº de cores distintas numa janela 10x7 px
-  const w=14,h=8;let d;try{d=ctx.getImageData(Math.max(0,Math.round(x)),Math.max(0,Math.round(y-4)),w,h).data}catch(e){return null}
-  let r=0,g=0,b=0;const set=new Set();for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];set.add(d[i]+','+d[i+1]+','+d[i+2])}
-  const n=d.length/4;return{c:[r/n,g/n,b/n],v:set.size}}
-function classCor(a,tipo){
-  if(!a)return null;if(a.v>=3)return'Não ativado';
-  const [r,g,b]=a.c;
-  if(tipo==='sfn'){if(Math.max(r,g,b)-Math.min(r,g,b)<40)return'Não ativado';let best=null,bd=1e9;SFN_COR.forEach(([c,n])=>{const dd=(c[0]-r)**2+(c[1]-g)**2+(c[2]-b)**2;if(dd<bd){bd=dd;best=n}});return best}
-  const l=(r+g+b)/3;let best=null,bd=1e9;PRONT_LUM.forEach(([v,n])=>{const dd=Math.abs(v-l);if(dd<bd){bd=dd;best=n}});return best}
-
-/* --- texto: linhas com células (separadas por posição) --- */
-function linhasPagina(items){
-  const L=[];items.filter(i=>i.str&&i.str.trim()).sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{
-    let l=L.find(l=>Math.abs(l.y-i.y)<3);if(!l){l={y:i.y,it:[]};L.push(l)}l.it.push(i)});
-  L.sort((a,b)=>b.y-a.y);
-  return L.map(l=>{l.it.sort((a,b)=>a.x-b.x);const c=[];let cur='',fim=null;
-    l.it.forEach(i=>{const s=i.str.trim();if(fim==null)cur=s;else{const g=i.x-fim;if(g>14){c.push(cur);cur=s}else cur+=(g>1.0?' ':'')+s}fim=i.x+i.w});
-    c.push(cur);const cc=c.map(x=>x.trim()).filter(Boolean);return{y:l.y,c:cc,t:cc.join(' ')}})}
-
-const HEAD=[ // ordem do boletim
- ['prontidao',/^Estados de Prontidão existentes/i],['sfn',/^Estados de Alerta do SFN/i],['determ',/^Determinações Operacionais/i],
- ['pir',/^Perigo de Incêndio Rural/i],['hidro_sis',/^Sistema de Vigilância e Alerta de Recursos Hídricos/i],
- ['hidro',/^Informação hidrológica relevante/i],['meteo',/^Informação meteorológica relevante/i],
- ['diops',/^Ocorrências DIOPS, comparativo/i],['decir1',/^Ocorrências \| Estado de Prontidão Especial Nível II . DECIR/i],
- ['decir2',/^Ocorrências \| Estado de Prontidão Especial Nível I, II, IV/i],['sismo',/^Atividade Sísmica/i],
- ['planos',/^Planos (e|de) Emergência/i],['saude',/^Informação relativa a fenómenos com impacto na saúde/i],
- ['nav',/^Perigos para a navegação marítima/i],['oc_curso',/^Ocorrências mais relevantes em curso/i],
- ['oc_rel',/^Ocorrências mais relevantes de /i],['agentes',/^Informações relevantes aos Agentes/i],['imprensa',/^Principais referências na Imprensa/i],
- ['prepos',/^Pré-posicionamento . Patrulhamentos/i],['emeif',/^Pré-posicionamento de meios sob gestão/i],['foracsrepc',/^Mobilização de meios fora/i],
- ['legisl',/^Legislação relevante/i],['outras',/^Outras Informações/i],['entidades',/^Informações relevantes das entidades/i],['presencas',/^Presenças no Boletim/i]];
-const semPag=t=>/^Página \d+ de \d+$/.test(t);
-const nada=a=>!a.length||a.every(x=>/^(nada (de especial )?a referir\.?|-+)$/i.test(x.replace(/^[•✓\s]+/,'').trim()));
-function bullets(L){const o=[];L.forEach(l=>{const t=l.t.replace(/^\s+/,'');if(/^[•✓]/.test(t)||!o.length)o.push(t.replace(/^[•✓]\s*/,''));else o[o.length-1]+=' '+t});return o}
-const num=s=>{const n=parseInt(String(s).replace(/\s/g,''),10);return isNaN(n)?null:n};
-function tabMunicipios(L){const r={};L.forEach(l=>{const c=l.c;if(c.length>=3&&/^(Amares|Barcelos|Braga|Esposende|Terras de Bouro|Vila Verde|Total)$/i.test(c[0]))r[c[0]]=c.slice(1).map(num)});return r}
-
-function parseBoletim(pag,cores){
-  const all=[];pag.forEach(p=>p.forEach(l=>{if(!semPag(l.t))all.push(l)}));
-  const R={};const cab=all.slice(0,6).map(l=>l.t).join(' ');
-  R.numero=(cab.match(/N[ºo°]\s*(\d+\/\d{4})/)||[])[1]||'';R.valido=(cab.match(/(\d{2}-\d{2}-\d{4})\s+(\d{2}:\d{2})/)||[]).slice(1).join(' ')||'';
-  R.paginas=(cab.match(/Número de Páginas:\s*(\d+)/)||[])[1]||'';
-  const S={};let cur=null;
-  all.forEach(l=>{const h=HEAD.find(([k,re])=>re.test(l.t));
-    if(h&&(!S[h[0]])){cur=h[0];S[cur]=[];if(h[0]==='oc_rel'||h[0]==='decir1'||h[0]==='decir2')S[cur].push(l);return}
-    if(cur)S[cur].push(l)});
-  const B=k=>S[k]?bullets(S[k].filter(l=>!/^(Barras|Informação adicional)/.test(l.t))):[];
-  R.prontidao=cores.prontidao||{};R.sfn=cores.sfn||{};
-  R.determ=nada(B('determ'))?[]:B('determ');
-  R.hidro=nada(B('hidro'))?[]:B('hidro');
-  R.saude=nada(B('saude'))?[]:B('saude');
-  R.agentes=nada(B('agentes'))?[]:B('agentes');
-  R.prepos=nada(B('prepos'))?[]:B('prepos');R.legisl=nada(B('legisl'))?[]:B('legisl');R.outras=nada(B('outras'))?[]:B('outras');
-  R.imprensa=nada(B('imprensa'))?[]:B('imprensa');R.emeif=nada(B('emeif'))?[]:B('emeif');R.foracsrepc=nada(B('foracsrepc'))?[]:B('foracsrepc');
-  // meteorologia por dia
-  R.meteo=[];(S.meteo||[]).forEach(l=>{const m=l.t.match(/^((Segunda|Terça|Quarta|Quinta|Sexta)-feira|Sábado|Domingo)\s+(\d{1,2}[A-Z]{3})/i);
-    if(m)R.meteo.push({dia:l.t.trim(),pontos:[]});else if(R.meteo.length&&/^[•]/.test(l.t))R.meteo[R.meteo.length-1].pontos.push(l.t.replace(/^•\s*/,''));
-    else if(R.meteo.length&&R.meteo[R.meteo.length-1].pontos.length)R.meteo[R.meteo.length-1].pontos[R.meteo[R.meteo.length-1].pontos.length-1]+=' '+l.t});
-  R.meteo=R.meteo.filter(d=>d.pontos.length);
-  // barragens (percentagens só em imagem; guardamos os nomes e a nota)
-  // atividade operacional
-  const dio=tabMunicipios(S.diops||[]);R.diops={braga:dio['Braga']||null,total:dio['Total']||null,todos:dio,
-    periodo:((S.diops||[]).map(l=>l.t).join(' ').match(/Atividade Operacional de (\S+) a (\S+)/)||[]).slice(1).join(' a ')};
-  const dc=(k)=>{const t=tabMunicipios(S[k]||[]);return{braga:t['Braga']||null,total:t['Total']||null,todos:t,periodo:((S[k]||[]).map(l=>l.t).join(' ').match(/entre (\S+) a (\S+)/)||[]).slice(1).join(' a ')}};
-  R.decir1=dc('decir1');R.decir2=dc('decir2');
-  // planos / declarações de alerta
-  R.planos=nada(B('planos'))?[]:B('planos');
-  // sismos
-  R.sismo=all.map(l=>l.t).join(' ').match(/Não foram registados sismos[^.]*\./)?'Sem sismos sentidos pela população nas últimas 24 h.':'';
-  // navegação
-  const nv=(S.nav||[]);const f=l=>{const x=nv.find(z=>z.t.startsWith(l));return x?x.c.slice(1).join(' ').trim():''};
-  R.nav={fechadas:f('Barras Fechadas'),condicionadas:f('Barras Condicionadas')};
-  // ocorrências relevantes em curso e do período
-  R.oc_curso=nada(B('oc_curso'))?[]:B('oc_curso');
-  R.oc_rel=[];
-  // entidades
-  R.entidades=[];let ult=null;(S.entidades||[]).forEach(l=>{if(/ – /.test(l.t)&&/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9º2]/.test(l.t)){const i=l.t.indexOf(' – ');ult={ent:l.t.slice(0,i),txt:l.t.slice(i+3)};R.entidades.push(ult)}else if(ult)ult.txt+=' '+l.t});
-  R.entidades=R.entidades.filter(e=>!/nada de especial a referir\.?$/i.test(e.txt.trim()));
-  return R}
-
-function ocRelevantes(itemsPorPagina){ // tabela por posição (colunas x)
-  const out=[],txt=arr=>{const L=[];arr.slice().sort((p,q)=>q.y-p.y||p.x-q.x).forEach(i=>{let l=L.find(l=>Math.abs(l.y-i.y)<3);if(!l){l={y:i.y,it:[]};L.push(l)}l.it.push(i)});
-    return L.map(l=>{l.it.sort((p,q)=>p.x-q.x);let s='',fim=null;l.it.forEach(i=>{const t=i.str.trim();if(!t)return;s+=(fim!=null&&i.x-fim>1?' ':'')+t;fim=i.x+i.w});return s}).filter(Boolean)};
-  itemsPorPagina.forEach(it=>{
-    const regs=it.filter(i=>/^\d{5,6}[A-Z]/.test(i.str.trim())&&i.x>105&&i.x<200).sort((a,b)=>b.y-a.y);
-    for(let k=0;k+2<regs.length;k+=3){
-      const a=regs[k],c=regs[k+2],ymax=a.y+8,ymin=c.y-14;
-      const col=(x0,x1)=>txt(it.filter(i=>i.x>=x0&&i.x<x1&&i.y<=ymax&&i.y>=ymin));
-      const local=col(200,285),j=x=>x.join(' ').replace(/\s+/g,' ').trim();
-      out.push({tipo:j(col(0,110)),inicio:a.str.replace(/\s/g,''),fim:c.str.replace(/\s/g,''),freguesia:local[local.length-2]||'',concelho:local[local.length-1]||'',
-        meios:j(col(285,380)),outros:j(col(420,465)).replace(/^-+$/,''),danos:j(col(465,700)).replace(/^-+$/,'')})}});
-  return out}
-
-const PIR_REF={'Terras de Bouro':[475,128],'Vila Verde':[319,167],'Amares':[333,229],'Esposende':[97,260],'Barcelos':[167,272],'Braga':[300,268]};
-function lerPir(its,altura){const d=its.filter(i=>/^[1-5]$/.test(i.str.trim())&&i.y>0).map(i=>({v:+i.str.trim(),x:i.x,t:altura-i.y})).filter(p=>p.t>90&&p.t<340);
-  if(d.length!==6)return null;const r={};const usados=new Set();
-  Object.entries(PIR_REF).forEach(([n,[x,y]])=>{let b=null,bd=1e9;d.forEach((p,k)=>{if(usados.has(k))return;const dd=(p.x-x)**2+(p.t-y)**2;if(dd<bd){bd=dd;b=k}});if(b!=null&&bd<60*60){usados.add(b);r[n]=d[b].v}});
-  return Object.keys(r).length===6?r:null}
-
-async function lerBoletimPdf(file){
-  const pdfjs=await carregarPdfJs(),buf=await file.arrayBuffer(),doc=await pdfjs.getDocument({data:buf}).promise;
-  const pag=[],itensPag=[],alturas=[];let cores={prontidao:{},sfn:{}};
-  for(let p=1;p<=doc.numPages;p++){
-    const pg=await doc.getPage(p),vp=pg.getViewport({scale:2}),tc=await pg.getTextContent();
-    const its=tc.items.map(i=>({str:i.str,x:i.transform[4],y:i.transform[5],w:i.width,h:i.height}));
-    pag.push(linhasPagina(its));alturas.push(pg.view[3]-pg.view[1]);itensPag.push(its);
-    if(p===1){
-      const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;const ctx=cv.getContext('2d',{willReadFrequently:true});
-      await pg.render({canvasContext:ctx,viewport:vp}).promise;
-      // primeiro encontro (de cima para baixo) de cada rótulo
-      const topo=(s,tipo)=>{const c=its.filter(i=>i.str.trim().startsWith(s.split(' ')[0].slice(0,6))).sort((a,b)=>b.y-a.y);if(!c.length)return null;const i=c[0];
-        const [vx,vy]=vp.convertToViewportPoint(i.x,i.y),yy=vy-(i.h||8),w=i.w*2;
-        const A=classCor(amostra(ctx,vx-14,yy),tipo),B=classCor(amostra(ctx,vx+w+4,yy),tipo);return A===B?A:(A==='N'||A==null)?B:A};
-      ['DIOPS','DECIR','DIONRBQ','DIRACAERO','DCDFCI-PNPG'].forEach(k=>cores.prontidao[k]=topo(k,'pront'));
-      ['CAPELLUS','HEFESTO II'].forEach(k=>{const c=its.filter(i=>i.str.trim().startsWith(k)).sort((a,b)=>b.y-a.y);
-        // o rótulo em maiúsculas dentro da caixa é o 1.º (de cima); a legenda vem depois
-        cores.sfn[k]=topo(k,'sfn')})}
-  }
-  const R=parseBoletim(pag,cores);R.oc_rel=ocRelevantes(itensPag);R.pir=lerPir(itensPag[1]||[],alturas[1]||842);R.fonte=file.name;R.lido=new Date().toISOString();return R}
-
-/* --- leitor mínimo de .msg (Outlook, formato OLE/CFB): assunto, remetente, data, corpo --- */
-function lerMsg(buf){
-  const u=new Uint8Array(buf),dv=new DataView(buf);
-  if(dv.getUint32(0,true)!==0xE011CFD0)throw new Error('não é um ficheiro .msg do Outlook');
-  const ss=1<<dv.getUint16(30,true),mss=1<<dv.getUint16(32,true),nFat=dv.getUint32(44,true),dirIni=dv.getUint32(48,true),corte=dv.getUint32(56,true),miniIni=dv.getUint32(60,true),difIni=dv.getUint32(68,true),nDif=dv.getUint32(72,true);
-  const off=s=>(s+1)*ss;let dif=[];for(let i=0;i<109;i++){const v=dv.getUint32(76+i*4,true);if(v<0xFFFFFFFA)dif.push(v)}
-  let d=difIni;for(let k=0;k<nDif&&d<0xFFFFFFFA;k++){for(let i=0;i<ss/4-1;i++){const v=dv.getUint32(off(d)+i*4,true);if(v<0xFFFFFFFA)dif.push(v)}d=dv.getUint32(off(d)+ss-4,true)}
-  const fat=[];dif.slice(0,nFat).forEach(s=>{for(let i=0;i<ss/4;i++)fat.push(dv.getUint32(off(s)+i*4,true))});
-  const cadeia=(ini,F)=>{const o=[];let s=ini,g=0;while(s<0xFFFFFFFA&&g++<1e6){o.push(s);s=F[s]}return o};
-  const ler=(ini,tam,F,base,tsz)=>{const ch=cadeia(ini,F),out=new Uint8Array(ch.length*tsz);ch.forEach((s,i)=>out.set(base(s),i*tsz));return out.slice(0,tam)};
-  const setor=s=>u.subarray(off(s),off(s)+ss);
-  const dirB=ler(dirIni,1e9,fat,setor,ss),ents=[];
-  for(let i=0;i+128<=dirB.length;i+=128){const e=new DataView(dirB.buffer,dirB.byteOffset+i,128),nl=e.getUint16(64,true);if(!nl)continue;
-    let n='';for(let k=0;k<nl/2-1;k++)n+=String.fromCharCode(e.getUint16(k*2,true));
-    ents.push({n,t:dirB[i+66],ini:e.getUint32(116,true),tam:e.getUint32(120,true),i:i/128})}
-  const raiz=ents.find(e=>e.t===5);
-  const mini=ler(raiz.ini,raiz.tam,fat,setor,ss);
-  const miniFat=[];cadeia(miniIni,fat).forEach(s=>{for(let i=0;i<ss/4;i++)miniFat.push(dv.getUint32(off(s)+i*4,true))});
-  const stream=n=>{const e=ents.find(x=>x.n===n&&x.t===2);if(!e)return null;
-    return e.tam<corte?ler(e.ini,e.tam,miniFat,s=>mini.subarray(s*mss,s*mss+mss),mss):ler(e.ini,e.tam,fat,setor,ss)};
-  const txt=k=>{let b=stream('__substg1.0_'+k+'001F');if(b)return new TextDecoder('utf-16le').decode(b).replace(/\0+$/,'');
-    b=stream('__substg1.0_'+k+'001E');return b?new TextDecoder('windows-1252').decode(b).replace(/\0+$/,''):''};
-  let corpo=txt('1000');
-  if(!corpo){const h=txt('1013')||(()=>{const b=stream('__substg1.0_10130102');return b?new TextDecoder('utf-8').decode(b):''})();
-    corpo=h.replace(/<(style|script)[\s\S]*?<\/\1>/gi,'').replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(+n))}
-  const cab=txt('007D'),dt=(cab.match(/^Date:\s*(.+)$/mi)||[])[1]||'';
-  return{assunto:txt('0037'),de:txt('0C1A')||txt('5D01'),email:txt('5D01')||txt('0C1F'),data:dt,corpo:corpo.replace(/\r/g,'')}}
-
-
-/* ---------- resumo e utilitários do boletim / aviso ---------- */
-const CORP_P={'N':'#10b981','I':'#fbbf24','II':'#fb923c','III':'#f43f5e','IV':'#c026d3','Não ativado':'#475569'};
-const NOME_P={'N':'Normal','I':'Nível I','II':'Nível II','III':'Nível III','IV':'Nível IV','Não ativado':'não ativado'};
-const CORP_S={'Risco Baixo':'#10b981','Risco Moderado':'#3b82f6','Risco Alto':'#eab308','Risco Elevado':'#f97316','Risco Extremo':'#ef4444','Não ativado':'#475569'};
-const PIR_N={1:'Reduzido',2:'Moderado',3:'Elevado',4:'Muito elevado',5:'Máximo'};
-const SFN_H={'Risco Baixo':'72h','Risco Moderado':'24h','Risco Alto':'12h','Risco Elevado':'6h','Risco Extremo':'imediato'};
-function bolData(B){const m=(B&&B.valido||'').match(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})/);return m?new Date(+m[3],m[2]-1,+m[1],+m[4],+m[5]):null}
-function bolIdade(B){const d=bolData(B);return d?(Date.now()-d.getTime())/3600e3:null}
-function bolIdTxt(B){const h=bolIdade(B);if(h==null)return'';return h<1?'há menos de 1 h':h<48?`há ${Math.round(h)} h`:`há ${Math.round(h/24)} dias`}
-const bolCurto=B=>{const d=bolData(B);return d?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`:(B.valido||'')};
-const gdhTxt=s=>{const m=String(s).match(/^(\d{2})(\d{2})?(\d{2})?/);return m?`${m[1]}${m[2]?':'+m[2]:''}`:s};
-function planosBraga(B){ // pares título + descrição; resume por concelho
-  const o=[],P=B.planos||[];for(let i=0;i<P.length;i++){if(!/^Despacho/i.test(P[i]))continue;const desc=P[i+1]&&!/^Despacho/i.test(P[i+1])?P[i+1]:'';
-    const t=P[i].replace(/^Despacho N\.º\s*/i,''),c=(desc.match(/Câmara Municipal de ([A-ZÀ-Ú][A-Za-zÀ-ú ]+?)(?:,|\s+(?:Dr|Eng|Sr)\.)/)||[])[1]||'';
-    const prol=/prolongamento até ao dia ([\d/]+)/i.exec(desc);
-    o.push({concelho:c.trim(),titulo:t.replace(/ - Declaração de Situação de Alerta de âmbito Municipal/i,'').trim()+' (alerta municipal)',nota:prol?'prolongada até '+prol[1]:'',texto:desc})}
-  return o}
-function bolOcBraga(B){return(B.oc_rel||[]).filter(o=>/^Braga$/i.test(o.concelho))}
-function bolBragaAtiv(B){const a=B.diops&&B.diops.braga,e=B.decir2&&B.decir2.braga;return{a,e}}
-function bolMeteoCurto(B,max){const cut=(t,n)=>{t=t.replace(/\.$/,'');return t.length>n?t.slice(0,n).replace(/[\s,;]+\S*$/,'')+'…':t};
-  return(B.meteo||[]).map(d=>{const dia=d.dia.replace(/-feira/,''),r=d.pontos.find(p=>/aguaceiro|chuva|trovoada|neve|granizo/i.test(p)),ns=[];
-    d.pontos.filter(p=>/^vento/i.test(p)).forEach(p=>(p.match(/(\d+) ?km\/h/g)||[]).forEach(x=>ns.push(parseInt(x))));const mv=ns.length?Math.max(...ns):0,
-    pts=[r&&cut(r,90),mv>=40&&max>1?'vento até '+mv+' km/h':''].filter(Boolean);return pts.length?`${dia}: ${pts.join('; ')}`:''}).filter(Boolean)}
-function bolProntTexto(B){const P=B.prontidao||{},k=Object.keys(P);const ativos=k.filter(x=>P[x]&&P[x]!=='N'&&P[x]!=='Não ativado'),normais=k.filter(x=>P[x]==='N'),na=k.filter(x=>P[x]==='Não ativado'),sem=k.filter(x=>!P[x]);
-  const L=[];ativos.forEach(x=>L.push(`${x} ${NOME_P[P[x]]}`));if(normais.length)L.push(normais.join(', ')+' Normal');if(na.length)L.push(na.join(', ')+' não ativado');if(sem.length)L.push(sem.join(', ')+': não lido, confirmar no boletim');return L}
-function bolSfnTexto(B){const S=B.sfn||{};return Object.keys(S).map(k=>!S[k]?`${k}: não lido`:S[k]==='Não ativado'?`${k} não ativado`:`${k} ${S[k].replace('Risco ','risco ').toLowerCase()} (${SFN_H[S[k]]})`)}
-/* linhas de texto simples (relatório PDF, email e mensagem) */
-function bolLinhas(B){
-  const L=[],{a,e}=bolBragaAtiv(B),pl=planosBraga(B),pB=pl.filter(x=>/braga/i.test(x.concelho)),oB=bolOcBraga(B);
-  L.push({k:'Prontidão (estados à hora do briefing)',v:bolProntTexto(B).join(' · ')});
-  L.push({k:'Estados de alerta do SFN (AMEC)',v:bolSfnTexto(B).join(' · ')});
-  L.push({k:'Determinações operacionais',v:B.determ.length?B.determ.join(' ').trim():'Nada a referir.'});
-  L.push({k:'Planos de emergência e declarações de alerta',v:pl.length?(pB.length?'Em Braga: '+pB.map(x=>x.titulo).join('; ')+'. ':'Nenhuma para Braga. ')+'Na sub-região: '+pl.map(x=>`${x.concelho||'?'}: ${x.titulo}${x.nota?', '+x.nota:''}`).join('; ')+'.':'Nada a referir.'});
-  if(B.pir)L.push({k:'Perigo de incêndio rural (PIR)',v:`Braga: ${B.pir['Braga']} (${PIR_N[B.pir['Braga']]||''})${Object.values(B.pir).some(v=>v>=3)?' · atenção, há concelhos com PIR elevado ou superior':''}`});
-  if(a)L.push({k:'Atividade operacional em Braga'+(B.diops.periodo?' ('+B.diops.periodo.replace(/NOV26/g,'/11').replace(/(\d{2})0000|(\d{2})2359/g,'$1$2')+')':''),v:`${a[3]} ocorrências (${a[0]} DIOPS, ${a[1]} DECIR, ${a[2]} NRBQ)${B.diops.total?'; sub-região: '+B.diops.total[3]:''}`});
-  if(e)L.push({k:'DECIR, Prontidão Especial Nível II, Braga',v:`${e[0]} ocorrências, ${e[1]} operacionais, ${e[2]} meios terrestres, ${e[3]} meios aéreos`});
-  L.push({k:'Ocorrências relevantes em Braga',v:oB.length?oB.map(o=>`${o.tipo}, ${o.freguesia}${o.danos?' ('+o.danos+')':''}`).join('; '):'Nenhuma no período.'});
-  const ou=(B.oc_rel||[]).filter(o=>!/^Braga$/i.test(o.concelho));if(ou.length)L.push({k:'Ocorrências relevantes na sub-região',v:ou.map(o=>`${o.tipo}, ${o.concelho}${o.danos?' ('+o.danos+')':''}`).join('; ')});
-  if(B.oc_curso.length)L.push({k:'Ocorrências relevantes em curso',v:B.oc_curso.join(' ')});
-  if(B.hidro.length)L.push({k:'Informação hidrológica',v:B.hidro.join(' ')});
-  const mt=bolMeteoCurto(B,3);if(mt.length)L.push({k:'IPMA, próximos dias',v:mt.join(' | ')});
-  if(B.nav&&B.nav.fechadas&&!/^-+$/.test(B.nav.fechadas))L.push({k:'Barras fechadas',v:B.nav.fechadas});
-  if(B.saude.length)L.push({k:'Saúde',v:B.saude.join(' ')});
-  if(B.agentes.length)L.push({k:'Informações aos Agentes de PC',v:B.agentes.join(' ')});
-  if(B.prepos.length)L.push({k:'Pré-posicionamento',v:B.prepos.join(' ')});
-  if(B.legisl.length)L.push({k:'Legislação',v:B.legisl.join(' ')});
-  if(B.outras.length)L.push({k:'Outras informações',v:B.outras.join(' ')});
-  return L}
-/* mensagem WhatsApp para as entidades (grupo CCOM e Agentes de PC) */
-function bolMsg(B){
-  const {a,e}=bolBragaAtiv(B),pl=planosBraga(B),pB=pl.filter(x=>/braga/i.test(x.concelho)),oB=bolOcBraga(B),L=[];
-  L.push(`📋 *BRIEFING CCOS CÁVADO nº${B.numero}* · válido a ${bolCurto(B)} · _RESERVADO, uso interno das entidades_`);
-  L.push(`🚦 *Prontidão:* ${bolProntTexto(B).join(' · ')}`);
-  L.push(`🪖 *SFN:* ${bolSfnTexto(B).join(' · ')}`);
-  if(B.determ.length)L.push(`📌 *Determinações:* ${B.determ.join(' ')}`);
-  L.push(`📜 *Declarações de alerta:* ${pB.length?'Braga: '+pB.map(x=>x.titulo).join('; '):'nenhuma para Braga'}${pl.length&&!pB.length?' (ativas em '+[...new Set(pl.map(x=>x.concelho).filter(Boolean))].join(' e ')+')':''}`);
-  if(B.pir)L.push(`🔥 *PIR Braga:* ${B.pir['Braga']} (${PIR_N[B.pir['Braga']]||''})`);
-  if(a)L.push(`📊 *Braga:* ${a[3]} ocorrências desde ${(B.diops.periodo.match(/^(\d{2})/)||[])[1]||'início do mês'}/11 (${a[0]} DIOPS, ${a[1]} DECIR)${e?`; DECIR EPE II: ${e[0]} oc., ${e[1]} operacionais`:''}`);
-  L.push(`🚨 *Relevantes em Braga:* ${oB.length?oB.map(o=>`${o.tipo.toLowerCase()} em ${o.freguesia}${o.danos?' ('+o.danos+')':''}`).join('; '):'nenhuma'}`);
-  const mt=bolMeteoCurto(B,2);if(mt.length)L.push('🌦️ *IPMA:* '+mt.join(' | '));
-  if(B.hidro.length)L.push('💧 *Hidrologia:* '+B.hidro.join(' '));
-  if(B.agentes.length)L.push('ℹ️ *Aos Agentes de PC:* '+B.agentes.join(' '));
-  const h=bolIdade(B);if(h!=null&&h>30)L.push(`⚠️ Briefing com ${bolIdTxt(B).replace('há ','')}: confirmar se há versão mais recente.`);
-  return L.join('\n')}
-/* ---------- aviso Planoclima ---------- */
-function avData(A){if(!A||!A.data)return null;const d=new Date(A.data);return isNaN(d)?null:d}
-function avIdade(A){const d=avData(A);return d?(Date.now()-d.getTime())/3600e3:null}
-const avDataTxt=A=>{const d=avData(A);return d?new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d).replace(',',''):''};
-function avPontos(A,curto){ // linhas com o que interessa (precipitação, vento, trovoada, conselhos)
-  const L=String(A.corpo||'').split(/\n/).map(x=>x.trim()).filter(Boolean),o=[];
-  L.forEach(l=>{if(/^-?\s*(PRECIPITA|VENTO)|^DIA\s|^ACONSELH/i.test(l)&&!/^Bom dia|^Enviamos/i.test(l)&&(!curto||!/^ACONSELH/i.test(l)))o.push(l.replace(/\s{2,}/g,' '))});
-  return o.length?o:L.slice(0,6)}
-function avTexto(A,max,curto){const t=avPontos(A,curto).join(' ');return t.length>max?t.slice(0,max-1).replace(/\s\S*$/,'')+'…':t}
-function avMsg(A){const h=avIdade(A);let L=`🌐 *Planoclima (aviso não oficial${avDataTxt(A)?', de '+avDataTxt(A).split(' ')[0]:''}):* ${avTexto(A,420,1)}`;
-  if(h!=null&&h>72)L+=`\n⚠️ Aviso com ${Math.round(h/24)} dias; pode estar desatualizado.`;return L}
-function lerEml(t){const i=t.search(/\r?\n\r?\n/),cab=t.slice(0,i),corpo0=t.slice(i).replace(/^\s+/,'');
-  const h=k=>{const m=cab.match(new RegExp('^'+k+':\\s*((?:.+(?:\\r?\\n[ \\t].+)*))','mi'));return m?m[1].replace(/\r?\n[ \t]+/g,' ').trim():''};
-  const dec=s=>s.replace(/=\?([\w-]+)\?([BQ])\?([^?]*)\?=/gi,(_,cs,e,x)=>{try{if(e.toUpperCase()==='B')return new TextDecoder(cs).decode(Uint8Array.from(atob(x),c=>c.charCodeAt(0)));return new TextDecoder(cs).decode(Uint8Array.from(x.replace(/_/g,' ').replace(/=([0-9A-F]{2})/gi,(m,hx)=>String.fromCharCode(parseInt(hx,16))),c=>c.charCodeAt(0)))}catch(e){return x}});
-  let c=corpo0;if(/quoted-printable/i.test(cab))c=c.replace(/=\r?\n/g,'').replace(/=([0-9A-F]{2})/gi,(m,x)=>String.fromCharCode(parseInt(x,16)));
-  else if(/base64/i.test(cab)){try{c=new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g,'')),x=>x.charCodeAt(0)))}catch(e){}}
-  if(/<html|<div|<p[ >]/i.test(c))c=c.replace(/<(style|script)[\s\S]*?<\/\1>/gi,'').replace(/<br\s*\/?>|<\/(p|div|tr|li)>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&');
-  return{assunto:dec(h('Subject')),de:dec(h('From')),email:(h('From').match(/<([^>]+)>/)||[])[1]||'',data:h('Date'),corpo:c}}
-function avGuardar(A){BOL.av=A;try{localStorage.setItem(AVK,JSON.stringify(A))}catch(e){}bolDesenhar();relRefrescar(true)}
-function bolGuardar(B){BOL.d=B;try{localStorage.setItem(BOLK,JSON.stringify(B))}catch(e){}bolDesenhar();bolAtualizaOpc()}
-function bolCarregar(){try{const a=localStorage.getItem(BOLK);if(a)BOL.d=JSON.parse(a);const b=localStorage.getItem(AVK);if(b)BOL.av=JSON.parse(b)}catch(e){}}
-function bolAtualizaOpc(){['relBol','msgBol'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.d;e.dataset.t=1}});['relAv','msgAv'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.av;e.dataset.t=1}})}
-/* ---------- sugestão de nível a partir do aviso Planoclima (nunca aplicada sozinha) ---------- */
-function avNivelTexto(A){const t=String(A.corpo||'').replace(/\s+/g,' ');let rate=0,acc6=0,raj=0;
-  for(const m of t.matchAll(/taxas?\s*>?\s*(\d+)\s*mm\s*\/\s*h/gi))rate=Math.max(rate,+m[1]);
-  for(const m of t.matchAll(/(\d+)\s*mm\s*em\s*(\d+)\s*h/gi)){const mm=+m[1],h=+m[2];if(h<=6)acc6=Math.max(acc6,mm)}
-  for(const m of t.matchAll(/rajadas?\s*(?:até|de|superiores a)?\s*(\d+)\s*km\s*\/\s*h/gi))raj=Math.max(raj,+m[1]);
-  const L=CFG.LIM;let n=0;if(acc6>=L.vigChuva||rate>=10||raj>=L.vigRaj)n=1;if(acc6>=L.proChuva||rate>=15)n=2;
-  return{n,rate,acc6,raj}}
-function avSugestao(d){const A=BOL.av;if(!A||!d)return null;const ia=avIdade(A);if(ia==null||ia>48)return null;
-  const x=avNivelTexto(A);if(x.n<=d.nivAuto)return null;
-  const coincide=d.nivAuto>=1||d.av.length>0;if(!coincide)return null;
-  const sug=Math.min(2,d.nivAuto+1),bits=[];if(x.rate)bits.push('>'+x.rate+' mm/h');if(x.acc6)bits.push('até '+x.acc6+' mm em ≤6 h');if(x.raj)bits.push('rajadas até '+x.raj+' km/h');
-  return{n:sug,txt:`A Planoclima (${avDataTxt(A).split(' ')[0]||'aviso recente'}) indica ${bits.join(', ')} e o painel já tem ${d.nivAuto>=1?'nível '+NOMEN[d.nivAuto]:'aviso do IPMA'}: sugere-se subir para ${NOMEN[sug]}. Decide o CorMPC.`}}
-function sugDesenhar(selId,boxId,d,aoAplicar){const b=$(boxId);if(!b)return;const g=avSugestao(d);
-  if(!g||+$(selId).value===g.n){b.style.display='none';b.innerHTML='';return}
-  b.style.display='';b.innerHTML=`<span>${esc(g.txt)}</span> <button type="button" class="lk">Aplicar sugestão</button>`;
-  b.querySelector('button').onclick=()=>{$(selId).value=String(g.n);aoAplicar()}}
-/* ---------- quadro no painel ---------- */
-function bolDesenhar(){
-  const el=$('bolCorpo');if(!el)return;$('btnBolLimpa').style.display=BOL.d?'':'none';$('btnAvLimpa').style.display=BOL.av?'':'none';
-  let h='';const B=BOL.d;
-  if(!B)h+='<div class="vazio">Carregue o PDF do Boletim Técnico-Operacional do CCOS Cávado (fica só neste navegador; não segue para o repositório nem para a internet).</div>';
-  else{
-    const id=bolIdade(B),vel=id!=null&&id>30;
-    h+=`<div style="margin:2px 0 6px"><b>Boletim nº${esc(B.numero)}</b> · válido a ${esc(B.valido)} <span class="pill" style="background:${vel?'#f43f5e33;color:#fda4af':'#10b98133;color:#6ee7b7'}">${esc(bolIdTxt(B))}${vel?' · confirmar versão mais recente':''}</span></div>`;
-    h+='<div class="bolg"><div><div class="bolt">Estados de prontidão</div>'+Object.keys(B.prontidao).map(k=>{const v=B.prontidao[k]||'?';return`<span class="bolc" style="border-color:${CORP_P[v]||'#64748b'};background:${(CORP_P[v]||'#64748b')+(v==='N'||v==='Não ativado'?'22':'55')}"><b>${esc(k)}</b> ${esc(NOME_P[v]||'não lido')}</span>`}).join('')+'</div>';
-    h+='<div><div class="bolt">Alerta SFN (AMEC)</div>'+Object.keys(B.sfn).map(k=>{const v=B.sfn[k]||'?';return`<span class="bolc" style="border-color:${CORP_S[v]||'#64748b'};background:${(CORP_S[v]||'#64748b')+(v==='Não ativado'?'22':'55')}"><b>${esc(k)}</b> ${v==='Não ativado'?'não ativado':esc(v.replace('Risco ','risco '))+' ('+SFN_H[v]+')'}</span>`}).join('')+'</div></div>';
-    const lin=bolLinhas(B).filter(x=>!/^Prontidão|^Estados de alerta/.test(x.k));
-    h+='<table class="bolt2">'+lin.map(x=>`<tr><th>${esc(x.k)}</th><td>${esc(x.v)}</td></tr>`).join('')+'</table>';
-    if((B.oc_rel||[]).length)h+='<details style="margin-top:6px"><summary>Ocorrências relevantes do período ('+B.oc_rel.length+')</summary><table class="bolt2">'+B.oc_rel.map(o=>`<tr><th>${esc(o.concelho)}${/^Braga$/i.test(o.concelho)?' ★':''}</th><td>${esc(o.tipo)} · ${esc(o.freguesia)} · ${esc(gdhTxt(o.inicio))}h · ${esc(o.meios)}${o.danos?' · <b>'+esc(o.danos)+'</b>':''}${o.outros?' · '+esc(o.outros):''}</td></tr>`).join('')+'</table></details>';
-    if((B.meteo||[]).length)h+='<details style="margin-top:4px"><summary>Informação meteorológica IPMA (no boletim)</summary><table class="bolt2">'+B.meteo.map(d=>`<tr><th>${esc(d.dia)}</th><td>${d.pontos.map(esc).join('<br>')}</td></tr>`).join('')+'</table></details>';
-    if((B.entidades||[]).length)h+='<details style="margin-top:4px"><summary>Entidades presentes no CCOS</summary><table class="bolt2">'+B.entidades.map(x=>`<tr><th>${esc(x.ent)}</th><td>${esc(x.txt)}</td></tr>`).join('')+'</table></details>';
-    h+='<div class="aviso-geral" style="margin-top:4px">Os estados de prontidão e de alerta do SFN estão desenhados a cores no boletim e são lidos pela cor das caixas: <b>confirme sempre no documento original</b>. Os níveis das barragens vêm em imagem e não são lidos.</div>'}
-  const A=BOL.av;h+='<div class="bolt" style="margin-top:10px">Aviso Planoclima (não oficial)</div>';
-  if(!A)h+='<div class="vazio">Carregue o ficheiro do aviso (.msg, .eml ou .txt) ou cole o texto abaixo.</div>';
-  else{const ia=avIdade(A),vel=ia!=null&&ia>72;h+=`<div style="margin:2px 0"><b>${esc(A.assunto||'Aviso')}</b><br><span class="nota">${esc(A.de||'')}${avDataTxt(A)?' · recebido a '+avDataTxt(A):''}</span> ${vel?`<span class="pill" style="background:#f43f5e33;color:#fda4af">com ${Math.round(ia/24)} dias · pode estar desatualizado</span>`:''}</div><div class="aviso-geral" style="color:var(--texto);font-size:11px">${esc(avTexto(A,900))}</div>`}
-  el.innerHTML=h}
-function bolInit(){
-  bolCarregar();bolDesenhar();bolAtualizaOpc();
-  $('fileBol').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const m=$('bolMsg');m.style.color='';m.textContent='A ler o PDF…';
-    try{const B=await lerBoletimPdf(f);if(!B.numero&&!B.valido)throw new Error('não parece um Boletim Técnico-Operacional do CCOS');delete B.fonte;m.textContent='Boletim lido: nº'+B.numero+'. Confirme os estados de prontidão no documento original.';m.style.color='#6ee7b7';
-      const t=BOL.d;BOL.d=null;bolGuardar(B);['relBol','msgBol'].forEach(i=>{$(i).checked=true});relRefrescar(true);if($('msgOv').classList.contains('on'))msgGerar()}
-    catch(err){m.style.color='#fda4af';m.textContent='Não foi possível ler o boletim: '+err.message}};
-  $('btnBolLimpa').onclick=()=>{BOL.d=null;try{localStorage.removeItem(BOLK)}catch(e){}bolDesenhar();relRefrescar(true)};
-  $('fileAv').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const m=$('bolMsg');
-    try{let A;if(/\.msg$/i.test(f.name))A=lerMsg(await f.arrayBuffer());else{const t=await f.text();A=/^(From|Subject|Date|Received|MIME-Version|X-)[\w-]*:/mi.test(t.slice(0,2000))?lerEml(t):{assunto:f.name.replace(/\.\w+$/,''),de:'',data:'',corpo:t}}
-      if(!(A.corpo||'').trim())throw new Error('sem texto no ficheiro');A.corpo=A.corpo.replace(/\n{3,}/g,'\n\n').trim();avGuardar(A);m.style.color='#6ee7b7';m.textContent='Aviso carregado.'}
-    catch(err){m.style.color='#fda4af';m.textContent='Não foi possível ler o aviso: '+err.message}};
-  $('btnAvTxt').onclick=()=>{const t=$('avTxt').value.trim();if(!t)return;const q=$('avData').value;avGuardar({assunto:'Aviso Planoclima (texto colado)',de:'Planoclima',data:q?new Date(q).toISOString():new Date().toISOString(),corpo:t});$('avTxt').value=''};
-  $('btnAvLimpa').onclick=()=>{BOL.av=null;try{localStorage.removeItem(AVK)}catch(e){}bolDesenhar();relRefrescar(true)};
-  ['relBol','relAv'].forEach(i=>$(i).onchange=()=>relRefrescar(false));['msgBol','msgAv'].forEach(i=>$(i).onchange=msgGerar)}
-
 carregarPrev();
 desenharPrev();
-bolInit();
 criarSat();
 carregarFreguesias().then(carregarAgua);
 carregarOcorrencias();carregarIfp();carregarAvisos();carregarModelos();carregarRio();
@@ -1329,7 +1056,7 @@ function relDados(){
     let oc=null;if(S.ifpRes){const m={};(S.ifp||[]).forEach(o=>{const n=o.natureza||'Outras';m[n]=(m[n]||0)+1});oc={total:S.ifpRes.emCurso!=null?S.ifpRes.emCurso:(S.ifp||[]).length,por:Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6)}}
     return{agora,emitido:`${new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric'}).format(agora)} às ${fmtHM(agora)}`,
       janela:`${dm(S.blocos[0].ini)} ${hh(S.blocos[0].ini)}h a ${dm(S.blocos[X.length-1].fim)} ${hh(S.blocos[X.length-1].fim)}h`,
-      nivAuto,blocos,periodos,av,freg,fregTodas,oc,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
+      nivAuto,blocos,periodos,av,freg,fregTodas,oc,contr:(S.contr&&S.contr.usar)?{nome:S.contr.nome,emitida:S.contr.emitida,peso:S.contr.peso,div:S.contr.div,texto:S.contr.texto||''}:null,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
   }finally{S.cen=cen0;S.hor=hor0}
 }
 function relResumo(d){
@@ -1370,7 +1097,7 @@ function relCcom(d,o){
 function relAtualiza(d,o){
   const t=new Date(d.agora.getTime()+o.at*3600e3),f=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(t).replace(',','');
   return`Previsão de atualização desta informação: dentro de ${o.at} horas (até ${f.replace(' ',', às ')}), ou antes, se a situação o justificar.`}
-function relOpc(){return{n:+$('relNivel').value<0?null:+$('relNivel').value,freg:$('relFreg').checked,oc:$('relOc').checked,med:$('relMed').checked,ccom:$('relCcom').value,per:$('relCcomPer').value.trim(),nota:$('relNota').value.trim(),at:+$('relAtual').value,bol:$('relBol').checked&&!!BOL.d,av:$('relAv').checked&&!!BOL.av}}
+function relOpc(){return{n:+$('relNivel').value<0?null:+$('relNivel').value,freg:$('relFreg').checked,oc:$('relOc').checked,med:$('relMed').checked,ccom:$('relCcom').value,per:$('relCcomPer').value.trim(),nota:$('relNota').value.trim(),at:+$('relAtual').value}}
 function relNivel(d,o){return o.n==null?d.nivAuto:o.n}
 function relAssunto(d,n){
   const p=d.periodos[0];let dest='sem períodos de atenção previstos';
@@ -1380,9 +1107,8 @@ function relEmail(d,o){
   const n=relNivel(d,o),h=+fmtHM(d.agora).slice(0,2),sd=h<13?'Bom dia':h<20?'Boa tarde':'Boa noite',L=[];
   L.push(sd+',','',`Segundo as previsões meteorológicas disponíveis (IPMA e modelos numéricos), com informação no relatório de apoio à decisão do SMPC (em anexo) com a previsão para o concelho de Braga (emitido a ${d.emitido.replace(' às ',', às ')}):`,'','Em resumo:');
   relResumo(d).forEach(l=>L.push('• '+l));L.push('');
+  if(d.contr){L.push(`Esta previsão incorpora a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' (emitida em '+d.contr.emitida+')':''}.`,'')}
   const cc=relCcom(d,o);if(cc){L.push('Informação CCOM:');cc.forEach(l=>L.push(l));L.push('')}
-  if(o.bol){const B=BOL.d;L.push(`Briefing técnico-operacional do CCOS Cávado nº${B.numero} (válido a ${bolCurto(B)}; documento reservado, uso interno das entidades):`);bolLinhas(B).filter(x=>/^(Prontidão|Estados de alerta|Determinações|Planos|Atividade|Ocorrências relevantes em Braga)/.test(x.k)).forEach(x=>L.push('• '+x.k+': '+x.v));L.push('')}
-  if(o.av){L.push('Aviso Planoclima (não oficial'+(avDataTxt(BOL.av)?', de '+avDataTxt(BOL.av).split(' ')[0]:'')+'): '+avTexto(BOL.av,500),'')}
   if(o.med){
     L.push('Efeitos expectáveis:');relEfeitos(d,n).forEach(l=>L.push('• '+l));L.push('');
     L.push('Medidas recomendadas:');relMedGerais(n).forEach(l=>L.push('• '+l));L.push('');
@@ -1407,6 +1133,7 @@ function relPdf(d,o){
   {const hg=relGraficos(doc,d,M,y,CW);y+=hg+3}
   sec('Mensagem-chave');relResumo(d).forEach(l=>par(l,true));
   {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));par(relAtualiza(d,o))}}
+  if(d.contr){sec('Previsão dedicada contratada');par(`Fornecedor: ${d.contr.nome}${d.contr.emitida?' · emitida em '+d.contr.emitida:''}. Os valores desta previsão foram incorporados no consenso dos modelos, com um peso de ${d.contr.peso} %.`);if(d.contr.div&&d.contr.texto.trim()){doc.setFont('helvetica','italic').setFontSize(8.5);const ls=doc.splitTextToSize(san(d.contr.texto.replace(/\s+/g,' ').trim().slice(0,900)+(d.contr.texto.length>900?' [...]':'')),CW);falta(ls.length*3.8+2);ls.forEach(l=>{T(l,M,y);y+=3.8});y+=1.5;doc.setFont('helvetica','normal')}}
   sec(`Previsão por blocos de 6 h (${d.horas} h)`);
   doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
     head:[['Período','Chuva (mm)','Intervalo (mm)','Rajada P90 (km/h)','Nível','Confiança']],
@@ -1417,15 +1144,6 @@ function relPdf(d,o){
   const ls=doc.splitTextToSize(san('Chuva mediana dos modelos por bloco de 6 h (intervalo entre modelos). Prontidão: aviso IPMA laranja ou superior, '+CFG.LIM.proChuva+' mm ou mais no bloco, ou probabilidade de 30 mm em 6 h igual ou superior a 15%. Vigilância: aviso amarelo, '+CFG.LIM.vigChuva+' mm ou mais, rajada P90 de '+CFG.LIM.vigRaj+' km/h ou mais, ou probabilidade de instabilidade forte igual ou superior a 30%. Para além das 48 h a previsão é uma tendência.'),CW);ls.forEach(l=>{T(l,M,y+3);y+=3.2});y+=3;doc.setTextColor(30,41,59);
   sec('Avisos IPMA em vigor e previstos');
   if(!d.av.length)par('Neste momento, sem avisos meteorológicos em vigor nem previstos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.vig?'em vigor':'previsto'} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true));
-  if(o.bol&&BOL.d){const B=BOL.d;if(y>215){doc.addPage();y=16}sec(`Briefing técnico-operacional CCOS Cávado nº${B.numero} (RESERVADO)`);
-    par(`Informação válida a ${B.valido}${bolIdTxt(B)?' ('+bolIdTxt(B)+')':''}. Documento reservado, destinado às entidades do SIOPS; não divulgar ao público.`);
-    const NC={'N':[209,250,229],'I':[254,240,199],'II':[253,215,170],'III':[252,165,165],'IV':[233,180,240],'Não ativado':[226,232,240]};
-    doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
-      head:[['Dispositivo','Estado']],body:[...Object.keys(B.prontidao).map(k=>[k,NOME_P[B.prontidao[k]]||'confirmar no boletim']),...Object.keys(B.sfn).map(k=>['SFN '+k,B.sfn[k]==='Não ativado'?'não ativado':(B.sfn[k]||'confirmar no boletim')])].map(r=>r.map(c=>san(c))),
-      didParseCell:h=>{if(h.section==='body'&&h.column.index===1){const ks=Object.keys(B.prontidao),i=h.row.index,v=i<ks.length?B.prontidao[ks[i]]:'Não ativado';h.cell.styles.fillColor=NC[v]||[255,255,255];h.cell.styles.fontStyle='bold'}}});
-    y=doc.lastAutoTable.finalY+5;
-    bolLinhas(B).filter(x=>!/^Prontidão|^Estados de alerta/.test(x.k)).forEach(x=>par(x.k+': '+x.v,true))}
-  if(o.av&&BOL.av){const A=BOL.av;sec('Aviso Planoclima (não oficial)');par(`${A.assunto||''}${A.de?' · '+A.de:''}${avDataTxt(A)?' · '+avDataTxt(A):''}`);par(avTexto(A,1400))}
   if(o.freg){if(y>120){doc.addPage();y=16}sec('Freguesias a vigiar (próximas 48 h)');
     const h=relMapa(doc,d,M,y,CW,150,falta);y+=h+1;
     par('Nível de risco por freguesia: combina a precipitação prevista, a suscetibilidade da freguesia e o histórico de inundações do SMPC (2022-2026). Indicador relativo; não substitui a cartografia oficial de risco.')}
@@ -1436,7 +1154,7 @@ function relPdf(d,o){
   // rodapé em todas as páginas
   const np=doc.getNumberOfPages();for(let p=1;p<=np;p++){doc.setPage(p);doc.setDrawColor(203,213,225).setLineWidth(.2).line(M,284,W-M,284);doc.setFont('helvetica','normal').setFontSize(7).setTextColor(100,116,139);
     doc.setFontSize(6.4);
-    T('Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec'+(o.bol&&BOL.d?'; CCOS Cávado (reservado)':'')+(o.av&&BOL.av?'; Planoclima':'')+(o.bol&&BOL.d||o.av&&BOL.av?'.':'. Grelha de cerca de 25 km; sem observações nem caudais.'),M,287);
+    T('Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec. Grelha de cerca de 25 km; sem observações nem caudais.',M,287);
     T('Município de Braga / SMPC · Rua do Ferraz, 4700-380 Braga · Tel. +351 253 20 28 61 · protecao.civil@cm-braga.pt',M,290.2);
     T(`A PREVENÇÃO COMEÇA EM CADA UM DE NÓS · ${p}/${np}`,W-M,293.4,{align:'right'})}
   return doc}
@@ -1519,7 +1237,7 @@ function relRefrescar(manterTexto){
   clearTimeout(REL.t);REL.t=setTimeout(()=>{
     const d=relDados(),av=$('relAviso');if(!d){av.textContent='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
     REL.d=d;const o=relOpc(),n=relNivel(d,o);
-    $('relNivelAuto').textContent=`automático: ${NOMEN[d.nivAuto]}`;sugDesenhar('relNivel','relSug',d,()=>relRefrescar(false));
+    $('relNivelAuto').textContent=`automático: ${NOMEN[d.nivAuto]}`;
     $('relAssunto').value=relAssunto(d,n);
     if(!REL.editado||!manterTexto)$('relCorpo').value=relEmail(d,o);
     try{const doc=relPdf(d,o);REL.pdf=doc.output('blob');if(REL.url)URL.revokeObjectURL(REL.url);REL.url=URL.createObjectURL(REL.pdf);$('relPdf').src=REL.url;av.textContent='';$('relAbrir').href=REL.url}
@@ -1532,13 +1250,121 @@ function abrirRelatorio(){
 function nomePdf(){const a=REL.d?REL.d.agora:new Date();const p=localNaive(a).replace(/[-:T]/g,'');return`Apoio_Decisao_Meteo_Braga_${p.slice(0,8)}_${p.slice(8,12)}.pdf`}
 function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)})}
 
+
+/* ============ Previsão meteorológica contratada (texto/PDF, só neste navegador) ============ */
+const CT={draft:{},notas:[]};
+try{S.contr=JSON.parse(localStorage.getItem('smpc_contratada')||'null')}catch(e){S.contr=null}
+const ctChave=h=>h.slice(0,13)+':00';
+function ctHoras(k){const b=S.blocos[k];return[...Array(CFG.BLOCO)].map((_,j)=>ctChave(addH(b.ini,j)))}
+function ctBloco(k,H){H=H||(S.contr&&S.contr.H);if(!H)return null;const v=ctHoras(k).map(h=>H[h]).filter(x=>x&&x[0]!=null);if(v.length<3)return null;const g=v.map(x=>x[1]).filter(x=>x!=null);return{mm:v.reduce((a,x)=>a+x[0],0),raj:g.length?Math.max(...g):null}}
+function contrP(P0){return P0}
+/* leitura do texto */
+const DSEM={'domingo':0,'segunda':1,'terça':2,'terca':2,'quarta':3,'quinta':4,'sexta':5,'sábado':6,'sabado':6};
+function ctData(linha,ctx,hoje){
+  let m;
+  if((m=linha.match(/(\d{4})-(\d{2})-(\d{2})/)))return{d:`${m[1]}-${m[2]}-${m[3]}`,txt:m[0]};
+  if((m=linha.match(/(?<![\d.])(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?(?![\d])/))&&+m[1]>=1&&+m[1]<=31&&+m[2]>=1&&+m[2]<=12){const a=m[3]?(m[3].length===2?'20'+m[3]:m[3]):hoje.slice(0,4);return{d:`${a}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`,txt:m[0]}}
+  if((m=linha.match(/\bdia\s+(\d{1,2})\b/i))){let mes=+hoje.slice(5,7),a=+hoje.slice(0,4);if(+m[1]<+hoje.slice(8,10)-3){mes++;if(mes>12){mes=1;a++}}return{d:`${a}-${String(mes).padStart(2,'0')}-${m[1].padStart(2,'0')}`,txt:m[0]}}
+  const rel=[['depois de amanhã',2],['depois de amanha',2],['amanhã',1],['amanha',1],['hoje',0]];
+  for(const [t,n] of rel)if(new RegExp('\\b'+t+'\\b','i').test(linha))return{d:addH(hoje+'T00:00',24*n).slice(0,10),txt:t};
+  if((m=linha.match(/\b(segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)(?:-feira)?\b/i))){const w=DSEM[m[1].toLowerCase()];const h0=new Date(hoje+'T12:00:00Z');let n=(w-h0.getUTCDay()+7)%7;return{d:addH(hoje+'T00:00',24*n).slice(0,10),txt:m[0]}}
+  return null}
+
+const MESES={janeiro:1,fevereiro:2,'março':3,marco:3,abril:4,maio:5,junho:6,julho:7,agosto:8,setembro:9,outubro:10,novembro:11,dezembro:12};
+function ctNarrativa(texto,hoje,notas){
+  const T=texto.replace(/ /g,' ').replace(/\s+/g,' '),tok=[],P=(re,f)=>{let m;re.lastIndex=0;while((m=re.exec(T))){const d=f(m);if(d)tok.push({pos:m.index,d})}};
+  const iso=(a,m,d)=>`${a}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,ano=hoje.slice(0,4);
+  P(/(\d{1,2})\.(\d{1,2})\.(\d{4})/g,m=>+m[2]<=12&&+m[1]<=31?iso(m[3],m[2],m[1]):null);
+  P(/(\d{1,2})\s*(?:de\s+)?(janeiro|fevereiro|mar[çc]o|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)(?:\s*(?:de)?\s*(\d{4}))?/gi,m=>iso(m[3]||ano,MESES[m[2].toLowerCase().replace('ç','ç')]||MESES[m[2].toLowerCase()],m[1]));
+  P(/(?<![\d.])(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?(?!\d)/g,m=>+m[2]<=12&&+m[1]<=31?iso(m[3]?(m[3].length===2?'20'+m[3]:m[3]):ano,m[2],m[1]):null);
+  P(/\b(segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)(?:-feira)?\b/gi,m=>{const w=DSEM[m[1].toLowerCase()],h0=new Date(hoje+'T12:00:00Z');return addH(hoje+'T00:00',24*((w-h0.getUTCDay()+7)%7)).slice(0,10)});
+  P(/\bamanh[ãa]\b/gi,()=>addH(hoje+'T00:00',24).slice(0,10));P(/\bhoje\b/gi,()=>hoje);
+  tok.sort((a,b)=>a.pos-b.pos);
+  const out=[],mmRe=/(?:at[ée]\s+)?(\d+(?:[.,]\d+)?)(?:\s*(?:-|–|a|e)\s*(\d+(?:[.,]\d+)?))?\s*mm(?!\s*\/\s*h)/gi;let m;
+  const taxas=[...T.matchAll(/(\d+(?:[.,]\d+)?)\s*mm\s*\/\s*h/gi)].map(x=>x[1]);
+  if(taxas.length)notas.add(`O texto refere taxas até ${Math.max(...taxas.map(x=>+x.replace(',','.')))} mm/h; não entram no quadro (só os totais).`);
+  const marcas=[];while((m=mmRe.exec(T)))marcas.push(m);
+  marcas.forEach((m,i)=>{
+    const v1=+m[1].replace(',','.'),v2=m[2]?+m[2].replace(',','.'):null,mm=v2!=null?(v1+v2)/2:v1,fimSeg=i+1<marcas.length?marcas[i+1].index:T.length,pos=m.index;
+    const ant=tok.filter(t=>t.pos<pos).pop()||tok.find(t=>t.pos>=pos);if(!ant)return;
+    const resto=T.slice(m.index+m[0].length,fimSeg);
+    const dur=resto.slice(0,80).match(/\b(?:em|durante|ao longo de)\s+(\d{1,2})(?:\s*(?:-|–|a)\s*(\d{1,2}))?\s*h\b/i),D=dur?(dur[2]?(+dur[1]+ +dur[2])/2:+dur[1]):null;
+    const jan=resto.match(/entre\s+(?:as\s+)?(\d{1,2})(?::\d{2})?\s*h?\s*(?:e|a|-|–)\s*(?:as\s+)?(\d{1,2})(?::\d{2})?\s*h/i);
+    let h1=0,h2=24,desc='o dia inteiro';
+    if(jan){const a=+jan[1],b=+jan[2];if(b>a){h1=a;h2=b;desc=`${a}h-${b}h`;if(D&&D<b-a){const c=(a+b)/2;h1=Math.max(a,Math.round(c-D/2));h2=Math.min(b,h1+Math.round(D));desc=`${D} h centradas na janela ${a}h-${b}h`}}}
+    else if(D){h1=8;h2=Math.min(24,8+Math.round(D));desc='sem janela horária (assumi início às 8h)'}
+    if(v2!=null)notas.add('Onde havia um intervalo de chuva (ex.: 45-60 mm), usei a média.');
+    if(h2-h1>=24)notas.add('Sem janela horária no texto: distribuí a chuva pelo dia inteiro (confirme o quadro).');
+    else notas.add(`Distribuí ${mm.toFixed(0)} mm de ${ant.d.slice(8,10)}/${ant.d.slice(5,7)} por ${desc}; no resto desse dia assumi 0 mm.`);
+    out.push({d:ant.d,h1,h2,mm})});
+  return out}
+function ctParse(texto){
+  const hoje=localNaive(new Date()).slice(0,10),hr={},pr={},nr={},dy={},notas=new Set();let ctx=null,n=0;
+  const put=(M,k,mm,g)=>{const e=M[k]||(M[k]={mm:null,g:null});if(mm!=null)e.mm=(e.mm||0)+mm;if(g!=null)e.g=Math.max(e.g||0,g)};
+  const hk=(d,h)=>ctChave(addH(d+'T00:00',h));
+  ctNarrativa(texto,hoje,notas).forEach(e=>{const L=e.h2-e.h1;for(let h=0;h<24;h++)put(nr,ctChave(addH(e.d+'T00:00',h)),(h>=e.h1&&h<e.h2)?e.mm/L:0,null);n++});
+  texto.split(/\r?\n/).forEach(l0=>{
+    let l=l0.replace(/ /g,' ').replace(/(\d),(\d)/g,'$1.$2');if(!l.trim())return;
+    const dt=ctData(l,ctx,hoje);if(dt){ctx=dt.d;l=l.replace(dt.txt,' ')}
+    let mm=null,g=null,mr;
+    const reMm=/(\d+(?:\.\d+)?)(?:\s*(?:-|–|a|e)\s*(\d+(?:\.\d+)?))?\s*(?:mm(?!\s*\/\s*h)|l\s*\/\s*m\s*[2²]|litros)/gi;
+    if((mr=reMm.exec(l))){if(/^\s*(?:,?\s*)?(?:até\s+)?(?:em|durante|ao longo de)\s+\d+(?:\s*(?:-|–|a)\s*\d+)?\s*h/i.test(l.slice(mr.index+mr[0].length)))return;mm=mr[2]?(+mr[1]+ +mr[2])/2:+mr[1];if(mr[2])notas.add('Onde havia um intervalo de chuva (ex.: 10 a 20 mm), usei a média.');l=l.replace(mr[0],' ')}
+    const reG=/(\d+)(?:\s*(?:-|–|a|e)\s*(\d+))?\s*km\s*\/?\s*h/gi;let gg;
+    while((gg=reG.exec(l))){g=Math.max(g||0,+gg[2]||+gg[1])}
+    l=l.replace(reG,' ');
+    if(mm==null&&g==null)return;if(!ctx)return;
+    let h1=null,h2=null,hs=null,m2;
+    if((m2=l.match(/(\d{1,2})(?:[:h]\d{2})?\s*(?:-|–|—|às|as|a|até|ate)\s*(\d{1,2})(?:[:h]\d{2})?\s*h\b/i))||(m2=l.match(/(\d{1,2}):\d{2}\s*(?:-|–|—|às|as|a|até|ate)\s*(\d{1,2}):\d{2}/i))){h1=+m2[1];h2=+m2[2];if(h2<=h1)h2+=24}
+    else{const T=[...l.matchAll(/(\d{1,2})(?::\d{2}|\s*h(?:\d{2})?)(?!\d)/gi)];if(T.length===1)hs=+T[0][1];else if(T.length>=2){h1=+T[0][1];h2=+T[1][1];if(h2<=h1)h2+=24}}
+    n++;
+    if(hs!=null&&hs<24)put(hr,hk(ctx,hs),mm,g);
+    else if(h1!=null&&h2-h1>=1&&h2-h1<=24){const L=h2-h1;for(let h=h1;h<h2;h++)put(pr,hk(ctx,h),mm!=null?mm/L:null,g)}
+    else{for(let h=0;h<24;h++)put(dy,hk(ctx,h),mm!=null?mm/24:null,g);if(mm!=null)notas.add('Onde só havia um total diário, distribuí-o igualmente pelas 24 h (confirme o quadro).')}
+  });
+  const H={};new Set([...Object.keys(hr),...Object.keys(pr),...Object.keys(nr),...Object.keys(dy)]).forEach(k=>{const a=hr[k]||pr[k]||nr[k]||dy[k],gs=[hr[k],pr[k],nr[k],dy[k]].map(x=>x&&x.g).filter(x=>x!=null);H[k]=[a.mm,gs.length?Math.max(...gs):null]});
+  return{H,n,notas:[...notas]}}
+async function ctPdfJs(){if(window.pdfjsLib)return window.pdfjsLib;await new Promise((ok,ko)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=ok;s.onerror=()=>ko(new Error('não foi possível carregar o leitor de PDF'));document.head.appendChild(s)});window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return window.pdfjsLib}
+async function ctLerPdf(f){const lib=await ctPdfJs(),doc=await lib.getDocument({data:await f.arrayBuffer()}).promise;let t='';
+  for(let i=1;i<=doc.numPages;i++){const c=await(await doc.getPage(i)).getTextContent();let ly=null,l='';c.items.forEach(it=>{const y=Math.round(it.transform[5]);if(ly!==null&&Math.abs(y-ly)>2){t+=l.trim()+'\n';l=''}l+=it.str+' ';ly=y});t+=l.trim()+'\n'}return t}
+/* quadro */
+function ctQuadro(){
+  const el=$('ctTab');if(!S.blocos||!S.blocos.length){el.textContent='A aguardar a previsão…';return}
+  const H=CT.draft;let cob=0;
+  el.innerHTML='<table><thead><tr><th>Bloco de 6 h</th><th>Chuva (mm)</th><th>Rajada (km/h)</th><th>Modelos (consenso)</th></tr></thead><tbody>'+S.blocos.map((b,k)=>{
+    const c=ctBloco(k,H),parc=!c&&ctHoras(k).some(h=>H[h]);if(c)cob++;
+    const X=S.calc&&S.calc[S.ponto]?S.calc[S.ponto].blocos[k]:null;
+    return`<tr class="${c?'':'nc'}"><td>${dow(b.ini)} ${dm(b.ini)} ${hh(b.ini)}-${hh(b.fim)}h${parc?' <i>(parcial)</i>':''}</td><td><input data-k="${k}" data-c="0" value="${c?c.mm.toFixed(1):''}"></td><td><input data-k="${k}" data-c="1" value="${c&&c.raj!=null?Math.round(c.raj):''}"></td><td>${X?X.chuva.toFixed(0)+' mm':''}</td></tr>`}).join('')+'</tbody></table>';
+  el.querySelectorAll('input').forEach(i=>i.onchange=()=>{const k=+i.dataset.k,hs=ctHoras(k),tr=i.closest('tr'),mm=tr.querySelector('[data-c="0"]').value.replace(',','.'),g=tr.querySelector('[data-c="1"]').value.replace(',','.');
+    hs.forEach(h=>{if(mm===''&&g==='')delete CT.draft[h];else CT.draft[h]=[mm===''?null:+mm/hs.length,g===''?null:+g]});ctQuadro()});
+  $('ctInfo').textContent=`${cob} de ${S.blocos.length} blocos com dados em 3 ou mais das 6 horas (só estes entram no cálculo; as horas sem dados contam como 0 mm).${CT.notas.length?' '+CT.notas.join(' '):''}`}
+function ctExtrair(){const r=ctParse($('ctTxt').value);CT.draft=r.H;CT.notas=r.notas;ctQuadro();$('ctMsg').style.color='';$('ctMsg').textContent=r.n?`Li ${r.n} linha(s) com valores. Confirme o quadro e carregue em Aplicar.`:($('ctTxt').value.trim()?'Não encontrei valores de chuva (mm) ou rajada (km/h) com data. Pode preencher o quadro à mão.':'')}
+function ctAbrir(){const c=S.contr;$('ctOv').classList.add('on');
+  if(c){$('ctNome').value=c.nome||'';$('ctEmit').value=c.emitida||'';$('ctPeso').value=String(c.peso||75);$('ctUsar').checked=c.usar!==false;$('ctDiv').checked=!!c.div;if(!$('ctTxt').value)$('ctTxt').value=c.texto||'';CT.draft={...(c.H||{})};CT.notas=[]}
+  else if(!$('ctEmit').value){const a=new Date();$('ctEmit').value=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(a).replace(',','')}
+  ctQuadro()}
+function ctMarca(){
+  const b=$('btnCt');if(b)b.textContent=S.contr&&S.contr.usar?'Previsão contratada ✓':'Previsão contratada';
+  const e=$('notaTab');if(e&&S.contr&&S.contr.usar&&e.textContent&&!e.querySelector('.ctm'))e.insertAdjacentHTML('beforeend',` <span class="ctm" style="color:#c4b5fd">Inclui previsão contratada (${esc(S.contr.nome||'')}, peso ${S.contr.peso} %).</span>`)}
+$('btnCt').onclick=ctAbrir;$('ctFecha').onclick=()=>$('ctOv').classList.remove('on');
+$('ctExtrai').onclick=ctExtrair;let ctT=null;$('ctTxt').oninput=()=>{clearTimeout(ctT);ctT=setTimeout(ctExtrair,500)};
+$('ctPdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;const m=$('ctMsg');m.style.color='';m.textContent='A ler o PDF…';
+  try{const t=await ctLerPdf(f);$('ctTxt').value=($('ctTxt').value.trim()?$('ctTxt').value.trim()+'\n':'')+t;CT.pdfNome=f.name;ctExtrair();if(!t.trim())m.textContent='O PDF não tem texto selecionável (pode ser uma imagem). Cole o texto do email ou preencha o quadro.'}
+  catch(err){m.style.color='#fca5a5';m.textContent='Não consegui ler o PDF: '+err.message+'. Cole o texto do email.'}e.target.value=''};
+$('ctAplica').onclick=()=>{
+  const ant=S.calc&&S.calc[S.ponto]?S.calc[S.ponto].total48.cons:null,lim=addH(localNaive(new Date()).slice(0,13)+':00',-24),H={};Object.keys(CT.draft).forEach(k=>{if(k>=lim)H[k]=CT.draft[k]});
+  S.contr={nome:$('ctNome').value.trim()||'Previsão dedicada',emitida:$('ctEmit').value.trim(),peso:+$('ctPeso').value,usar:$('ctUsar').checked,div:$('ctDiv').checked,texto:$('ctTxt').value,pdf:CT.pdfNome||'',H,aplicada:new Date().toISOString()};
+  try{localStorage.setItem('smpc_contratada',JSON.stringify(S.contr))}catch(e){}
+  calcular();desenharTudo();ctQuadro();const dep=S.calc&&S.calc[S.ponto]?S.calc[S.ponto].total48.cons:null;
+  $('ctMsg').style.color='#6ee7b7';$('ctMsg').textContent=S.contr.usar?`Previsões atualizadas com a previsão contratada.${ant!=null&&dep!=null?` Chuva em 48 h (consenso): ${ant.toFixed(0)} mm antes, ${dep.toFixed(0)} mm agora.`:''}`:'Guardada, mas desligada dos cálculos.'};
+$('ctRemove').onclick=()=>{S.contr=null;CT.draft={};CT.notas=[];$('ctTxt').value='';try{localStorage.removeItem('smpc_contratada')}catch(e){}calcular();desenharTudo();ctQuadro();$('ctMsg').style.color='#6ee7b7';$('ctMsg').textContent='Previsão contratada removida; previsões recalculadas só com os modelos.'};
+
 /* ---------- Mensagens curtas (SMS / WhatsApp) ---------- */
 const MSG={tab:'pop',edit:false};
 const dcurto=s=>DIAS_EXT[new Date(s+':00Z').getUTCDay()].replace('-feira','');
 function msgPeriodo(p){
   if(!p)return'';const a=p.ini,b=p.fim;
   return a.slice(0,10)===b.slice(0,10)?`${dcurto(a)} ${dm(a)}, das ${hh(a)}h às ${hh(b)}h`:`de ${dcurto(a)} ${dm(a)}, ${hh(a)}h, a ${dcurto(b)} ${dm(b)}, ${hh(b)}h`}
-function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom:$('msgCcom').value,per:$('msgPer').value.trim(),nota:$('msgNota').value.trim(),at:+$('msgAt').value,semAc:$('msgSemAc').checked,bol:$('msgBol').checked&&!!BOL.d,av:$('msgAv').checked&&!!BOL.av}}
+function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom:$('msgCcom').value,per:$('msgPer').value.trim(),nota:$('msgNota').value.trim(),at:+$('msgAt').value,semAc:$('msgSemAc').checked}}
 const semAcentos=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[–—]/g,'-');
 function msgAtual(d,o){const t=new Date(d.agora.getTime()+o.at*3600e3),f=x=>new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit'}).format(x),h=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(t);return f(t)===f(d.agora)?'às '+h:'dia '+f(t)+', às '+h}
 function msgFatos(d,o){
@@ -1573,18 +1399,17 @@ function msgEnt(d,o,tipo){
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
     f.ipma.forEach(x=>L.push('⚠️ '+x));
     if(tipo==='ccom'){const b=msgBlocos(d);if(b.length)L.push('','*Blocos de 6 h:*',...b)}}
+  if(d.contr)L.push('',`📑 Inclui a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' ('+d.contr.emitida+')':''}.`);
   if(cc){L.push('',`🏛️ *CCOM:* ${cc[0]}`)}
   if(f.n>=1&&f.p){L.push('','*Medidas:*');
     if(f.n===2)L.push('• Mobilizar SMPC, Bombeiros Sapadores, AGERE, DVEPM e Juntas de Freguesia: limpeza preventiva e vigilância dos sistemas de escoamento.','• Meios em prontidão: máquinas, camião-grua, corte de árvores; ULPC com Equipas de Intervenção.','• Equipas com comunicações alternativas, carregadores e iluminação.');
     else L.push('• Manter equipas em sobreaviso.','• Limpeza preventiva dos sistemas de escoamento nas áreas de cada entidade.');
     L.push('• Reportar ao CCOM: localização exata, descrição, pessoas em risco/vias cortadas e fotografia, se possível.',`• Indicar ao CCOM o ponto de contacto e os meios disponíveis. CCOM: ${CFG.CCOM_TEL||''}.`)}
-  if(tipo==='ccom'&&o.bol)L.push('',bolMsg(BOL.d));
-  if(tipo==='ccom'&&o.av)L.push('',avMsg(BOL.av));
   if(o.nota)L.push('',o.nota);
   L.push('',`🔄 Próxima atualização até ${msgAtual(d,o)}, ou antes se a situação o justificar.`,'Relatório completo em PDF por email.');return L.join('\n')}
 function msgGerar(){
   const d=relDados(),t=$('msgTxt');if(!d){t.value='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
-  const o=msgOpc();$('msgBolL').style.display=$('msgAvL').style.display=MSG.tab==='ccom'?'':'none';$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];sugDesenhar('msgNivel','msgSug',d,msgGerar);
+  const o=msgOpc();$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];
   t.value=MSG.tab==='pop'?msgPop(d,o):MSG.tab==='sms'?msgSms(d,o):msgEnt(d,o,MSG.tab);MSG.edit=false;msgConta()}
 function msgConta(){
   const t=$('msgTxt').value,c=$('msgCont');$('msgWa').style.display=MSG.tab==='sms'?'none':'';
@@ -1630,7 +1455,7 @@ $('relOutlook').onclick=async()=>{
   location.href=url};
 $('relCcom').onchange=()=>{$('relPerL').style.display=$('relCcom').value==='ativo'?'grid':'none';relRefrescar(false)};
 $('relCcomPer').oninput=()=>relRefrescar(true);$('relAtual').onchange=()=>relRefrescar(false);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('ctOv').classList.remove('on');$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
 
 </script>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
