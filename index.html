@@ -196,7 +196,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <span><i class="dot load" id="e-hid"></i>Linhas de água <b id="t-hid">…</b></span>
   </div>
 </header>
-<div id="faixaAvisos" role="region" aria-label="Avisos IPMA em vigor"></div>
+<div id="faixaAvisos" role="region" aria-label="Avisos IPMA em vigor e previstos"></div>
 
 <main>
   <section class="kpis" id="kpis"></section>
@@ -274,7 +274,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="grafRaj"></div>
       </div>
       <div class="card">
-        <h2 id="cardAvisos">Avisos IPMA em vigor <span class="nota">amarelo, laranja e vermelho, todos os tipos · agitação marítima não considerada (não se aplica a Braga)</span></h2>
+        <h2 id="cardAvisos">Avisos IPMA em vigor e previstos <span class="nota">emitidos para o concelho, mesmo que comecem mais tarde · amarelo, laranja e vermelho, todos os tipos · agitação marítima não considerada (não se aplica a Braga)</span></h2>
         <div id="avisos"><div class="vazio">A carregar…</div></div>
       </div>
       <div class="card">
@@ -748,7 +748,7 @@ function desenharKpis(){
     h+=cel('Rajada máxima (P90)',rmax.toFixed(0)+' km/h','nas próximas 48 h');
   } else h+=cel('Modelos','…','a carregar');
   const av=avisosRel();const top=av.reduce((m,a)=>Math.max(m,{yellow:1,orange:2,red:3}[a.nivel]||0),0);
-  h+=cel('Avisos IPMA',av.length||'0',av.length?`mais alto: ${['','amarelo','laranja','vermelho'][top]}`:'sem avisos para Braga',top>=2?'c2':top==1?'c1':'c0');
+  h+=cel('Avisos IPMA',av.length||'0',av.length?`mais alto: ${['','amarelo','laranja','vermelho'][top]} · ${av.filter(avVigor).length} em vigor, ${av.filter(a=>!avVigor(a)).length} previstos`:'sem avisos para Braga',top>=2?'c2':top==1?'c1':'c0');
   const relI=S.ifp.filter(o=>CFG.RELACIONADAS.test(o.natureza||'')).length;
   const nI=S.ifpRes?(S.ifpRes.emCurso!=null?S.ifpRes.emCurso:S.ifp.length):null;
   h+=CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em resolução, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
@@ -798,11 +798,12 @@ function desenharTabela(){
   $('notaTab').innerHTML=`Janela ${S.modelos.inicio.replace('T',' ')} a ${S.modelos.fim.replace('T',' ')} (hora local). Total 48 h: <b>${C.total48.cons.toFixed(0)} mm</b> (${C.total48.min.toFixed(0)} a ${C.total48.max.toFixed(0)}; P90 ${C.total48.p90.toFixed(0)}). Máximo em 24 h: <b>${C.max24.cons.toFixed(0)} mm</b> (${C.max24.min.toFixed(0)} a ${C.max24.max.toFixed(0)}). Prontidão: aviso laranja ou superior, chuva ≥ ${CFG.LIM.proChuva} mm/6 h ou P(30 mm/6 h) ≥ 15%. Vigilância: aviso amarelo, chuva ≥ ${CFG.LIM.vigChuva} mm/6 h, rajada P90 ≥ ${CFG.LIM.vigRaj} km/h ou P(CAPE ≥ 500) ≥ 30%. Falhas: ${S.modelos.falhas.length?esc(S.modelos.falhas.join('; ')):'nenhuma'}.`;
 }
 const NIV_IPMA={yellow:1,orange:2,red:3},NOME_IPMA={yellow:'amarelo',orange:'laranja',red:'vermelho'};
+const avVigor=a=>String(a.inicio).slice(0,16)<=localNaive(new Date());const avEst=a=>avVigor(a)?'em vigor':'previsto';
 function avisosOrd(){return avisosRel().filter(a=>NIV_IPMA[a.nivel]).sort((a,b)=>NIV_IPMA[b.nivel]-NIV_IPMA[a.nivel]||String(a.inicio).localeCompare(String(b.inicio)))}
 function desenharFaixa(){
   const f=$('faixaAvisos');if(!f)return;const av=avisosOrd();
   f.classList.toggle('on',av.length>0);
-  f.innerHTML=av.map(a=>`<div class="fx ${a.nivel}" title="Ver detalhe"><b>Aviso ${NOME_IPMA[a.nivel]} · ${esc(a.tipo)}</b> <span class="mono">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join('');
+  f.innerHTML=av.map(a=>`<div class="fx ${a.nivel}" title="Ver detalhe"><b>Aviso ${NOME_IPMA[a.nivel]} · ${esc(a.tipo)}</b> <span class="mono">${avVigor(a)?'':'(previsto) '}${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join('');
   f.onclick=()=>{const c=$('cardAvisos');if(c)c.scrollIntoView({behavior:'smooth',block:'center'})}}
 function verificarAvisosIpma(){
   if(!S.avisosOK)return;
@@ -816,7 +817,7 @@ function verificarAvisosIpma(){
 function desenharAvisos(){
   desenharFaixa();
   const av=avisosOrd();
-  $('avisos').innerHTML=av.length?av.map(a=>`<div class="aviso ${a.nivel}"><b>${esc(a.tipo)} · ${{yellow:'amarelo',orange:'laranja',red:'vermelho'}[a.nivel]||a.nivel}</b><br>${esc(a.texto)}<br><span class="mono" style="color:#94a3b8">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join(''):(S.avisosOK?'<div class="vazio">Sem avisos IPMA para Braga (excluída a agitação marítima).</div>':'<div class="vazio">A carregar…</div>');
+  $('avisos').innerHTML=av.length?av.map(a=>`<div class="aviso ${a.nivel}"><b>${esc(a.tipo)} · ${{yellow:'amarelo',orange:'laranja',red:'vermelho'}[a.nivel]||a.nivel}</b> <span class="mono" style="color:${avVigor(a)?'#fca5a5':'#fcd34d'}">${avVigor(a)?'EM VIGOR':'PREVISTO'}</span><br>${esc(a.texto)}<br><span class="mono" style="color:#94a3b8">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join(''):(S.avisosOK?'<div class="vazio">Sem avisos IPMA para Braga (excluída a agitação marítima).</div>':'<div class="vazio">A carregar…</div>');
 }
 function desenharOc(){
   gOc.clearLayers();
@@ -997,7 +998,7 @@ function relDados(){
     const periodos=[];let i=0;
     while(i<X.length){if(niv[i]<1){i++;continue}let j=i,mx=0,pk=i;while(j<X.length&&niv[j]>=1){mx=Math.max(mx,niv[j]);if(X[j].chuva>X[pk].chuva)pk=j;j++}
       periodos.push({ini:S.blocos[i].ini,fim:S.blocos[j-1].fim,n:mx,pico:X[pk],k0:i,rajMax:Math.max(...X.slice(i,j).map(x=>x.raj90))});i=j}
-    const av=avisosOrd().map(a=>({tipo:a.tipo,n:a.nivel,ini:a.inicio,fim:a.fim,texto:a.texto||''}));
+    const av=avisosOrd().map(a=>({tipo:a.tipo,n:a.nivel,ini:a.inicio,fim:a.fim,texto:a.texto||'',vig:avVigor(a)}));
     // freguesias a vigiar nas próximas 48 h (consenso), sem alterar o que o utilizador vê
     S.hor='48';desenharRisco();const fregTodas=(S.risco||[]).map(x=>({nome:x.nome,r:x.r})),freg=fregTodas.filter(x=>x.r>=1);
     S.hor=hor0;S.cen=cen0;desenharRisco();
@@ -1009,8 +1010,8 @@ function relDados(){
 }
 function relResumo(d){
   const L=[];
-  if(!d.av.length)L.push('Neste momento não há aviso do IPMA em vigor para Braga.');
-  else d.av.slice(0,5).forEach(a=>L.push(`Aviso IPMA ${NOME_IPMA[a.n]}: ${a.tipo}, de ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}.`));
+  if(!d.av.length)L.push('Neste momento não há avisos do IPMA em vigor nem previstos para Braga.');
+  else d.av.slice(0,5).forEach(a=>L.push(`Aviso IPMA ${NOME_IPMA[a.n]} (${a.vig?'em vigor':'previsto'}): ${a.tipo}, de ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}.`));
   if(!d.periodos.length)L.push(`Nas próximas ${d.horas} h não se prevê nenhum período que atinja o nível de Vigilância.`);
   d.periodos.forEach(p=>{const dia=DIAS_EXT[new Date(p.ini+':00Z').getUTCDay()];
     L.push(`${dia[0].toUpperCase()+dia.slice(1)} ${dm(p.ini)}, das ${hh(p.ini)}h às ${hh(p.fim)}h: nível de ${NOMEN[p.n]} proposto; pico de cerca de ${Math.round(p.pico.chuva)} mm em 6 h (${Math.round(p.pico.min)} a ${Math.round(p.pico.max)} mm entre modelos), rajada P90 até ${Math.round(p.rajMax)} km/h${p.k0>=8?' (tendência, maior incerteza)':''}.`)});
@@ -1088,8 +1089,8 @@ function relPdf(d,o){
     didParseCell:h=>{if(h.section==='body'&&h.column.index===4){const v=d.blocos[h.row.index].n;h.cell.styles.fillColor=v===2?[254,202,202]:v===1?[254,240,199]:[209,250,229];h.cell.styles.fontStyle='bold'}}});
   y=doc.lastAutoTable.finalY+2;falta(16);doc.setFont('helvetica','normal').setFontSize(7.5).setTextColor(100,116,139);
   const ls=doc.splitTextToSize(san('Chuva mediana dos modelos por bloco de 6 h (intervalo entre modelos). Prontidão: aviso IPMA laranja ou superior, '+CFG.LIM.proChuva+' mm ou mais no bloco, ou probabilidade de 30 mm em 6 h igual ou superior a 15%. Vigilância: aviso amarelo, '+CFG.LIM.vigChuva+' mm ou mais, rajada P90 de '+CFG.LIM.vigRaj+' km/h ou mais, ou probabilidade de instabilidade forte igual ou superior a 30%. Para além das 48 h a previsão é uma tendência.'),CW);ls.forEach(l=>{T(l,M,y+3);y+=3.2});y+=3;doc.setTextColor(30,41,59);
-  sec('Avisos IPMA em vigor');
-  if(!d.av.length)par('Neste momento, sem avisos meteorológicos ativos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true));
+  sec('Avisos IPMA em vigor e previstos');
+  if(!d.av.length)par('Neste momento, sem avisos meteorológicos em vigor nem previstos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.vig?'em vigor':'previsto'} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true));
   if(o.freg){if(y>120){doc.addPage();y=16}sec('Freguesias a vigiar (próximas 48 h)');
     const h=relMapa(doc,d,M,y,CW,150,falta);y+=h+1;
     par('Nível de risco por freguesia: combina a precipitação prevista, a suscetibilidade da freguesia e o histórico de inundações do SMPC (2022-2026). Indicador relativo; não substitui a cartografia oficial de risco.')}
@@ -1209,12 +1210,12 @@ function msgFatos(d,o){
   const n=o.n==null?d.nivAuto:o.n,p=d.periodos[0],av=d.av[0];
   return{n,p,per:msgPeriodo(p),pico:p?Math.round(p.pico.chuva):0,raj:p?Math.round(p.rajMax):0,m24:Math.round(d.max24.cons),
     forte:p&&p.pico.chuva>=20,vento:p&&p.rajMax>=60,
-    ipma:av?`Aviso ${NOME_IPMA[av.n]} do IPMA: ${av.tipo.toLowerCase()}, de ${dm(av.ini)} ${av.ini.slice(11,16)} a ${dm(av.fim)} ${av.fim.slice(11,16)}.`:''}}
+    ipma:d.av.slice(0,3).map(a=>`Aviso ${NOME_IPMA[a.n]} do IPMA (${a.vig?'em vigor':'previsto'}): ${a.tipo.toLowerCase()}, de ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}.`)}}
 function msgPop(d,o){
   const f=msgFatos(d,o),E=['🟢','🟡','🔴'][f.n],L=[`${E} *PROTEÇÃO CIVIL DE BRAGA | AVISO À POPULAÇÃO*`,''];
   if(f.n===0||!f.p){L.push('Nas próximas horas não se prevê nenhuma situação meteorológica que exija cuidados especiais no concelho de Braga. Mantemos a monitorização.')}
   else{L.push(`Prevê-se chuva${f.forte?' persistente, por vezes forte,':''} ${f.per}${f.m24?`, com acumulados até cerca de ${f.m24} mm em 24 h`:''}${f.vento?` e rajadas de vento até ${f.raj} km/h`:''}.`);
-    if(f.ipma)L.push(f.ipma);L.push('','Podem ocorrer inundações em zonas baixas e arruamentos, queda de árvores e outras estruturas e constrangimentos de trânsito.','','*O que deve fazer:*',
+    f.ipma.forEach(x=>L.push(x));L.push('','Podem ocorrer inundações em zonas baixas e arruamentos, queda de árvores e outras estruturas e constrangimentos de trânsito.','','*O que deve fazer:*',
     '• Evite deslocações desnecessárias nas horas de maior chuva.','• Não atravesse vias alagadas nem estacione junto a linhas de água.','• Afaste-se de árvores, andaimes, placards e toldos.','• Mantenha desobstruídos os sumidouros junto à sua casa e fixe objetos soltos no exterior.','• Em caso de emergência ligue *112*.')}
   if(o.nota)L.push('',o.nota);
   L.push('',`Informação atualizada às ${fmtHM(d.agora)}. Próxima atualização até ${msgAtual(d,o)}.`,'Proteção Civil de Braga');return L.join('\n')}
@@ -1235,7 +1236,7 @@ function msgEnt(d,o,tipo){
   const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,`*Nível proposto: ${NOMEN[f.n].toUpperCase()}* · ${d.emitido.replace(' às ',', ')}`,''];
   if(!f.p)L.push('Sem períodos de Vigilância ou Prontidão previstos nas próximas '+d.horas+' h. Mantém-se a monitorização.');
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
-    if(f.ipma)L.push('⚠️ '+f.ipma);
+    f.ipma.forEach(x=>L.push('⚠️ '+x));
     if(tipo==='ccom'){const b=msgBlocos(d);if(b.length)L.push('','*Blocos de 6 h:*',...b)}}
   if(cc){L.push('',`🏛️ *CCOM:* ${cc[0]}`)}
   if(f.n>=1&&f.p){L.push('','*Medidas:*');
