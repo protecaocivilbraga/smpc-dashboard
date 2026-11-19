@@ -151,6 +151,30 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 
 #relBox button.sec{background:#334155}
 .chuvaNum{font:600 9px/14px system-ui;color:#0f172a;text-align:center;text-shadow:0 0 2px #fff,0 0 2px #fff}
+#msgOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}
+#msgOv.on{display:flex}
+#msgBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(1180px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#msgBox .rh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #334155}
+#msgBox h3{margin:0;font-size:15px}
+#msgBox .rg{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:0;flex:1;min-height:0}
+#msgBox .rc{padding:10px 14px;overflow:auto;border-right:1px solid #334155;display:grid;gap:8px;align-content:start}
+#msgBox .rp{display:flex;flex-direction:column;min-height:0}
+#msgBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#msgBox input:not([type=checkbox]):not([type=radio]),#msgBox textarea,#msgBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:5px 7px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
+#msgBox .rck{display:flex;flex-wrap:wrap;gap:4px 14px}#msgBox .rck label,#msgBox .ro{display:flex;align-items:center;gap:6px;color:#e2e8f0}
+#msgBox .rb{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#msgBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:7px 12px;font-size:12px;cursor:pointer}
+#msgBox button.lk{background:none;color:#60a5fa;padding:0 0 0 6px;font-size:11px;text-decoration:underline}
+#msgBox a{color:#60a5fa;font-size:11px}
+#msgBox fieldset{border:1px solid #475569;border-radius:8px;padding:8px 10px;display:grid;gap:6px}
+#msgBox legend{font-size:11px;color:#fbbf24;padding:0 4px}
+#msgBox .rn{font-size:11px;color:#94a3b8;margin:0}
+@media(max-width:800px){#msgBox{height:96vh}#msgBox .rg{grid-template-columns:1fr;overflow:auto}#msgBox .rc{overflow:visible;border-right:0}#msgBox .rp{min-height:320px}#relPdf{min-height:320px}}
+@media print{#relOv{display:none!important}}
+.btnRel{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer}
+
+#msgBox button.sec{background:#334155}
+#msgFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#msgBox{width:min(900px,97vw);height:min(92vh,820px)}#msgBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#msgBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#msgBox .tabs button{background:#1e293b;border:1px solid #334155}#msgBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#msgTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#msgCont{font-size:11px;color:#94a3b8}#msgCont.mau{color:#fbbf24}#msgBox .rp{padding:10px 14px;gap:8px}
 </style>
 </head>
 <body>
@@ -160,6 +184,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
   </div>
   <div class="mono" id="relogio">--:--:--</div>
+  <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
   <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
   <div class="estados">
     <span><i class="dot load" id="e-oc"></i>Ocorrências <b id="t-oc">…</b></span>
@@ -294,6 +319,27 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 </main>
 
 
+<div id="msgOv" role="dialog" aria-modal="true" aria-labelledby="msgTit"><div id="msgBox">
+  <div class="rh"><h3 id="msgTit">Mensagens de aviso (SMS e WhatsApp)</h3><button id="msgFecha" title="Fechar (Esc)">×</button></div>
+  <div class="rg">
+    <div class="rc">
+      <p class="rn">Texto proposto a partir da previsão do painel. <b>Reveja antes de enviar.</b> O painel não envia nada: copie e cole no canal de avisos ou no grupo.</p>
+      <label>Nível a comunicar<select id="msgNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select><span class="mono" id="msgNivelAuto"></span></label>
+      <label>CCOM<select id="msgCcom"><option value="mon">Não ativado: monitorização</option><option value="ativo">CCOM ativado</option><option value="nd">Não referir</option></select></label>
+      <label id="msgPerL" style="display:none">Período de ativação<input id="msgPer" placeholder="ex.: das 09h às 20h de 20/11"></label>
+      <label>Nota adicional (opcional)<textarea id="msgNota" rows="2"></textarea></label>
+      <label>Próxima atualização<select id="msgAt"><option value="6">6 horas</option><option value="12">12 horas</option><option value="24" selected>24 horas</option><option value="36">36 horas</option><option value="48">48 horas</option></select></label>
+      <label class="ro"><input type="checkbox" id="msgSemAc" checked> SMS sem acentos (cabem mais caracteres)</label>
+    </div>
+    <div class="rp">
+      <div class="tabs" id="msgTabs"><button data-t="pop" class="on">População · WhatsApp</button><button data-t="sms">População · SMS</button><button data-t="apc">Agentes de Proteção Civil</button><button data-t="ccom">Grupo CCOM</button></div>
+      <textarea id="msgTxt" spellcheck="false"></textarea>
+      <div id="msgCont"></div>
+      <div class="rb"><button id="msgCopia">Copiar texto</button><button id="msgWa" class="sec">Abrir no WhatsApp</button><button id="msgRegen" class="sec">Refazer a partir do painel</button></div>
+      <div id="msgMsg" class="rn" role="status"></div>
+    </div>
+  </div>
+</div></div>
 <div id="relOv" role="dialog" aria-modal="true" aria-labelledby="relTit"><div id="relBox">
   <div class="rh"><h3 id="relTit">Relatório de apoio à decisão</h3><button id="relFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
@@ -1149,6 +1195,72 @@ function abrirRelatorio(){
   $('relOv').classList.add('on');relRefrescar(false)}
 function nomePdf(){const a=REL.d?REL.d.agora:new Date();const p=localNaive(a).replace(/[-:T]/g,'');return`Apoio_Decisao_Meteo_Braga_${p.slice(0,8)}_${p.slice(8,12)}.pdf`}
 function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)})}
+
+/* ---------- Mensagens curtas (SMS / WhatsApp) ---------- */
+const MSG={tab:'pop',edit:false};
+const dcurto=s=>DIAS_EXT[new Date(s+':00Z').getUTCDay()].replace('-feira','');
+function msgPeriodo(p){
+  if(!p)return'';const a=p.ini,b=p.fim;
+  return a.slice(0,10)===b.slice(0,10)?`${dcurto(a)} ${dm(a)}, das ${hh(a)}h às ${hh(b)}h`:`de ${dcurto(a)} ${dm(a)}, ${hh(a)}h, a ${dcurto(b)} ${dm(b)}, ${hh(b)}h`}
+function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom:$('msgCcom').value,per:$('msgPer').value.trim(),nota:$('msgNota').value.trim(),at:+$('msgAt').value,semAc:$('msgSemAc').checked}}
+const semAcentos=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[–—]/g,'-');
+function msgAtual(d,o){const t=new Date(d.agora.getTime()+o.at*3600e3),f=x=>new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit'}).format(x),h=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(t);return f(t)===f(d.agora)?'às '+h:'dia '+f(t)+', às '+h}
+function msgFatos(d,o){
+  const n=o.n==null?d.nivAuto:o.n,p=d.periodos[0],av=d.av[0];
+  return{n,p,per:msgPeriodo(p),pico:p?Math.round(p.pico.chuva):0,raj:p?Math.round(p.rajMax):0,m24:Math.round(d.max24.cons),
+    forte:p&&p.pico.chuva>=20,vento:p&&p.rajMax>=60,
+    ipma:av?`Aviso ${NOME_IPMA[av.n]} do IPMA: ${av.tipo.toLowerCase()}, de ${dm(av.ini)} ${av.ini.slice(11,16)} a ${dm(av.fim)} ${av.fim.slice(11,16)}.`:''}}
+function msgPop(d,o){
+  const f=msgFatos(d,o),E=['🟢','🟡','🔴'][f.n],L=[`${E} *PROTEÇÃO CIVIL DE BRAGA | AVISO À POPULAÇÃO*`,''];
+  if(f.n===0||!f.p){L.push('Nas próximas horas não se prevê nenhuma situação meteorológica que exija cuidados especiais no concelho de Braga. Mantemos a monitorização.')}
+  else{L.push(`Prevê-se chuva${f.forte?' persistente, por vezes forte,':''} ${f.per}${f.m24?`, com acumulados até cerca de ${f.m24} mm em 24 h`:''}${f.vento?` e rajadas de vento até ${f.raj} km/h`:''}.`);
+    if(f.ipma)L.push(f.ipma);L.push('','Podem ocorrer inundações em zonas baixas e arruamentos, queda de árvores e outras estruturas e constrangimentos de trânsito.','','*O que deve fazer:*',
+    '• Evite deslocações desnecessárias nas horas de maior chuva.','• Não atravesse vias alagadas nem estacione junto a linhas de água.','• Afaste-se de árvores, andaimes, placards e toldos.','• Mantenha desobstruídos os sumidouros junto à sua casa e fixe objetos soltos no exterior.','• Em caso de emergência ligue *112*.')}
+  if(o.nota)L.push('',o.nota);
+  L.push('',`Informação atualizada às ${fmtHM(d.agora)}. Próxima atualização até ${msgAtual(d,o)}.`,'Proteção Civil de Braga');return L.join('\n')}
+function msgSms(d,o){
+  const f=msgFatos(d,o);let t;
+  if(f.n===0||!f.p)t='Protecao Civil Braga: sem previsao de situacoes meteorologicas significativas nas proximas horas.';
+  else{const A=f.p.ini,B=f.p.fim,d3=x=>dcurto(x).slice(0,3),pc=A.slice(0,10)===B.slice(0,10)?`${d3(A)} ${dm(A)} ${hh(A)}-${hh(B)}h`:`${d3(A)} ${dm(A)} ${hh(A)}h a ${d3(B)} ${dm(B)} ${hh(B)}h`,
+    ev=`chuva${f.forte?' forte':''}${f.vento?' e vento':''}`,mm=f.m24?`, ate ${f.m24}mm/24h`:'';
+    const C=[`Protecao Civil Braga: ${ev} ${pc}${mm}. Evite deslocacoes, nao atravesse vias alagadas, afaste-se de arvores. Emergencia 112`,
+      `PC Braga: ${ev} ${pc}${mm}. Evite deslocacoes e vias alagadas. Emergencia 112`,
+      `PC Braga: ${ev} ${pc}. Evite deslocacoes. 112`];
+    t=C.find(x=>x.length<=160)||C[C.length-1];
+    if(o.nota&&(t+' '+o.nota).length<=160)t+=' '+o.nota}
+  return o.semAc?semAcentos(t):t}
+function msgBlocos(d){return d.blocos.filter(b=>b.n>=1||b.mm>=1).slice(0,8).map(b=>`• ${b.rot.replace(' · ',' ')}: ${Math.round(b.mm)} mm, rajada ${Math.round(b.raj)} km/h, ${NOMEN[b.n]}`)}
+function msgEnt(d,o,tipo){
+  const f=msgFatos(d,o),E=['🟢','🟡','🔴'][f.n],cc=relCcom(d,{ccom:o.ccom,per:o.per,nota:''});
+  const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,`*Nível proposto: ${NOMEN[f.n].toUpperCase()}* · ${d.emitido.replace(' às ',', ')}`,''];
+  if(!f.p)L.push('Sem períodos de Vigilância ou Prontidão previstos nas próximas '+d.horas+' h. Mantém-se a monitorização.');
+  else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
+    if(f.ipma)L.push('⚠️ '+f.ipma);
+    if(tipo==='ccom'){const b=msgBlocos(d);if(b.length)L.push('','*Blocos de 6 h:*',...b)}}
+  if(cc){L.push('',`🏛️ *CCOM:* ${cc[0]}`)}
+  if(f.n>=1&&f.p){L.push('','*Medidas:*');
+    if(f.n===2)L.push('• Mobilizar SMPC, Bombeiros Sapadores, AGERE, DVEPM e Juntas de Freguesia: limpeza preventiva e vigilância dos sistemas de escoamento.','• Meios em prontidão: máquinas, camião-grua, corte de árvores; ULPC com Equipas de Intervenção.','• Equipas com comunicações alternativas, carregadores e iluminação.');
+    else L.push('• Manter equipas em sobreaviso.','• Limpeza preventiva dos sistemas de escoamento nas áreas de cada entidade.');
+    L.push('• Reportar ao CCOM: localização exata, descrição, pessoas em risco/vias cortadas e fotografia, se possível.',`• Indicar ao CCOM o ponto de contacto e os meios disponíveis. CCOM: ${CFG.CCOM_TEL||''}.`)}
+  if(o.nota)L.push('',o.nota);
+  L.push('',`🔄 Próxima atualização até ${msgAtual(d,o)}, ou antes se a situação o justificar.`,'Relatório completo em PDF por email.');return L.join('\n')}
+function msgGerar(){
+  const d=relDados(),t=$('msgTxt');if(!d){t.value='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
+  const o=msgOpc();$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];
+  t.value=MSG.tab==='pop'?msgPop(d,o):MSG.tab==='sms'?msgSms(d,o):msgEnt(d,o,MSG.tab);MSG.edit=false;msgConta()}
+function msgConta(){
+  const t=$('msgTxt').value,c=$('msgCont');$('msgWa').style.display=MSG.tab==='sms'?'none':'';
+  if(MSG.tab==='sms'){const gsm=/^[\x20-\x7e\n\r€£¥èéùìòÇØøÅåΔ_ΦΓΛΩΠΨΣΘΞÆæßÉ¤¡ÄÖÑÜ§¿äöñüà]*$/.test(t),n=t.length,lim=gsm?(n<=160?160:153):(n<=70?70:67),seg=Math.max(1,Math.ceil(n/lim));
+    c.textContent=`${n} caracteres · ${seg} SMS${gsm?'':' (contém caracteres fora do alfabeto GSM: segmentos de 70)'}`;c.className=seg>2?'mau':''}
+  else{c.textContent=`${t.length} caracteres`;c.className=''}}
+function abrirMsg(){$('msgOv').classList.add('on');$('msgPerL').style.display=$('msgCcom').value==='ativo'?'grid':'none';msgGerar()}
+$('btnMsg').onclick=abrirMsg;$('msgFecha').onclick=()=>$('msgOv').classList.remove('on');
+['msgNivel','msgCcom','msgAt','msgSemAc'].forEach(i=>$(i).onchange=()=>{$('msgPerL').style.display=$('msgCcom').value==='ativo'?'grid':'none';msgGerar()});
+['msgPer','msgNota'].forEach(i=>$(i).oninput=msgGerar);
+$('msgTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{MSG.tab=b.dataset.t;$('msgTabs').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));msgGerar()});
+$('msgTxt').oninput=()=>{MSG.edit=true;msgConta()};$('msgRegen').onclick=msgGerar;
+$('msgCopia').onclick=async()=>{const m=$('msgMsg');try{await navigator.clipboard.writeText($('msgTxt').value)}catch(e){$('msgTxt').select();document.execCommand('copy')}m.style.color='#6ee7b7';m.textContent='Texto copiado. Cole-o no canal ou no grupo.'};
+$('msgWa').onclick=()=>{window.open('https://wa.me/?text='+encodeURIComponent($('msgTxt').value),'_blank','noopener');$('msgMsg').style.color='#6ee7b7';$('msgMsg').textContent='Escolha no WhatsApp o grupo ou o canal de destino e confirme o envio.'};
 $('btnRel').onclick=abrirRelatorio;$('relFecha').onclick=()=>$('relOv').classList.remove('on');
 ['relNivel','relFreg','relOc','relMed'].forEach(i=>$(i).onchange=()=>relRefrescar(false));
 $('relNota').oninput=()=>relRefrescar(true);
@@ -1180,7 +1292,7 @@ $('relOutlook').onclick=async()=>{
   location.href=url};
 $('relCcom').onchange=()=>{$('relPerL').style.display=$('relCcom').value==='ativo'?'grid':'none';relRefrescar(false)};
 $('relCcomPer').oninput=()=>relRefrescar(true);$('relAtual').onchange=()=>relRefrescar(false);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')$('relOv').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
 
 </script>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
