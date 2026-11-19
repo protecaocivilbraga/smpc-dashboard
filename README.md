@@ -7,3 +7,10 @@ Painel de apoio à consciência situacional (ficheiro único `index.html`, sem s
 **Fontes abertas:** Open-Meteo (ensembles e caudais GloFAS), IPMA, EUMETSAT View, Fogos.pt/ANEPC, OpenStreetMap, geoapi.pt.
 
 **Nota:** o risco por freguesia é um indicador relativo; não substitui a cartografia oficial de zonas inundáveis. Os níveis Normal, Vigilância e Prontidão são propostas a validar pelo CorMPC.
+
+## Briefing técnico-operacional do CCOS Cávado e aviso Planoclima
+
+Quadro "Briefing técnico-operacional CCOS Cávado" no painel: carrega-se o PDF do boletim (e o aviso da Planoclima em .msg, .eml, .txt ou texto colado). A leitura é feita **no navegador** (pdf.js, carregado do cdnjs) e o resultado fica só no `localStorage` deste navegador (`smpc_bol`, `smpc_aviso`). **O boletim é RESERVADO: nunca é enviado nem incluído neste repositório.**
+
+- Estados de prontidão (DIOPS, DECIR, DIONRBQ, DIRACAERO, DCDFCI-PNPG) e estados de alerta do SFN estão desenhados a cores; são lidos pela cor das caixas. Confirmar sempre no documento original.
+- Entra no relatório PDF e no email (opções "Briefing CCOS Cávado" e "Aviso Planoclima") e na mensagem **Entidades · grupos CCOM e Agentes de PC**. Nunca nas mensagens à população (WhatsApp e SMS).

@@ -78,6 +78,11 @@ td.r,th.r{text-align:right}
 .oc .hr{color:var(--suave)}.oc .nt{font-weight:700}.oc .es{color:var(--suave);font-size:10px}
 .oc.rel .nt{color:var(--azul)}
 .vazio{color:var(--cinza);font-size:11px;padding:4px 0}
+.bolg{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 6px}.bolt{font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--suave);font-weight:700;margin-bottom:3px}
+.bolc{display:inline-block;border:2px solid;border-radius:8px;padding:2px 8px;margin:0 5px 4px 0;font-size:11px}
+.bolt2{width:100%;border-collapse:collapse;font-size:11px;margin-top:4px}.bolt2 th{text-align:left;vertical-align:top;color:var(--suave);font-weight:600;padding:3px 10px 3px 0;width:26%;border-top:1px solid var(--linha)}.bolt2 td{padding:3px 0;border-top:1px solid var(--linha)}
+#cardBol details summary{cursor:pointer;color:var(--suave);font-size:11px}#cardBol textarea{width:100%;background:var(--card2);color:var(--texto);border:1px solid var(--linha);border-radius:6px;padding:4px 6px;font:inherit;font-size:11px}
+.reservado{background:#f43f5e22;border:1px solid #f43f5e66;color:#fecdd3;border-radius:6px;padding:3px 8px;font-size:10.5px;margin:2px 0 6px}
 .legenda{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:10px;color:var(--suave);margin-top:4px}
 .legenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-2px}
 .aviso-geral{font-size:10px;color:var(--cinza);line-height:1.5}
@@ -304,6 +309,22 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </section>
 
+  <section class="card" id="cardBol">
+    <h2>Briefing técnico-operacional CCOS Cávado <span class="nota">estados de prontidão, planos ativados, ocorrências · uso interno</span></h2>
+    <div class="reservado"><b>RESERVADO.</b> O boletim destina-se às entidades do SIOPS. Os dados ficam só neste navegador (nunca no repositório) e só entram no relatório e na mensagem para as entidades (grupos CCOM e Agentes de PC), nunca nos avisos à população.</div>
+    <div class="ctl">
+      <label>Boletim (PDF): <input type="file" id="fileBol" accept=".pdf,application/pdf"></label>
+      <button id="btnBolLimpa" style="display:none">Remover</button>
+      <label>Aviso Planoclima: <input type="file" id="fileAv" accept=".msg,.eml,.txt"></label>
+      <button id="btnAvLimpa" style="display:none">Remover</button>
+      <span id="bolMsg" class="nota" role="status"></span>
+    </div>
+    <div id="bolCorpo"></div>
+    <details style="margin-top:6px"><summary>Colar o texto do aviso (por exemplo, recebido por WhatsApp)</summary>
+      <textarea id="avTxt" rows="4" placeholder="Cole aqui o texto do aviso da Planoclima"></textarea>
+      <div class="ctl" style="margin-top:4px"><label>Data e hora de receção (opcional) <input type="datetime-local" id="avData" style="background:var(--card2);color:var(--texto);border:1px solid var(--linha);border-radius:6px;padding:2px 6px"></label><button id="btnAvTxt">Guardar aviso</button></div></details>
+  </section>
+
   <section class="card">
     <h2>Fontes e limitações</h2>
     <p class="aviso-geral">
@@ -330,6 +351,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <label>Nota adicional (opcional)<textarea id="msgNota" rows="2"></textarea></label>
       <label>Próxima atualização<select id="msgAt"><option value="6">6 horas</option><option value="12">12 horas</option><option value="24" selected>24 horas</option><option value="36">36 horas</option><option value="48">48 horas</option></select></label>
       <label class="ro"><input type="checkbox" id="msgSemAc" checked> SMS sem acentos (cabem mais caracteres)</label>
+      <label class="ro" id="msgBolL"><input type="checkbox" id="msgBol"> Incluir briefing CCOS Cávado (reservado, só entidades)</label>
+      <label class="ro" id="msgAvL"><input type="checkbox" id="msgAv"> Incluir aviso Planoclima (só entidades)</label>
     </div>
     <div class="rp">
       <div class="tabs" id="msgTabs"><button data-t="pop" class="on">População · WhatsApp</button><button data-t="sms">População · SMS</button><button data-t="ccom">Entidades · grupos CCOM e Agentes de PC</button></div>
@@ -348,7 +371,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <label>Nível a comunicar
         <select id="relNivel"><option value="-1">Automático</option><option value="0">Normal</option><option value="1">Vigilância</option><option value="2">Prontidão</option></select>
         <span class="mono" id="relNivelAuto"></span></label>
-      <div class="rck"><label><input type="checkbox" id="relFreg" checked> Mapa das freguesias</label><label><input type="checkbox" id="relOc" checked> Ocorrências em curso</label><label><input type="checkbox" id="relMed" checked> Efeitos e medidas</label></div>
+      <div class="rck"><label><input type="checkbox" id="relFreg" checked> Mapa das freguesias</label><label><input type="checkbox" id="relOc" checked> Ocorrências em curso</label><label><input type="checkbox" id="relMed" checked> Efeitos e medidas</label><label><input type="checkbox" id="relBol"> Briefing CCOS Cávado (reservado)</label><label><input type="checkbox" id="relAv"> Aviso Planoclima</label></div>
       <label>Informação CCOM
         <select id="relCcom"><option value="mon">Não ativado: mantém-se a monitorização e a avaliação da situação</option><option value="ativo">CCOM ativado</option><option value="nd">Não incluir</option></select></label>
       <label id="relPerL" style="display:none">Período de ativação (e local, se quiser)<input id="relCcomPer" placeholder="ex.: das 09h de 20/11 às 20h, no Quartel dos Bombeiros Sapadores"></label>
@@ -969,8 +992,291 @@ $('filePrev').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{cons
 $('btnPrevLimpa').onclick=()=>{S.prev=null;try{localStorage.removeItem('smpc_prev')}catch(_){}desenharPrev()};
 $('chkPrev').onchange=()=>$('chkPrev').checked?gPrev.addTo(mapa):mapa.removeLayer(gPrev);
 $('chkPrev').addEventListener('change',desenharPrev);
+/* ===== Boletim CCOS + Aviso Planoclima: leitura só no navegador (nada é enviado nem fica no repositório) ===== */
+const BOL={d:null,av:null};
+const BOLK='smpc_bol',AVK='smpc_aviso';
+const PDFJS_V='3.11.174',PDFJS_U='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/'+PDFJS_V+'/';
+function carregarPdfJs(){
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  return new Promise((ok,ko)=>{const s=document.createElement('script');s.src=PDFJS_U+'pdf.min.js';
+    s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=PDFJS_U+'pdf.worker.min.js';ok(window.pdfjsLib)};
+    s.onerror=()=>ko(new Error('não foi possível carregar a biblioteca de leitura de PDF (sem rede?)'));document.head.appendChild(s)})}
+
+/* --- cores da página 1: níveis de prontidão (cinzentos) e estados SFN (cores) --- */
+const PRONT_LUM=[[255,'N'],[191,'I'],[128,'II'],[64,'III'],[13,'IV']];
+const SFN_COR=[[[0,176,80],'Risco Baixo'],[[0,112,192],'Risco Moderado'],[[255,255,0],'Risco Alto'],[[237,125,49],'Risco Elevado'],[[255,0,0],'Risco Extremo']];
+function amostra(ctx,x,y){ // média e nº de cores distintas numa janela 10x7 px
+  const w=14,h=8;let d;try{d=ctx.getImageData(Math.max(0,Math.round(x)),Math.max(0,Math.round(y-4)),w,h).data}catch(e){return null}
+  let r=0,g=0,b=0;const set=new Set();for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];b+=d[i+2];set.add(d[i]+','+d[i+1]+','+d[i+2])}
+  const n=d.length/4;return{c:[r/n,g/n,b/n],v:set.size}}
+function classCor(a,tipo){
+  if(!a)return null;if(a.v>=3)return'Não ativado';
+  const [r,g,b]=a.c;
+  if(tipo==='sfn'){if(Math.max(r,g,b)-Math.min(r,g,b)<40)return'Não ativado';let best=null,bd=1e9;SFN_COR.forEach(([c,n])=>{const dd=(c[0]-r)**2+(c[1]-g)**2+(c[2]-b)**2;if(dd<bd){bd=dd;best=n}});return best}
+  const l=(r+g+b)/3;let best=null,bd=1e9;PRONT_LUM.forEach(([v,n])=>{const dd=Math.abs(v-l);if(dd<bd){bd=dd;best=n}});return best}
+
+/* --- texto: linhas com células (separadas por posição) --- */
+function linhasPagina(items){
+  const L=[];items.filter(i=>i.str&&i.str.trim()).sort((a,b)=>b.y-a.y||a.x-b.x).forEach(i=>{
+    let l=L.find(l=>Math.abs(l.y-i.y)<3);if(!l){l={y:i.y,it:[]};L.push(l)}l.it.push(i)});
+  L.sort((a,b)=>b.y-a.y);
+  return L.map(l=>{l.it.sort((a,b)=>a.x-b.x);const c=[];let cur='',fim=null;
+    l.it.forEach(i=>{const s=i.str.trim();if(fim==null)cur=s;else{const g=i.x-fim;if(g>14){c.push(cur);cur=s}else cur+=(g>1.0?' ':'')+s}fim=i.x+i.w});
+    c.push(cur);const cc=c.map(x=>x.trim()).filter(Boolean);return{y:l.y,c:cc,t:cc.join(' ')}})}
+
+const HEAD=[ // ordem do boletim
+ ['prontidao',/^Estados de Prontidão existentes/i],['sfn',/^Estados de Alerta do SFN/i],['determ',/^Determinações Operacionais/i],
+ ['pir',/^Perigo de Incêndio Rural/i],['hidro_sis',/^Sistema de Vigilância e Alerta de Recursos Hídricos/i],
+ ['hidro',/^Informação hidrológica relevante/i],['meteo',/^Informação meteorológica relevante/i],
+ ['diops',/^Ocorrências DIOPS, comparativo/i],['decir1',/^Ocorrências \| Estado de Prontidão Especial Nível II . DECIR/i],
+ ['decir2',/^Ocorrências \| Estado de Prontidão Especial Nível I, II, IV/i],['sismo',/^Atividade Sísmica/i],
+ ['planos',/^Planos (e|de) Emergência/i],['saude',/^Informação relativa a fenómenos com impacto na saúde/i],
+ ['nav',/^Perigos para a navegação marítima/i],['oc_curso',/^Ocorrências mais relevantes em curso/i],
+ ['oc_rel',/^Ocorrências mais relevantes de /i],['agentes',/^Informações relevantes aos Agentes/i],['imprensa',/^Principais referências na Imprensa/i],
+ ['prepos',/^Pré-posicionamento . Patrulhamentos/i],['emeif',/^Pré-posicionamento de meios sob gestão/i],['foracsrepc',/^Mobilização de meios fora/i],
+ ['legisl',/^Legislação relevante/i],['outras',/^Outras Informações/i],['entidades',/^Informações relevantes das entidades/i],['presencas',/^Presenças no Boletim/i]];
+const semPag=t=>/^Página \d+ de \d+$/.test(t);
+const nada=a=>!a.length||a.every(x=>/^(nada (de especial )?a referir\.?|-+)$/i.test(x.replace(/^[•✓\s]+/,'').trim()));
+function bullets(L){const o=[];L.forEach(l=>{const t=l.t.replace(/^\s+/,'');if(/^[•✓]/.test(t)||!o.length)o.push(t.replace(/^[•✓]\s*/,''));else o[o.length-1]+=' '+t});return o}
+const num=s=>{const n=parseInt(String(s).replace(/\s/g,''),10);return isNaN(n)?null:n};
+function tabMunicipios(L){const r={};L.forEach(l=>{const c=l.c;if(c.length>=3&&/^(Amares|Barcelos|Braga|Esposende|Terras de Bouro|Vila Verde|Total)$/i.test(c[0]))r[c[0]]=c.slice(1).map(num)});return r}
+
+function parseBoletim(pag,cores){
+  const all=[];pag.forEach(p=>p.forEach(l=>{if(!semPag(l.t))all.push(l)}));
+  const R={};const cab=all.slice(0,6).map(l=>l.t).join(' ');
+  R.numero=(cab.match(/N[ºo°]\s*(\d+\/\d{4})/)||[])[1]||'';R.valido=(cab.match(/(\d{2}-\d{2}-\d{4})\s+(\d{2}:\d{2})/)||[]).slice(1).join(' ')||'';
+  R.paginas=(cab.match(/Número de Páginas:\s*(\d+)/)||[])[1]||'';
+  const S={};let cur=null;
+  all.forEach(l=>{const h=HEAD.find(([k,re])=>re.test(l.t));
+    if(h&&(!S[h[0]])){cur=h[0];S[cur]=[];if(h[0]==='oc_rel'||h[0]==='decir1'||h[0]==='decir2')S[cur].push(l);return}
+    if(cur)S[cur].push(l)});
+  const B=k=>S[k]?bullets(S[k].filter(l=>!/^(Barras|Informação adicional)/.test(l.t))):[];
+  R.prontidao=cores.prontidao||{};R.sfn=cores.sfn||{};
+  R.determ=nada(B('determ'))?[]:B('determ');
+  R.hidro=nada(B('hidro'))?[]:B('hidro');
+  R.saude=nada(B('saude'))?[]:B('saude');
+  R.agentes=nada(B('agentes'))?[]:B('agentes');
+  R.prepos=nada(B('prepos'))?[]:B('prepos');R.legisl=nada(B('legisl'))?[]:B('legisl');R.outras=nada(B('outras'))?[]:B('outras');
+  R.imprensa=nada(B('imprensa'))?[]:B('imprensa');R.emeif=nada(B('emeif'))?[]:B('emeif');R.foracsrepc=nada(B('foracsrepc'))?[]:B('foracsrepc');
+  // meteorologia por dia
+  R.meteo=[];(S.meteo||[]).forEach(l=>{const m=l.t.match(/^((Segunda|Terça|Quarta|Quinta|Sexta)-feira|Sábado|Domingo)\s+(\d{1,2}[A-Z]{3})/i);
+    if(m)R.meteo.push({dia:l.t.trim(),pontos:[]});else if(R.meteo.length&&/^[•]/.test(l.t))R.meteo[R.meteo.length-1].pontos.push(l.t.replace(/^•\s*/,''));
+    else if(R.meteo.length&&R.meteo[R.meteo.length-1].pontos.length)R.meteo[R.meteo.length-1].pontos[R.meteo[R.meteo.length-1].pontos.length-1]+=' '+l.t});
+  R.meteo=R.meteo.filter(d=>d.pontos.length);
+  // barragens (percentagens só em imagem; guardamos os nomes e a nota)
+  // atividade operacional
+  const dio=tabMunicipios(S.diops||[]);R.diops={braga:dio['Braga']||null,total:dio['Total']||null,todos:dio,
+    periodo:((S.diops||[]).map(l=>l.t).join(' ').match(/Atividade Operacional de (\S+) a (\S+)/)||[]).slice(1).join(' a ')};
+  const dc=(k)=>{const t=tabMunicipios(S[k]||[]);return{braga:t['Braga']||null,total:t['Total']||null,todos:t,periodo:((S[k]||[]).map(l=>l.t).join(' ').match(/entre (\S+) a (\S+)/)||[]).slice(1).join(' a ')}};
+  R.decir1=dc('decir1');R.decir2=dc('decir2');
+  // planos / declarações de alerta
+  R.planos=nada(B('planos'))?[]:B('planos');
+  // sismos
+  R.sismo=all.map(l=>l.t).join(' ').match(/Não foram registados sismos[^.]*\./)?'Sem sismos sentidos pela população nas últimas 24 h.':'';
+  // navegação
+  const nv=(S.nav||[]);const f=l=>{const x=nv.find(z=>z.t.startsWith(l));return x?x.c.slice(1).join(' ').trim():''};
+  R.nav={fechadas:f('Barras Fechadas'),condicionadas:f('Barras Condicionadas')};
+  // ocorrências relevantes em curso e do período
+  R.oc_curso=nada(B('oc_curso'))?[]:B('oc_curso');
+  R.oc_rel=[];
+  // entidades
+  R.entidades=[];let ult=null;(S.entidades||[]).forEach(l=>{if(/ – /.test(l.t)&&/^[A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9º2]/.test(l.t)){const i=l.t.indexOf(' – ');ult={ent:l.t.slice(0,i),txt:l.t.slice(i+3)};R.entidades.push(ult)}else if(ult)ult.txt+=' '+l.t});
+  R.entidades=R.entidades.filter(e=>!/nada de especial a referir\.?$/i.test(e.txt.trim()));
+  return R}
+
+function ocRelevantes(itemsPorPagina){ // tabela por posição (colunas x)
+  const out=[],txt=arr=>{const L=[];arr.slice().sort((p,q)=>q.y-p.y||p.x-q.x).forEach(i=>{let l=L.find(l=>Math.abs(l.y-i.y)<3);if(!l){l={y:i.y,it:[]};L.push(l)}l.it.push(i)});
+    return L.map(l=>{l.it.sort((p,q)=>p.x-q.x);let s='',fim=null;l.it.forEach(i=>{const t=i.str.trim();if(!t)return;s+=(fim!=null&&i.x-fim>1?' ':'')+t;fim=i.x+i.w});return s}).filter(Boolean)};
+  itemsPorPagina.forEach(it=>{
+    const regs=it.filter(i=>/^\d{5,6}[A-Z]/.test(i.str.trim())&&i.x>105&&i.x<200).sort((a,b)=>b.y-a.y);
+    for(let k=0;k+2<regs.length;k+=3){
+      const a=regs[k],c=regs[k+2],ymax=a.y+8,ymin=c.y-14;
+      const col=(x0,x1)=>txt(it.filter(i=>i.x>=x0&&i.x<x1&&i.y<=ymax&&i.y>=ymin));
+      const local=col(200,285),j=x=>x.join(' ').replace(/\s+/g,' ').trim();
+      out.push({tipo:j(col(0,110)),inicio:a.str.replace(/\s/g,''),fim:c.str.replace(/\s/g,''),freguesia:local[local.length-2]||'',concelho:local[local.length-1]||'',
+        meios:j(col(285,380)),outros:j(col(420,465)).replace(/^-+$/,''),danos:j(col(465,700)).replace(/^-+$/,'')})}});
+  return out}
+
+const PIR_REF={'Terras de Bouro':[475,128],'Vila Verde':[319,167],'Amares':[333,229],'Esposende':[97,260],'Barcelos':[167,272],'Braga':[300,268]};
+function lerPir(its,altura){const d=its.filter(i=>/^[1-5]$/.test(i.str.trim())&&i.y>0).map(i=>({v:+i.str.trim(),x:i.x,t:altura-i.y})).filter(p=>p.t>90&&p.t<340);
+  if(d.length!==6)return null;const r={};const usados=new Set();
+  Object.entries(PIR_REF).forEach(([n,[x,y]])=>{let b=null,bd=1e9;d.forEach((p,k)=>{if(usados.has(k))return;const dd=(p.x-x)**2+(p.t-y)**2;if(dd<bd){bd=dd;b=k}});if(b!=null&&bd<60*60){usados.add(b);r[n]=d[b].v}});
+  return Object.keys(r).length===6?r:null}
+
+async function lerBoletimPdf(file){
+  const pdfjs=await carregarPdfJs(),buf=await file.arrayBuffer(),doc=await pdfjs.getDocument({data:buf}).promise;
+  const pag=[],itensPag=[],alturas=[];let cores={prontidao:{},sfn:{}};
+  for(let p=1;p<=doc.numPages;p++){
+    const pg=await doc.getPage(p),vp=pg.getViewport({scale:2}),tc=await pg.getTextContent();
+    const its=tc.items.map(i=>({str:i.str,x:i.transform[4],y:i.transform[5],w:i.width,h:i.height}));
+    pag.push(linhasPagina(its));alturas.push(pg.view[3]-pg.view[1]);itensPag.push(its);
+    if(p===1){
+      const cv=document.createElement('canvas');cv.width=vp.width;cv.height=vp.height;const ctx=cv.getContext('2d',{willReadFrequently:true});
+      await pg.render({canvasContext:ctx,viewport:vp}).promise;
+      // primeiro encontro (de cima para baixo) de cada rótulo
+      const topo=(s,tipo)=>{const c=its.filter(i=>i.str.trim().startsWith(s.split(' ')[0].slice(0,6))).sort((a,b)=>b.y-a.y);if(!c.length)return null;const i=c[0];
+        const [vx,vy]=vp.convertToViewportPoint(i.x,i.y),yy=vy-(i.h||8),w=i.w*2;
+        const A=classCor(amostra(ctx,vx-14,yy),tipo),B=classCor(amostra(ctx,vx+w+4,yy),tipo);return A===B?A:(A==='N'||A==null)?B:A};
+      ['DIOPS','DECIR','DIONRBQ','DIRACAERO','DCDFCI-PNPG'].forEach(k=>cores.prontidao[k]=topo(k,'pront'));
+      ['CAPELLUS','HEFESTO II'].forEach(k=>{const c=its.filter(i=>i.str.trim().startsWith(k)).sort((a,b)=>b.y-a.y);
+        // o rótulo em maiúsculas dentro da caixa é o 1.º (de cima); a legenda vem depois
+        cores.sfn[k]=topo(k,'sfn')})}
+  }
+  const R=parseBoletim(pag,cores);R.oc_rel=ocRelevantes(itensPag);R.pir=lerPir(itensPag[1]||[],alturas[1]||842);R.fonte=file.name;R.lido=new Date().toISOString();return R}
+
+/* --- leitor mínimo de .msg (Outlook, formato OLE/CFB): assunto, remetente, data, corpo --- */
+function lerMsg(buf){
+  const u=new Uint8Array(buf),dv=new DataView(buf);
+  if(dv.getUint32(0,true)!==0xE011CFD0)throw new Error('não é um ficheiro .msg do Outlook');
+  const ss=1<<dv.getUint16(30,true),mss=1<<dv.getUint16(32,true),nFat=dv.getUint32(44,true),dirIni=dv.getUint32(48,true),corte=dv.getUint32(56,true),miniIni=dv.getUint32(60,true),difIni=dv.getUint32(68,true),nDif=dv.getUint32(72,true);
+  const off=s=>(s+1)*ss;let dif=[];for(let i=0;i<109;i++){const v=dv.getUint32(76+i*4,true);if(v<0xFFFFFFFA)dif.push(v)}
+  let d=difIni;for(let k=0;k<nDif&&d<0xFFFFFFFA;k++){for(let i=0;i<ss/4-1;i++){const v=dv.getUint32(off(d)+i*4,true);if(v<0xFFFFFFFA)dif.push(v)}d=dv.getUint32(off(d)+ss-4,true)}
+  const fat=[];dif.slice(0,nFat).forEach(s=>{for(let i=0;i<ss/4;i++)fat.push(dv.getUint32(off(s)+i*4,true))});
+  const cadeia=(ini,F)=>{const o=[];let s=ini,g=0;while(s<0xFFFFFFFA&&g++<1e6){o.push(s);s=F[s]}return o};
+  const ler=(ini,tam,F,base,tsz)=>{const ch=cadeia(ini,F),out=new Uint8Array(ch.length*tsz);ch.forEach((s,i)=>out.set(base(s),i*tsz));return out.slice(0,tam)};
+  const setor=s=>u.subarray(off(s),off(s)+ss);
+  const dirB=ler(dirIni,1e9,fat,setor,ss),ents=[];
+  for(let i=0;i+128<=dirB.length;i+=128){const e=new DataView(dirB.buffer,dirB.byteOffset+i,128),nl=e.getUint16(64,true);if(!nl)continue;
+    let n='';for(let k=0;k<nl/2-1;k++)n+=String.fromCharCode(e.getUint16(k*2,true));
+    ents.push({n,t:dirB[i+66],ini:e.getUint32(116,true),tam:e.getUint32(120,true),i:i/128})}
+  const raiz=ents.find(e=>e.t===5);
+  const mini=ler(raiz.ini,raiz.tam,fat,setor,ss);
+  const miniFat=[];cadeia(miniIni,fat).forEach(s=>{for(let i=0;i<ss/4;i++)miniFat.push(dv.getUint32(off(s)+i*4,true))});
+  const stream=n=>{const e=ents.find(x=>x.n===n&&x.t===2);if(!e)return null;
+    return e.tam<corte?ler(e.ini,e.tam,miniFat,s=>mini.subarray(s*mss,s*mss+mss),mss):ler(e.ini,e.tam,fat,setor,ss)};
+  const txt=k=>{let b=stream('__substg1.0_'+k+'001F');if(b)return new TextDecoder('utf-16le').decode(b).replace(/\0+$/,'');
+    b=stream('__substg1.0_'+k+'001E');return b?new TextDecoder('windows-1252').decode(b).replace(/\0+$/,''):''};
+  let corpo=txt('1000');
+  if(!corpo){const h=txt('1013')||(()=>{const b=stream('__substg1.0_10130102');return b?new TextDecoder('utf-8').decode(b):''})();
+    corpo=h.replace(/<(style|script)[\s\S]*?<\/\1>/gi,'').replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(+n))}
+  const cab=txt('007D'),dt=(cab.match(/^Date:\s*(.+)$/mi)||[])[1]||'';
+  return{assunto:txt('0037'),de:txt('0C1A')||txt('5D01'),email:txt('5D01')||txt('0C1F'),data:dt,corpo:corpo.replace(/\r/g,'')}}
+
+
+/* ---------- resumo e utilitários do boletim / aviso ---------- */
+const CORP_P={'N':'#10b981','I':'#fbbf24','II':'#fb923c','III':'#f43f5e','IV':'#c026d3','Não ativado':'#475569'};
+const NOME_P={'N':'Normal','I':'Nível I','II':'Nível II','III':'Nível III','IV':'Nível IV','Não ativado':'não ativado'};
+const CORP_S={'Risco Baixo':'#10b981','Risco Moderado':'#3b82f6','Risco Alto':'#eab308','Risco Elevado':'#f97316','Risco Extremo':'#ef4444','Não ativado':'#475569'};
+const PIR_N={1:'Reduzido',2:'Moderado',3:'Elevado',4:'Muito elevado',5:'Máximo'};
+const SFN_H={'Risco Baixo':'72h','Risco Moderado':'24h','Risco Alto':'12h','Risco Elevado':'6h','Risco Extremo':'imediato'};
+function bolData(B){const m=(B&&B.valido||'').match(/(\d{2})-(\d{2})-(\d{4}) (\d{2}):(\d{2})/);return m?new Date(+m[3],m[2]-1,+m[1],+m[4],+m[5]):null}
+function bolIdade(B){const d=bolData(B);return d?(Date.now()-d.getTime())/3600e3:null}
+function bolIdTxt(B){const h=bolIdade(B);if(h==null)return'';return h<1?'há menos de 1 h':h<48?`há ${Math.round(h)} h`:`há ${Math.round(h/24)} dias`}
+const bolCurto=B=>{const d=bolData(B);return d?`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`:(B.valido||'')};
+const gdhTxt=s=>{const m=String(s).match(/^(\d{2})(\d{2})?(\d{2})?/);return m?`${m[1]}${m[2]?':'+m[2]:''}`:s};
+function planosBraga(B){ // pares título + descrição; resume por concelho
+  const o=[],P=B.planos||[];for(let i=0;i<P.length;i++){if(!/^Despacho/i.test(P[i]))continue;const desc=P[i+1]&&!/^Despacho/i.test(P[i+1])?P[i+1]:'';
+    const t=P[i].replace(/^Despacho N\.º\s*/i,''),c=(desc.match(/Câmara Municipal de ([A-ZÀ-Ú][A-Za-zÀ-ú ]+?)(?:,|\s+(?:Dr|Eng|Sr)\.)/)||[])[1]||'';
+    const prol=/prolongamento até ao dia ([\d/]+)/i.exec(desc);
+    o.push({concelho:c.trim(),titulo:t.replace(/ - Declaração de Situação de Alerta de âmbito Municipal/i,'').trim()+' (alerta municipal)',nota:prol?'prolongada até '+prol[1]:'',texto:desc})}
+  return o}
+function bolOcBraga(B){return(B.oc_rel||[]).filter(o=>/^Braga$/i.test(o.concelho))}
+function bolBragaAtiv(B){const a=B.diops&&B.diops.braga,e=B.decir2&&B.decir2.braga;return{a,e}}
+function bolMeteoCurto(B,max){const cut=(t,n)=>{t=t.replace(/\.$/,'');return t.length>n?t.slice(0,n).replace(/[\s,;]+\S*$/,'')+'…':t};
+  return(B.meteo||[]).map(d=>{const dia=d.dia.replace(/-feira/,''),r=d.pontos.find(p=>/aguaceiro|chuva|trovoada|neve|granizo/i.test(p)),ns=[];
+    d.pontos.filter(p=>/^vento/i.test(p)).forEach(p=>(p.match(/(\d+) ?km\/h/g)||[]).forEach(x=>ns.push(parseInt(x))));const mv=ns.length?Math.max(...ns):0,
+    pts=[r&&cut(r,90),mv>=40&&max>1?'vento até '+mv+' km/h':''].filter(Boolean);return pts.length?`${dia}: ${pts.join('; ')}`:''}).filter(Boolean)}
+function bolProntTexto(B){const P=B.prontidao||{},k=Object.keys(P);const ativos=k.filter(x=>P[x]&&P[x]!=='N'&&P[x]!=='Não ativado'),normais=k.filter(x=>P[x]==='N'),na=k.filter(x=>P[x]==='Não ativado'),sem=k.filter(x=>!P[x]);
+  const L=[];ativos.forEach(x=>L.push(`${x} ${NOME_P[P[x]]}`));if(normais.length)L.push(normais.join(', ')+' Normal');if(na.length)L.push(na.join(', ')+' não ativado');if(sem.length)L.push(sem.join(', ')+': não lido, confirmar no boletim');return L}
+function bolSfnTexto(B){const S=B.sfn||{};return Object.keys(S).map(k=>!S[k]?`${k}: não lido`:S[k]==='Não ativado'?`${k} não ativado`:`${k} ${S[k].replace('Risco ','risco ').toLowerCase()} (${SFN_H[S[k]]})`)}
+/* linhas de texto simples (relatório PDF, email e mensagem) */
+function bolLinhas(B){
+  const L=[],{a,e}=bolBragaAtiv(B),pl=planosBraga(B),pB=pl.filter(x=>/braga/i.test(x.concelho)),oB=bolOcBraga(B);
+  L.push({k:'Prontidão (estados à hora do briefing)',v:bolProntTexto(B).join(' · ')});
+  L.push({k:'Estados de alerta do SFN (AMEC)',v:bolSfnTexto(B).join(' · ')});
+  L.push({k:'Determinações operacionais',v:B.determ.length?B.determ.join(' ').trim():'Nada a referir.'});
+  L.push({k:'Planos de emergência e declarações de alerta',v:pl.length?(pB.length?'Em Braga: '+pB.map(x=>x.titulo).join('; ')+'. ':'Nenhuma para Braga. ')+'Na sub-região: '+pl.map(x=>`${x.concelho||'?'}: ${x.titulo}${x.nota?', '+x.nota:''}`).join('; ')+'.':'Nada a referir.'});
+  if(B.pir)L.push({k:'Perigo de incêndio rural (PIR)',v:`Braga: ${B.pir['Braga']} (${PIR_N[B.pir['Braga']]||''})${Object.values(B.pir).some(v=>v>=3)?' · atenção, há concelhos com PIR elevado ou superior':''}`});
+  if(a)L.push({k:'Atividade operacional em Braga'+(B.diops.periodo?' ('+B.diops.periodo.replace(/NOV26/g,'/11').replace(/(\d{2})0000|(\d{2})2359/g,'$1$2')+')':''),v:`${a[3]} ocorrências (${a[0]} DIOPS, ${a[1]} DECIR, ${a[2]} NRBQ)${B.diops.total?'; sub-região: '+B.diops.total[3]:''}`});
+  if(e)L.push({k:'DECIR, Prontidão Especial Nível II, Braga',v:`${e[0]} ocorrências, ${e[1]} operacionais, ${e[2]} meios terrestres, ${e[3]} meios aéreos`});
+  L.push({k:'Ocorrências relevantes em Braga',v:oB.length?oB.map(o=>`${o.tipo}, ${o.freguesia}${o.danos?' ('+o.danos+')':''}`).join('; '):'Nenhuma no período.'});
+  const ou=(B.oc_rel||[]).filter(o=>!/^Braga$/i.test(o.concelho));if(ou.length)L.push({k:'Ocorrências relevantes na sub-região',v:ou.map(o=>`${o.tipo}, ${o.concelho}${o.danos?' ('+o.danos+')':''}`).join('; ')});
+  if(B.oc_curso.length)L.push({k:'Ocorrências relevantes em curso',v:B.oc_curso.join(' ')});
+  if(B.hidro.length)L.push({k:'Informação hidrológica',v:B.hidro.join(' ')});
+  const mt=bolMeteoCurto(B,3);if(mt.length)L.push({k:'IPMA, próximos dias',v:mt.join(' | ')});
+  if(B.nav&&B.nav.fechadas&&!/^-+$/.test(B.nav.fechadas))L.push({k:'Barras fechadas',v:B.nav.fechadas});
+  if(B.saude.length)L.push({k:'Saúde',v:B.saude.join(' ')});
+  if(B.agentes.length)L.push({k:'Informações aos Agentes de PC',v:B.agentes.join(' ')});
+  if(B.prepos.length)L.push({k:'Pré-posicionamento',v:B.prepos.join(' ')});
+  if(B.legisl.length)L.push({k:'Legislação',v:B.legisl.join(' ')});
+  if(B.outras.length)L.push({k:'Outras informações',v:B.outras.join(' ')});
+  return L}
+/* mensagem WhatsApp para as entidades (grupo CCOM e Agentes de PC) */
+function bolMsg(B){
+  const {a,e}=bolBragaAtiv(B),pl=planosBraga(B),pB=pl.filter(x=>/braga/i.test(x.concelho)),oB=bolOcBraga(B),L=[];
+  L.push(`📋 *BRIEFING CCOS CÁVADO nº${B.numero}* · válido a ${bolCurto(B)} · _RESERVADO, uso interno das entidades_`);
+  L.push(`🚦 *Prontidão:* ${bolProntTexto(B).join(' · ')}`);
+  L.push(`🪖 *SFN:* ${bolSfnTexto(B).join(' · ')}`);
+  if(B.determ.length)L.push(`📌 *Determinações:* ${B.determ.join(' ')}`);
+  L.push(`📜 *Declarações de alerta:* ${pB.length?'Braga: '+pB.map(x=>x.titulo).join('; '):'nenhuma para Braga'}${pl.length&&!pB.length?' (ativas em '+[...new Set(pl.map(x=>x.concelho).filter(Boolean))].join(' e ')+')':''}`);
+  if(B.pir)L.push(`🔥 *PIR Braga:* ${B.pir['Braga']} (${PIR_N[B.pir['Braga']]||''})`);
+  if(a)L.push(`📊 *Braga:* ${a[3]} ocorrências desde ${(B.diops.periodo.match(/^(\d{2})/)||[])[1]||'início do mês'}/11 (${a[0]} DIOPS, ${a[1]} DECIR)${e?`; DECIR EPE II: ${e[0]} oc., ${e[1]} operacionais`:''}`);
+  L.push(`🚨 *Relevantes em Braga:* ${oB.length?oB.map(o=>`${o.tipo.toLowerCase()} em ${o.freguesia}${o.danos?' ('+o.danos+')':''}`).join('; '):'nenhuma'}`);
+  const mt=bolMeteoCurto(B,2);if(mt.length)L.push('🌦️ *IPMA:* '+mt.join(' | '));
+  if(B.hidro.length)L.push('💧 *Hidrologia:* '+B.hidro.join(' '));
+  if(B.agentes.length)L.push('ℹ️ *Aos Agentes de PC:* '+B.agentes.join(' '));
+  const h=bolIdade(B);if(h!=null&&h>30)L.push(`⚠️ Briefing com ${bolIdTxt(B).replace('há ','')}: confirmar se há versão mais recente.`);
+  return L.join('\n')}
+/* ---------- aviso Planoclima ---------- */
+function avData(A){if(!A||!A.data)return null;const d=new Date(A.data);return isNaN(d)?null:d}
+function avIdade(A){const d=avData(A);return d?(Date.now()-d.getTime())/3600e3:null}
+const avDataTxt=A=>{const d=avData(A);return d?new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(d).replace(',',''):''};
+function avPontos(A,curto){ // linhas com o que interessa (precipitação, vento, trovoada, conselhos)
+  const L=String(A.corpo||'').split(/\n/).map(x=>x.trim()).filter(Boolean),o=[];
+  L.forEach(l=>{if(/^-?\s*(PRECIPITA|VENTO)|^DIA\s|^ACONSELH/i.test(l)&&!/^Bom dia|^Enviamos/i.test(l)&&(!curto||!/^ACONSELH/i.test(l)))o.push(l.replace(/\s{2,}/g,' '))});
+  return o.length?o:L.slice(0,6)}
+function avTexto(A,max,curto){const t=avPontos(A,curto).join(' ');return t.length>max?t.slice(0,max-1).replace(/\s\S*$/,'')+'…':t}
+function avMsg(A){const h=avIdade(A);let L=`🌐 *Planoclima (aviso não oficial${avDataTxt(A)?', de '+avDataTxt(A).split(' ')[0]:''}):* ${avTexto(A,420,1)}`;
+  if(h!=null&&h>72)L+=`\n⚠️ Aviso com ${Math.round(h/24)} dias; pode estar desatualizado.`;return L}
+function lerEml(t){const i=t.search(/\r?\n\r?\n/),cab=t.slice(0,i),corpo0=t.slice(i).replace(/^\s+/,'');
+  const h=k=>{const m=cab.match(new RegExp('^'+k+':\\s*((?:.+(?:\\r?\\n[ \\t].+)*))','mi'));return m?m[1].replace(/\r?\n[ \t]+/g,' ').trim():''};
+  const dec=s=>s.replace(/=\?([\w-]+)\?([BQ])\?([^?]*)\?=/gi,(_,cs,e,x)=>{try{if(e.toUpperCase()==='B')return new TextDecoder(cs).decode(Uint8Array.from(atob(x),c=>c.charCodeAt(0)));return new TextDecoder(cs).decode(Uint8Array.from(x.replace(/_/g,' ').replace(/=([0-9A-F]{2})/gi,(m,hx)=>String.fromCharCode(parseInt(hx,16))),c=>c.charCodeAt(0)))}catch(e){return x}});
+  let c=corpo0;if(/quoted-printable/i.test(cab))c=c.replace(/=\r?\n/g,'').replace(/=([0-9A-F]{2})/gi,(m,x)=>String.fromCharCode(parseInt(x,16)));
+  else if(/base64/i.test(cab)){try{c=new TextDecoder().decode(Uint8Array.from(atob(c.replace(/\s/g,'')),x=>x.charCodeAt(0)))}catch(e){}}
+  if(/<html|<div|<p[ >]/i.test(c))c=c.replace(/<(style|script)[\s\S]*?<\/\1>/gi,'').replace(/<br\s*\/?>|<\/(p|div|tr|li)>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&');
+  return{assunto:dec(h('Subject')),de:dec(h('From')),email:(h('From').match(/<([^>]+)>/)||[])[1]||'',data:h('Date'),corpo:c}}
+function avGuardar(A){BOL.av=A;try{localStorage.setItem(AVK,JSON.stringify(A))}catch(e){}bolDesenhar();relRefrescar(true)}
+function bolGuardar(B){BOL.d=B;try{localStorage.setItem(BOLK,JSON.stringify(B))}catch(e){}bolDesenhar();bolAtualizaOpc()}
+function bolCarregar(){try{const a=localStorage.getItem(BOLK);if(a)BOL.d=JSON.parse(a);const b=localStorage.getItem(AVK);if(b)BOL.av=JSON.parse(b)}catch(e){}}
+function bolAtualizaOpc(){['relBol','msgBol'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.d;e.dataset.t=1}});['relAv','msgAv'].forEach(i=>{const e=$(i);if(e&&!e.dataset.t){e.checked=!!BOL.av;e.dataset.t=1}})}
+/* ---------- quadro no painel ---------- */
+function bolDesenhar(){
+  const el=$('bolCorpo');if(!el)return;$('btnBolLimpa').style.display=BOL.d?'':'none';$('btnAvLimpa').style.display=BOL.av?'':'none';
+  let h='';const B=BOL.d;
+  if(!B)h+='<div class="vazio">Carregue o PDF do Boletim Técnico-Operacional do CCOS Cávado (fica só neste navegador; não segue para o repositório nem para a internet).</div>';
+  else{
+    const id=bolIdade(B),vel=id!=null&&id>30;
+    h+=`<div style="margin:2px 0 6px"><b>Boletim nº${esc(B.numero)}</b> · válido a ${esc(B.valido)} <span class="pill" style="background:${vel?'#f43f5e33;color:#fda4af':'#10b98133;color:#6ee7b7'}">${esc(bolIdTxt(B))}${vel?' · confirmar versão mais recente':''}</span></div>`;
+    h+='<div class="bolg"><div><div class="bolt">Estados de prontidão</div>'+Object.keys(B.prontidao).map(k=>{const v=B.prontidao[k]||'?';return`<span class="bolc" style="border-color:${CORP_P[v]||'#64748b'};background:${(CORP_P[v]||'#64748b')+(v==='N'||v==='Não ativado'?'22':'55')}"><b>${esc(k)}</b> ${esc(NOME_P[v]||'não lido')}</span>`}).join('')+'</div>';
+    h+='<div><div class="bolt">Alerta SFN (AMEC)</div>'+Object.keys(B.sfn).map(k=>{const v=B.sfn[k]||'?';return`<span class="bolc" style="border-color:${CORP_S[v]||'#64748b'};background:${(CORP_S[v]||'#64748b')+(v==='Não ativado'?'22':'55')}"><b>${esc(k)}</b> ${v==='Não ativado'?'não ativado':esc(v.replace('Risco ','risco '))+' ('+SFN_H[v]+')'}</span>`}).join('')+'</div></div>';
+    const lin=bolLinhas(B).filter(x=>!/^Prontidão|^Estados de alerta/.test(x.k));
+    h+='<table class="bolt2">'+lin.map(x=>`<tr><th>${esc(x.k)}</th><td>${esc(x.v)}</td></tr>`).join('')+'</table>';
+    if((B.oc_rel||[]).length)h+='<details style="margin-top:6px"><summary>Ocorrências relevantes do período ('+B.oc_rel.length+')</summary><table class="bolt2">'+B.oc_rel.map(o=>`<tr><th>${esc(o.concelho)}${/^Braga$/i.test(o.concelho)?' ★':''}</th><td>${esc(o.tipo)} · ${esc(o.freguesia)} · ${esc(gdhTxt(o.inicio))}h · ${esc(o.meios)}${o.danos?' · <b>'+esc(o.danos)+'</b>':''}${o.outros?' · '+esc(o.outros):''}</td></tr>`).join('')+'</table></details>';
+    if((B.meteo||[]).length)h+='<details style="margin-top:4px"><summary>Informação meteorológica IPMA (no boletim)</summary><table class="bolt2">'+B.meteo.map(d=>`<tr><th>${esc(d.dia)}</th><td>${d.pontos.map(esc).join('<br>')}</td></tr>`).join('')+'</table></details>';
+    if((B.entidades||[]).length)h+='<details style="margin-top:4px"><summary>Entidades presentes no CCOS</summary><table class="bolt2">'+B.entidades.map(x=>`<tr><th>${esc(x.ent)}</th><td>${esc(x.txt)}</td></tr>`).join('')+'</table></details>';
+    h+='<div class="aviso-geral" style="margin-top:4px">Os estados de prontidão e de alerta do SFN estão desenhados a cores no boletim e são lidos pela cor das caixas: <b>confirme sempre no documento original</b>. Os níveis das barragens vêm em imagem e não são lidos.</div>'}
+  const A=BOL.av;h+='<div class="bolt" style="margin-top:10px">Aviso Planoclima (não oficial)</div>';
+  if(!A)h+='<div class="vazio">Carregue o ficheiro do aviso (.msg, .eml ou .txt) ou cole o texto abaixo.</div>';
+  else{const ia=avIdade(A),vel=ia!=null&&ia>72;h+=`<div style="margin:2px 0"><b>${esc(A.assunto||'Aviso')}</b><br><span class="nota">${esc(A.de||'')}${avDataTxt(A)?' · recebido a '+avDataTxt(A):''}</span> ${vel?`<span class="pill" style="background:#f43f5e33;color:#fda4af">com ${Math.round(ia/24)} dias · pode estar desatualizado</span>`:''}</div><div class="aviso-geral" style="color:var(--texto);font-size:11px">${esc(avTexto(A,900))}</div>`}
+  el.innerHTML=h}
+function bolInit(){
+  bolCarregar();bolDesenhar();bolAtualizaOpc();
+  $('fileBol').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const m=$('bolMsg');m.style.color='';m.textContent='A ler o PDF…';
+    try{const B=await lerBoletimPdf(f);if(!B.numero&&!B.valido)throw new Error('não parece um Boletim Técnico-Operacional do CCOS');delete B.fonte;m.textContent='Boletim lido: nº'+B.numero+'. Confirme os estados de prontidão no documento original.';m.style.color='#6ee7b7';
+      const t=BOL.d;BOL.d=null;bolGuardar(B);['relBol','msgBol'].forEach(i=>{$(i).checked=true});relRefrescar(true);if($('msgOv').classList.contains('on'))msgGerar()}
+    catch(err){m.style.color='#fda4af';m.textContent='Não foi possível ler o boletim: '+err.message}};
+  $('btnBolLimpa').onclick=()=>{BOL.d=null;try{localStorage.removeItem(BOLK)}catch(e){}bolDesenhar();relRefrescar(true)};
+  $('fileAv').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;const m=$('bolMsg');
+    try{let A;if(/\.msg$/i.test(f.name))A=lerMsg(await f.arrayBuffer());else{const t=await f.text();A=/^(From|Subject|Date|Received|MIME-Version|X-)[\w-]*:/mi.test(t.slice(0,2000))?lerEml(t):{assunto:f.name.replace(/\.\w+$/,''),de:'',data:'',corpo:t}}
+      if(!(A.corpo||'').trim())throw new Error('sem texto no ficheiro');A.corpo=A.corpo.replace(/\n{3,}/g,'\n\n').trim();avGuardar(A);m.style.color='#6ee7b7';m.textContent='Aviso carregado.'}
+    catch(err){m.style.color='#fda4af';m.textContent='Não foi possível ler o aviso: '+err.message}};
+  $('btnAvTxt').onclick=()=>{const t=$('avTxt').value.trim();if(!t)return;const q=$('avData').value;avGuardar({assunto:'Aviso Planoclima (texto colado)',de:'Planoclima',data:q?new Date(q).toISOString():new Date().toISOString(),corpo:t});$('avTxt').value=''};
+  $('btnAvLimpa').onclick=()=>{BOL.av=null;try{localStorage.removeItem(AVK)}catch(e){}bolDesenhar();relRefrescar(true)};
+  ['relBol','relAv'].forEach(i=>$(i).onchange=()=>relRefrescar(false));['msgBol','msgAv'].forEach(i=>$(i).onchange=msgGerar)}
+
 carregarPrev();
 desenharPrev();
+bolInit();
 criarSat();
 carregarFreguesias().then(carregarAgua);
 carregarOcorrencias();carregarIfp();carregarAvisos();carregarModelos();carregarRio();
@@ -1046,7 +1352,7 @@ function relCcom(d,o){
 function relAtualiza(d,o){
   const t=new Date(d.agora.getTime()+o.at*3600e3),f=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(t).replace(',','');
   return`Previsão de atualização desta informação: dentro de ${o.at} horas (até ${f.replace(' ',', às ')}), ou antes, se a situação o justificar.`}
-function relOpc(){return{n:+$('relNivel').value<0?null:+$('relNivel').value,freg:$('relFreg').checked,oc:$('relOc').checked,med:$('relMed').checked,ccom:$('relCcom').value,per:$('relCcomPer').value.trim(),nota:$('relNota').value.trim(),at:+$('relAtual').value}}
+function relOpc(){return{n:+$('relNivel').value<0?null:+$('relNivel').value,freg:$('relFreg').checked,oc:$('relOc').checked,med:$('relMed').checked,ccom:$('relCcom').value,per:$('relCcomPer').value.trim(),nota:$('relNota').value.trim(),at:+$('relAtual').value,bol:$('relBol').checked&&!!BOL.d,av:$('relAv').checked&&!!BOL.av}}
 function relNivel(d,o){return o.n==null?d.nivAuto:o.n}
 function relAssunto(d,n){
   const p=d.periodos[0];let dest='sem períodos de atenção previstos';
@@ -1057,6 +1363,8 @@ function relEmail(d,o){
   L.push(sd+',','',`Segundo as previsões meteorológicas disponíveis (IPMA e modelos numéricos), com informação no relatório de apoio à decisão do SMPC (em anexo) com a previsão para o concelho de Braga (emitido a ${d.emitido.replace(' às ',', às ')}):`,'','Em resumo:');
   relResumo(d).forEach(l=>L.push('• '+l));L.push('');
   const cc=relCcom(d,o);if(cc){L.push('Informação CCOM:');cc.forEach(l=>L.push(l));L.push('')}
+  if(o.bol){const B=BOL.d;L.push(`Briefing técnico-operacional do CCOS Cávado nº${B.numero} (válido a ${bolCurto(B)}; documento reservado, uso interno das entidades):`);bolLinhas(B).filter(x=>/^(Prontidão|Estados de alerta|Determinações|Planos|Atividade|Ocorrências relevantes em Braga)/.test(x.k)).forEach(x=>L.push('• '+x.k+': '+x.v));L.push('')}
+  if(o.av){L.push('Aviso Planoclima (não oficial'+(avDataTxt(BOL.av)?', de '+avDataTxt(BOL.av).split(' ')[0]:'')+'): '+avTexto(BOL.av,500),'')}
   if(o.med){
     L.push('Efeitos expectáveis:');relEfeitos(d,n).forEach(l=>L.push('• '+l));L.push('');
     L.push('Medidas recomendadas:');relMedGerais(n).forEach(l=>L.push('• '+l));L.push('');
@@ -1091,6 +1399,15 @@ function relPdf(d,o){
   const ls=doc.splitTextToSize(san('Chuva mediana dos modelos por bloco de 6 h (intervalo entre modelos). Prontidão: aviso IPMA laranja ou superior, '+CFG.LIM.proChuva+' mm ou mais no bloco, ou probabilidade de 30 mm em 6 h igual ou superior a 15%. Vigilância: aviso amarelo, '+CFG.LIM.vigChuva+' mm ou mais, rajada P90 de '+CFG.LIM.vigRaj+' km/h ou mais, ou probabilidade de instabilidade forte igual ou superior a 30%. Para além das 48 h a previsão é uma tendência.'),CW);ls.forEach(l=>{T(l,M,y+3);y+=3.2});y+=3;doc.setTextColor(30,41,59);
   sec('Avisos IPMA em vigor e previstos');
   if(!d.av.length)par('Neste momento, sem avisos meteorológicos em vigor nem previstos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.vig?'em vigor':'previsto'} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true));
+  if(o.bol&&BOL.d){const B=BOL.d;if(y>215){doc.addPage();y=16}sec(`Briefing técnico-operacional CCOS Cávado nº${B.numero} (RESERVADO)`);
+    par(`Informação válida a ${B.valido}${bolIdTxt(B)?' ('+bolIdTxt(B)+')':''}. Documento reservado, destinado às entidades do SIOPS; não divulgar ao público.`);
+    const NC={'N':[209,250,229],'I':[254,240,199],'II':[253,215,170],'III':[252,165,165],'IV':[233,180,240],'Não ativado':[226,232,240]};
+    doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
+      head:[['Dispositivo','Estado']],body:[...Object.keys(B.prontidao).map(k=>[k,NOME_P[B.prontidao[k]]||'confirmar no boletim']),...Object.keys(B.sfn).map(k=>['SFN '+k,B.sfn[k]==='Não ativado'?'não ativado':(B.sfn[k]||'confirmar no boletim')])].map(r=>r.map(c=>san(c))),
+      didParseCell:h=>{if(h.section==='body'&&h.column.index===1){const ks=Object.keys(B.prontidao),i=h.row.index,v=i<ks.length?B.prontidao[ks[i]]:'Não ativado';h.cell.styles.fillColor=NC[v]||[255,255,255];h.cell.styles.fontStyle='bold'}}});
+    y=doc.lastAutoTable.finalY+5;
+    bolLinhas(B).filter(x=>!/^Prontidão|^Estados de alerta/.test(x.k)).forEach(x=>par(x.k+': '+x.v,true))}
+  if(o.av&&BOL.av){const A=BOL.av;sec('Aviso Planoclima (não oficial)');par(`${A.assunto||''}${A.de?' · '+A.de:''}${avDataTxt(A)?' · '+avDataTxt(A):''}`);par(avTexto(A,1400))}
   if(o.freg){if(y>120){doc.addPage();y=16}sec('Freguesias a vigiar (próximas 48 h)');
     const h=relMapa(doc,d,M,y,CW,150,falta);y+=h+1;
     par('Nível de risco por freguesia: combina a precipitação prevista, a suscetibilidade da freguesia e o histórico de inundações do SMPC (2022-2026). Indicador relativo; não substitui a cartografia oficial de risco.')}
@@ -1101,7 +1418,7 @@ function relPdf(d,o){
   // rodapé em todas as páginas
   const np=doc.getNumberOfPages();for(let p=1;p<=np;p++){doc.setPage(p);doc.setDrawColor(203,213,225).setLineWidth(.2).line(M,284,W-M,284);doc.setFont('helvetica','normal').setFontSize(7).setTextColor(100,116,139);
     doc.setFontSize(6.4);
-    T('Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec. Grelha de cerca de 25 km; sem observações nem caudais.',M,287);
+    T('Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec'+(o.bol&&BOL.d?'; CCOS Cávado (reservado)':'')+(o.av&&BOL.av?'; Planoclima':'')+(o.bol&&BOL.d||o.av&&BOL.av?'.':'. Grelha de cerca de 25 km; sem observações nem caudais.'),M,287);
     T('Município de Braga / SMPC · Rua do Ferraz, 4700-380 Braga · Tel. +351 253 20 28 61 · protecao.civil@cm-braga.pt',M,290.2);
     T(`A PREVENÇÃO COMEÇA EM CADA UM DE NÓS · ${p}/${np}`,W-M,293.4,{align:'right'})}
   return doc}
@@ -1203,7 +1520,7 @@ const dcurto=s=>DIAS_EXT[new Date(s+':00Z').getUTCDay()].replace('-feira','');
 function msgPeriodo(p){
   if(!p)return'';const a=p.ini,b=p.fim;
   return a.slice(0,10)===b.slice(0,10)?`${dcurto(a)} ${dm(a)}, das ${hh(a)}h às ${hh(b)}h`:`de ${dcurto(a)} ${dm(a)}, ${hh(a)}h, a ${dcurto(b)} ${dm(b)}, ${hh(b)}h`}
-function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom:$('msgCcom').value,per:$('msgPer').value.trim(),nota:$('msgNota').value.trim(),at:+$('msgAt').value,semAc:$('msgSemAc').checked}}
+function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom:$('msgCcom').value,per:$('msgPer').value.trim(),nota:$('msgNota').value.trim(),at:+$('msgAt').value,semAc:$('msgSemAc').checked,bol:$('msgBol').checked&&!!BOL.d,av:$('msgAv').checked&&!!BOL.av}}
 const semAcentos=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[–—]/g,'-');
 function msgAtual(d,o){const t=new Date(d.agora.getTime()+o.at*3600e3),f=x=>new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit'}).format(x),h=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(t);return f(t)===f(d.agora)?'às '+h:'dia '+f(t)+', às '+h}
 function msgFatos(d,o){
@@ -1243,11 +1560,13 @@ function msgEnt(d,o,tipo){
     if(f.n===2)L.push('• Mobilizar SMPC, Bombeiros Sapadores, AGERE, DVEPM e Juntas de Freguesia: limpeza preventiva e vigilância dos sistemas de escoamento.','• Meios em prontidão: máquinas, camião-grua, corte de árvores; ULPC com Equipas de Intervenção.','• Equipas com comunicações alternativas, carregadores e iluminação.');
     else L.push('• Manter equipas em sobreaviso.','• Limpeza preventiva dos sistemas de escoamento nas áreas de cada entidade.');
     L.push('• Reportar ao CCOM: localização exata, descrição, pessoas em risco/vias cortadas e fotografia, se possível.',`• Indicar ao CCOM o ponto de contacto e os meios disponíveis. CCOM: ${CFG.CCOM_TEL||''}.`)}
+  if(tipo==='ccom'&&o.bol)L.push('',bolMsg(BOL.d));
+  if(tipo==='ccom'&&o.av)L.push('',avMsg(BOL.av));
   if(o.nota)L.push('',o.nota);
   L.push('',`🔄 Próxima atualização até ${msgAtual(d,o)}, ou antes se a situação o justificar.`,'Relatório completo em PDF por email.');return L.join('\n')}
 function msgGerar(){
   const d=relDados(),t=$('msgTxt');if(!d){t.value='Os dados da previsão ainda estão a carregar. Tente daqui a pouco.';return}
-  const o=msgOpc();$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];
+  const o=msgOpc();$('msgBolL').style.display=$('msgAvL').style.display=MSG.tab==='ccom'?'':'none';$('msgNivelAuto').textContent='automático: '+NOMEN[d.nivAuto];
   t.value=MSG.tab==='pop'?msgPop(d,o):MSG.tab==='sms'?msgSms(d,o):msgEnt(d,o,MSG.tab);MSG.edit=false;msgConta()}
 function msgConta(){
   const t=$('msgTxt').value,c=$('msgCont');$('msgWa').style.display=MSG.tab==='sms'?'none':'';
