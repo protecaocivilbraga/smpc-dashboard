@@ -197,6 +197,29 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #ctBox button.sec{background:#334155}
 #ctFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#ctBox{width:min(900px,97vw);height:min(92vh,820px)}#ctBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#ctBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#ctBox .tabs button{background:#1e293b;border:1px solid #334155}#ctBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#ctTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#ctCont{font-size:11px;color:#94a3b8}#ctCont.mau{color:#fbbf24}#ctBox .rp{padding:10px 14px;gap:8px}
 #ctBox table{border-collapse:collapse;width:100%;font-size:12px}#ctBox th,#ctBox td{border-bottom:1px solid #1e2b47;padding:3px 5px;text-align:left}#ctBox td input{width:70px!important;padding:2px 4px!important}#ctBox tr.nc td{color:#64748b}#ctTab{overflow:auto;flex:1}#ctBox .rp{overflow:auto}
+#anOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}
+#anOv.on{display:flex}
+#anBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(1180px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#anBox .rh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #334155}
+#anBox h3{margin:0;font-size:15px}
+#anBox .rg{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:0;flex:1;min-height:0}
+#anBox .rc{padding:10px 14px;overflow:auto;border-right:1px solid #334155;display:grid;gap:8px;align-content:start}
+#anBox .rp{display:flex;flex-direction:column;min-height:0}
+#anBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#anBox input:not([type=checkbox]):not([type=radio]),#anBox textarea,#anBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:5px 7px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
+#anBox .rck{display:flex;flex-wrap:wrap;gap:4px 14px}#anBox .rck label,#anBox .ro{display:flex;align-items:center;gap:6px;color:#e2e8f0}
+#anBox .rb{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#anBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:7px 12px;font-size:12px;cursor:pointer}
+#anBox button.lk{background:none;color:#60a5fa;padding:0 0 0 6px;font-size:11px;text-decoration:underline}
+#anBox a{color:#60a5fa;font-size:11px}
+#anBox fieldset{border:1px solid #475569;border-radius:8px;padding:8px 10px;display:grid;gap:6px}
+#anBox legend{font-size:11px;color:#fbbf24;padding:0 4px}
+#anBox .rn{font-size:11px;color:#94a3b8;margin:0}
+@media(max-width:800px){#anBox{height:96vh}#anBox .rg{grid-template-columns:1fr;overflow:auto}#anBox .rc{overflow:visible;border-right:0}#anBox .rp{min-height:320px}#relPdf{min-height:320px}}
+#anBox button.sec{background:#334155}
+#anFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#anBox{width:min(900px,97vw);height:min(92vh,820px)}#anBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#anBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#anBox .tabs button{background:#1e293b;border:1px solid #334155}#anBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#anTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#ctCont{font-size:11px;color:#94a3b8}#ctCont.mau{color:#fbbf24}#anBox .rp{padding:10px 14px;gap:8px}
+#anBox table{border-collapse:collapse;width:100%;font-size:12px}#anBox th,#anBox td{border-bottom:1px solid #1e2b47;padding:3px 5px;text-align:left}#anBox td input{width:70px!important;padding:2px 4px!important}#anBox tr.nc td{color:#64748b}#anTab{overflow:auto;flex:1}#anBox .rp{overflow:auto}
+#faixaAnepc{display:none;padding:7px 14px;border-bottom:1px solid var(--linha);border-left:6px solid var(--anc,#64748b);background:#0b1220;font-size:13px;gap:10px;align-items:center;flex-wrap:wrap}#faixaAnepc.on{display:flex}#faixaAnepc .anE{font-weight:700;color:var(--anc,#e2e8f0)}#faixaAnepc .ex{opacity:.6}
 </style>
 </head>
 <body>
@@ -206,6 +229,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
   </div>
   <div class="mono" id="relogio">--:--:--</div>
+  <button class="btnRel" id="btnAn" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309">Briefing ANEPC</button>
   <button class="btnRel" id="btnCt" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
   <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
   <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
@@ -219,6 +243,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <span><i class="dot load" id="e-hid"></i>Linhas de água <b id="t-hid">…</b></span>
   </div>
 </header>
+<div id="faixaAnepc" role="region" aria-label="Estado do dispositivo ANEPC / CCOSR"></div>
 <div id="faixaAvisos" role="region" aria-label="Avisos IPMA em vigor e previstos"></div>
 
 <main>
@@ -342,6 +367,28 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 </main>
 
 
+<div id="anOv" role="dialog" aria-modal="true" aria-labelledby="anTit"><div id="anBox">
+  <div class="rh"><h3 id="anTit">Briefing do CCOSR / ANEPC e estado de prontidão</h3><button id="anFecha" title="Fechar (Esc)">×</button></div>
+  <div class="rg">
+    <div class="rc">
+      <p class="rn">Anexe o PDF do briefing (ou cole o texto). O painel procura o estado de prontidão e propõe-o; <b>confirme os campos</b> antes de guardar. Fica guardado só neste navegador.</p>
+      <label>Anexar PDF do briefing<input type="file" id="anPdf" accept=".pdf,application/pdf"></label>
+      <label>Estado do dispositivo<select id="anEst"><option value="">Sem estado determinado</option><option value="Normal">Normal</option><option value="Alerta Especial · Nível Azul">Alerta Especial · Nível Azul</option><option value="Alerta Especial · Nível Amarelo">Alerta Especial · Nível Amarelo</option><option value="Alerta Especial · Nível Laranja">Alerta Especial · Nível Laranja</option><option value="Alerta Especial · Nível Vermelho">Alerta Especial · Nível Vermelho</option><option value="Sobreaviso">Sobreaviso</option><option value="Prontidão">Prontidão</option><option value="__o">Outro (escrever abaixo)</option></select></label>
+      <label id="anOutL" style="display:none">Estado (texto livre)<input id="anOut" placeholder="ex.: Prontidão reforçada"></label>
+      <label>Origem e emissão<input id="anOrig" placeholder="ex.: CCOSR Cávado, briefing de 19/11 11h"></label>
+      <label>Período de vigência<input id="anPer" placeholder="ex.: desde 19/11 18h até 22/11 12h"></label>
+      <label>Válido até (opcional; depois disto o painel marca como expirado)<input type="datetime-local" id="anAte"></label>
+      <label>Nota / excerto do briefing<textarea id="anNota" rows="4" placeholder="Frase do briefing que determina o estado"></textarea></label>
+      <label>Texto completo do briefing (opcional; para consulta)<textarea id="anTxt" rows="6" spellcheck="false"></textarea></label>
+    </div>
+    <div class="rp">
+      <div id="anInfo" class="rn"></div>
+      <div id="anPrev"></div>
+      <div class="rb"><button id="anGuarda">Guardar e mostrar</button><button id="anAbrePdf" class="sec" style="display:none">Abrir PDF</button><button id="anRemove" class="sec">Remover</button></div>
+      <div id="anMsg" class="rn" role="status"></div>
+    </div>
+  </div>
+</div></div>
 <div id="ctOv" role="dialog" aria-modal="true" aria-labelledby="ctTit"><div id="ctBox">
   <div class="rh"><h3 id="ctTit">Previsão meteorológica contratada</h3><button id="ctFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
@@ -784,7 +831,7 @@ async function carregarRio(){
 /* ============================== DESENHO ============================== */
 function corNivel(n){return['#10b981','#fbbf24','#f43f5e'][n]}
 function dataAtual(){return S.calc&&S.calc[S.ponto]?S.calc[S.ponto]:null}
-function desenharTudo(){desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao();ctMarca()}
+function desenharTudo(){desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao();ctMarca();anMarca()}
 function desenharKpis(){
   const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');
   const cel=(t,v,s,c)=>`<div class="kpi"><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
@@ -1056,7 +1103,7 @@ function relDados(){
     let oc=null;if(S.ifpRes){const m={};(S.ifp||[]).forEach(o=>{const n=o.natureza||'Outras';m[n]=(m[n]||0)+1});oc={total:S.ifpRes.emCurso!=null?S.ifpRes.emCurso:(S.ifp||[]).length,por:Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6)}}
     return{agora,emitido:`${new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric'}).format(agora)} às ${fmtHM(agora)}`,
       janela:`${dm(S.blocos[0].ini)} ${hh(S.blocos[0].ini)}h a ${dm(S.blocos[X.length-1].fim)} ${hh(S.blocos[X.length-1].fim)}h`,
-      nivAuto,blocos,periodos,av,freg,fregTodas,oc,contr:(S.contr&&S.contr.usar)?{nome:S.contr.nome,emitida:S.contr.emitida,peso:S.contr.peso,div:S.contr.div,texto:S.contr.texto||''}:null,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
+      nivAuto,blocos,periodos,av,freg,fregTodas,oc,anepc:(S.anepc&&S.anepc.est)?{est:S.anepc.est,per:S.anepc.per,orig:S.anepc.orig,nota:S.anepc.nota}:null,contr:(S.contr&&S.contr.usar)?{nome:S.contr.nome,emitida:S.contr.emitida,peso:S.contr.peso,div:S.contr.div,texto:S.contr.texto||''}:null,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
   }finally{S.cen=cen0;S.hor=hor0}
 }
 function relResumo(d){
@@ -1107,6 +1154,7 @@ function relEmail(d,o){
   const n=relNivel(d,o),h=+fmtHM(d.agora).slice(0,2),sd=h<13?'Bom dia':h<20?'Boa tarde':'Boa noite',L=[];
   L.push(sd+',','',`Segundo as previsões meteorológicas disponíveis (IPMA e modelos numéricos), com informação no relatório de apoio à decisão do SMPC (em anexo) com a previsão para o concelho de Braga (emitido a ${d.emitido.replace(' às ',', às ')}):`,'','Em resumo:');
   relResumo(d).forEach(l=>L.push('• '+l));L.push('');
+  if(d.anepc){L.push(`Estado do dispositivo ANEPC/CCOSR: ${d.anepc.est}${d.anepc.per?' ('+d.anepc.per+')':''}${d.anepc.orig?' · '+d.anepc.orig:''}.`,'')}
   if(d.contr){L.push(`Esta previsão incorpora a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' (emitida em '+d.contr.emitida+')':''}.`,'')}
   const cc=relCcom(d,o);if(cc){L.push('Informação CCOM:');cc.forEach(l=>L.push(l));L.push('')}
   if(o.med){
@@ -1133,6 +1181,7 @@ function relPdf(d,o){
   {const hg=relGraficos(doc,d,M,y,CW);y+=hg+3}
   sec('Mensagem-chave');relResumo(d).forEach(l=>par(l,true));
   {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));par(relAtualiza(d,o))}}
+  if(d.anepc){sec('Estado do dispositivo ANEPC / CCOSR');par(`${d.anepc.est}${d.anepc.per?' · '+d.anepc.per:''}${d.anepc.orig?' · '+d.anepc.orig:''}`,true);if(d.anepc.nota)par(d.anepc.nota)}
   if(d.contr){sec('Previsão dedicada contratada');par(`Fornecedor: ${d.contr.nome}${d.contr.emitida?' · emitida em '+d.contr.emitida:''}. Os valores desta previsão foram incorporados no consenso dos modelos, com um peso de ${d.contr.peso} %.`);if(d.contr.div&&d.contr.texto.trim()){doc.setFont('helvetica','italic').setFontSize(8.5);const ls=doc.splitTextToSize(san(d.contr.texto.replace(/\s+/g,' ').trim().slice(0,900)+(d.contr.texto.length>900?' [...]':'')),CW);falta(ls.length*3.8+2);ls.forEach(l=>{T(l,M,y);y+=3.8});y+=1.5;doc.setFont('helvetica','normal')}}
   sec(`Previsão por blocos de 6 h (${d.horas} h)`);
   doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
@@ -1250,6 +1299,48 @@ function abrirRelatorio(){
 function nomePdf(){const a=REL.d?REL.d.agora:new Date();const p=localNaive(a).replace(/[-:T]/g,'');return`Apoio_Decisao_Meteo_Braga_${p.slice(0,8)}_${p.slice(8,12)}.pdf`}
 function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(',')[1]);r.onerror=ko;r.readAsDataURL(b)})}
 
+
+
+/* ============ Briefing CCOSR / ANEPC: estado de prontidão determinado (só neste navegador) ============ */
+const AN={pdfUrl:null,pdfNome:''};
+try{S.anepc=JSON.parse(localStorage.getItem('smpc_anepc')||'null')}catch(e){S.anepc=null}
+const anCor=e=>{e=(e||'').toLowerCase();return/vermelho/.test(e)?'#dc2626':/laranja/.test(e)?'#f97316':/amarelo|sobreaviso/.test(e)?'#f59e0b':/azul/.test(e)?'#3b82f6':/prontid/.test(e)?'#f97316':/normal/.test(e)?'#10b981':'#94a3b8'};
+function anExtrair(t){
+  const T=t.replace(/ /g,' ').replace(/[ \t]+/g,' '),fr=T.split(/(?<=[.!?])\s+|\n+/).map(x=>x.trim()).filter(Boolean),res={est:'',nota:'',per:''};
+  const niv=x=>{const m=x.match(/\b(azul|amarelo|laranja|vermelho)\b/i);return m?m[1][0].toUpperCase()+m[1].slice(1).toLowerCase():''};
+  let f=fr.find(x=>/alerta\s+especial/i.test(x)&&niv(x));
+  if(f){res.est='Alerta Especial · Nível '+niv(f);res.nota=f}
+  else if((f=fr.find(x=>/n[íi]vel\s+(azul|amarelo|laranja|vermelho)/i.test(x)&&/(alerta|prontid|dispositivo|ccosr|anepc)/i.test(x)))){res.est='Alerta Especial · Nível '+niv(f.match(/n[íi]vel\s+(azul|amarelo|laranja|vermelho)/i)[0]);res.nota=f}
+  else if((f=fr.find(x=>/prontid[ãa]o/i.test(x)))){res.est='Prontidão';res.nota=f}
+  else if((f=fr.find(x=>/sobreaviso/i.test(x)))){res.est='Sobreaviso';res.nota=f}
+  if(res.nota.length>400)res.nota=res.nota.slice(0,400)+' [...]';
+  const m=T.match(/(?:desde|a partir d[aeo]s?|entre)\s[^.]{0,40}?\d{1,2}[h:][^.]{0,70}(?:at[ée]|e)\s[^.]{0,50}?\d{1,2}[h:]?[^.\n]{0,25}/i);if(m)res.per=m[0].trim();
+  const o=T.match(/(CCOSR[^.\n]{0,40}|Comando Sub-?[Rr]egional[^.\n]{0,40})/i);if(o)res.orig=o[1].trim();
+  return res}
+function anMarca(){
+  const e=$('faixaAnepc');if(!e)return;const a=S.anepc;
+  if(!a||!a.est){e.className='';e.innerHTML='';return}
+  const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16),cor=anCor(a.est);
+  e.style.setProperty('--anc',cor);e.className='on';
+  e.innerHTML=`<span>Estado do dispositivo ANEPC/CCOSR:</span> <span class="anE">${esc(a.est)}</span>${exp?' <span class="ex">(expirado)</span>':''}${a.per?` <span class="mono">${esc(a.per)}</span>`:''}${a.orig?` <span class="mono ex">${esc(a.orig)}</span>`:''}${a.nota?`<span style="flex-basis:100%;font-size:12px;color:#cbd5e1">${esc(a.nota.length>260?a.nota.slice(0,260)+'…':a.nota)}</span>`:''}`}
+function anPreencher(r){if(r.est){$('anEst').value=r.est}if(r.orig&&!$('anOrig').value)$('anOrig').value=r.orig;if(r.per&&!$('anPer').value)$('anPer').value=r.per;if(r.nota&&!$('anNota').value)$('anNota').value=r.nota;$('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'}
+function anAbrir(){const a=S.anepc;$('anOv').classList.add('on');
+  if(a&&!$('anOrig').dataset.on){$('anOrig').dataset.on=1;const lista=[...$('anEst').options].map(o=>o.value);if(lista.includes(a.est))$('anEst').value=a.est;else{$('anEst').value='__o';$('anOut').value=a.est}$('anOrig').value=a.orig||'';$('anPer').value=a.per||'';$('anNota').value=a.nota||'';$('anTxt').value=a.texto||'';$('anAte').value=a.ate||''}
+  $('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'}
+$('btnAn').onclick=anAbrir;$('anFecha').onclick=()=>$('anOv').classList.remove('on');$('anEst').onchange=()=>{$('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'};
+$('anPdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;const m=$('anMsg');m.style.color='';m.textContent='A ler o PDF…';
+  try{if(AN.pdfUrl)URL.revokeObjectURL(AN.pdfUrl);AN.pdfUrl=URL.createObjectURL(f);AN.pdfNome=f.name;$('anAbrePdf').style.display='';
+    const t=await ctLerPdf(f);$('anTxt').value=t;const r=anExtrair(t);$('anEst').value='';$('anNota').value='';$('anPer').value='';anPreencher(r);
+    m.style.color=r.est?'#6ee7b7':'#fbbf24';m.textContent=r.est?`Encontrei o estado "${r.est}". Confirme a frase e os campos e carregue em Guardar.`:(t.trim()?'Não encontrei um estado de prontidão no texto. Escolha-o na lista e escreva a nota.':'O PDF não tem texto selecionável (pode ser imagem). Escolha o estado na lista.')}
+  catch(err){m.style.color='#fca5a5';m.textContent='Não consegui ler o PDF: '+err.message+'. Escolha o estado na lista.'}e.target.value=''};
+let anT=null;$('anTxt').oninput=()=>{clearTimeout(anT);anT=setTimeout(()=>{if($('anEst').value)return;const r=anExtrair($('anTxt').value);anPreencher(r);$('anMsg').style.color=r.est?'#6ee7b7':'';$('anMsg').textContent=r.est?`Encontrei o estado "${r.est}". Confirme e guarde.`:''},500)};
+$('anAbrePdf').onclick=()=>{if(AN.pdfUrl)window.open(AN.pdfUrl,'_blank','noopener')};
+$('anGuarda').onclick=()=>{
+  const v=$('anEst').value,est=v==='__o'?$('anOut').value.trim():v;
+  S.anepc=est?{est,orig:$('anOrig').value.trim(),per:$('anPer').value.trim(),nota:$('anNota').value.trim(),ate:$('anAte').value,texto:$('anTxt').value,pdf:AN.pdfNome,guardado:new Date().toISOString()}:null;
+  try{if(S.anepc)localStorage.setItem('smpc_anepc',JSON.stringify(S.anepc));else localStorage.removeItem('smpc_anepc')}catch(e){}
+  anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent=est?'Estado guardado e mostrado no painel. Passa também para o relatório e para as mensagens.':'Sem estado: a faixa foi retirada.'};
+$('anRemove').onclick=()=>{S.anepc=null;try{localStorage.removeItem('smpc_anepc')}catch(e){}['anEst','anOut','anOrig','anPer','anAte','anNota','anTxt'].forEach(i=>$(i).value='');$('anOrig').dataset.on='';anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent='Removido.'};
 
 /* ============ Previsão meteorológica contratada (texto/PDF, só neste navegador) ============ */
 const CT={draft:{},notas:[]};
@@ -1399,6 +1490,7 @@ function msgEnt(d,o,tipo){
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
     f.ipma.forEach(x=>L.push('⚠️ '+x));
     if(tipo==='ccom'){const b=msgBlocos(d);if(b.length)L.push('','*Blocos de 6 h:*',...b)}}
+  if(d.anepc)L.push(`🛡️ *ANEPC/CCOSR:* ${d.anepc.est}${d.anepc.per?' ('+d.anepc.per+')':''}`);
   if(d.contr)L.push('',`📑 Inclui a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' ('+d.contr.emitida+')':''}.`);
   if(cc){L.push('',`🏛️ *CCOM:* ${cc[0]}`)}
   if(f.n>=1&&f.p){L.push('','*Medidas:*');
@@ -1455,7 +1547,7 @@ $('relOutlook').onclick=async()=>{
   location.href=url};
 $('relCcom').onchange=()=>{$('relPerL').style.display=$('relCcom').value==='ativo'?'grid':'none';relRefrescar(false)};
 $('relCcomPer').oninput=()=>relRefrescar(true);$('relAtual').onchange=()=>relRefrescar(false);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('ctOv').classList.remove('on');$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('anOv').classList.remove('on');$('ctOv').classList.remove('on');$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
 
 </script>
 <script>if('serviceWorker' in navigator&&location.protocol==='https:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
