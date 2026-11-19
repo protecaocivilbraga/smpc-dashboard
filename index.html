@@ -1139,7 +1139,7 @@ function relDados(){
     const nivAuto=Math.max(0,...niv.slice(0,8));
     const blocos=S.blocos.map((b,k)=>{const x=X[k];return{rot:`${dow(b.ini)} ${dm(b.ini)} · ${hh(b.ini)}-${hh(b.fim)}h`,mm:x.chuva,min:x.min,max:x.max,raj:x.raj90,n:niv[k],conf:x.conf,k}});
     const periodos=[];let i=0;
-    while(i<X.length){if(niv[i]<1){i++;continue}let j=i,mx=0,pk=i;while(j<X.length&&niv[j]>=1){mx=Math.max(mx,niv[j]);if(X[j].chuva>X[pk].chuva)pk=j;j++}
+    while(i<X.length){if(niv[i]<1){i++;continue}let j=i,mx=0,pk=i;while(j<X.length&&niv[j]===niv[i]){mx=Math.max(mx,niv[j]);if(X[j].chuva>X[pk].chuva)pk=j;j++}
       periodos.push({ini:S.blocos[i].ini,fim:S.blocos[j-1].fim,n:mx,pico:X[pk],k0:i,rajMax:Math.max(...X.slice(i,j).map(x=>x.raj90))});i=j}
     const av=avisosOrd().map(a=>({tipo:a.tipo,n:a.nivel,ini:a.inicio,fim:a.fim,texto:a.texto||'',vig:avVigor(a)}));
     // freguesias a vigiar nas próximas 48 h (consenso), sem alterar o que o utilizador vê
@@ -1156,8 +1156,9 @@ function relResumo(d){
   if(!d.av.length)L.push('Neste momento não há avisos do IPMA em vigor nem previstos para Braga.');
   else d.av.slice(0,5).forEach(a=>L.push(`Aviso IPMA ${NOME_IPMA[a.n]} (${a.vig?'em vigor':'previsto'}): ${a.tipo}, de ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}.`));
   if(!d.periodos.length)L.push(`Nas próximas ${d.horas} h não se prevê nenhum período que atinja o nível de Vigilância.`);
-  d.periodos.forEach(p=>{const dia=DIAS_EXT[new Date(p.ini+':00Z').getUTCDay()];
-    L.push(`${dia[0].toUpperCase()+dia.slice(1)} ${dm(p.ini)}, das ${hh(p.ini)}h às ${hh(p.fim)}h: nível de ${NOMEN[p.n]} proposto; pico de cerca de ${Math.round(p.pico.chuva)} mm em 6 h (${Math.round(p.pico.min)} a ${Math.round(p.pico.max)} mm entre modelos), rajada P90 até ${Math.round(p.rajMax)} km/h${p.k0>=8?' (tendência, maior incerteza)':''}.`)});
+  d.periodos.forEach(p=>{const dn=t=>{const x=DIAS_EXT[new Date(t+':00Z').getUTCDay()];return x[0].toUpperCase()+x.slice(1)};
+    const quando=p.ini.slice(0,10)===p.fim.slice(0,10)?`${dn(p.ini)} ${dm(p.ini)}, das ${hh(p.ini)}h às ${hh(p.fim)}h`:`De ${dn(p.ini).toLowerCase()} ${dm(p.ini)}, às ${hh(p.ini)}h, a ${dn(p.fim).toLowerCase()} ${dm(p.fim)}, às ${hh(p.fim)}h`;
+    L.push(`${quando}: Nível recomendado: ${NOMEN[p.n]}; pico de cerca de ${Math.round(p.pico.chuva)} mm em 6 h (${Math.round(p.pico.min)} a ${Math.round(p.pico.max)} mm entre modelos), rajada P90 até ${Math.round(p.rajMax)} km/h${p.k0>=8?' (tendência, maior incerteza)':''}.`)});
   L.push(`O total previsto em 48 h é de cerca de ${Math.round(d.total48.cons)} mm, com um intervalo entre modelos de ${Math.round(d.total48.min)} a ${Math.round(d.total48.max)} mm; máximo em 24 h consecutivas: ${Math.round(d.max24.cons)} mm.`);
   return L}
 function relEfeitos(d,n){
@@ -1189,7 +1190,7 @@ function relCcom(d,o){
 function relAtualiza(d,o){
   const t=new Date(d.agora.getTime()+o.at*3600e3),f=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(t).replace(',','');
   return`Previsão de atualização desta informação: dentro de ${o.at} horas (até ${f.replace(' ',', às ')}), ou antes, se a situação o justificar.`}
-const REL_SECS=[['nivel','Caixa do nível proposto'],['gsem','Gráfico: semáforo por blocos'],['gchuva','Gráfico: chuva por bloco'],['graj','Gráfico: rajada máxima'],['grio','Gráfico: caudal modelado'],['resumo','Mensagem-chave',1],['ccom','Informação CCOM'],['atual','Previsão de atualização da informação'],['anepc','Estados de prontidão ANEPC / CCOSR'],['contr','Previsão dedicada contratada'],['blocos','Tabela de previsão por blocos'],['critP','Nota dos critérios (por baixo da tabela)'],['avisos','Avisos IPMA'],['freg','Mapa e freguesias a vigiar'],['oc','Ocorrências em curso'],['efeitos','Efeitos expectáveis',1],['medG','Medidas recomendadas',1],['medE','Mobilização de meios e recursos (entidades)',1],['fontes','Rodapé: linha de fontes'],['contacto','Rodapé: morada e contacto']];
+const REL_SECS=[['nivel','Caixa do nível recomendado'],['gsem','Gráfico: semáforo por blocos'],['gchuva','Gráfico: chuva por bloco'],['graj','Gráfico: rajada máxima'],['grio','Gráfico: caudal modelado'],['resumo','Mensagem-chave',1],['ccom','Informação CCOM'],['atual','Previsão de atualização da informação'],['anepc','Estados de prontidão ANEPC / CCOSR'],['contr','Previsão dedicada contratada'],['blocos','Tabela de previsão por blocos'],['critP','Nota dos critérios (por baixo da tabela)'],['avisos','Avisos IPMA'],['freg','Mapa e freguesias a vigiar'],['oc','Ocorrências em curso'],['efeitos','Efeitos expectáveis',1],['medG','Medidas recomendadas',1],['medE','Mobilização de meios e recursos (entidades)',1],['fontes','Rodapé: linha de fontes'],['contacto','Rodapé: morada e contacto']];
 const REL_LST={sel:{},ex:new Set()};
 try{const j=JSON.parse(localStorage.getItem('smpc_rel_sel')||'null');if(j){REL_LST.sel=j.sel||{};REL_LST.ex=new Set(j.ex||[])}}catch(e){}
 const sx=(o,k)=>!o.s||o.s[k]!==false;
@@ -1206,9 +1207,9 @@ function relItens(d,n){const m={resumo:relResumo(d),efeitos:relEfeitos(d,n),medG
 function relOpc(){return{s:Object.assign({},REL_LST.sel),ex:REL_LST.ex,n:+$('relNivel').value<0?null:+$('relNivel').value,ccom:$('relCcom').value,per:$('relCcomPer').value.trim(),nota:$('relNota').value.trim(),at:+$('relAtual').value}}
 function relNivel(d,o){return o.n==null?d.nivAuto:o.n}
 function relAssunto(d,n){
-  const p=d.periodos[0];let dest='sem períodos de atenção previstos';
+  const p=d.periodos.find(q=>q.n===d.nivAuto)||d.periodos[0];let dest='sem períodos de atenção previstos';
   if(p){const dia=DIAS_EXT[new Date(p.ini+':00Z').getUTCDay()];dest=`atenção a ${dia} ${dm(p.ini)}, ${periodoDia(+hh(p.ini))}`}
-  return`Proteção Civil | Previsão a ${d.horas} h para Braga${n===2?': Prontidão proposta,':':'} ${dest}`.replace(',,',',')}
+  return`Proteção Civil | Previsão a ${d.horas} h para Braga${n===2?': Prontidão recomendada,':':'} ${dest}`.replace(',,',',')}
 function relEmail(d,o){
   const n=relNivel(d,o),h=+fmtHM(d.agora).slice(0,2),sd=h<13?'Bom dia':h<20?'Boa tarde':'Boa noite',L=[];
   L.push(sd+',','',`Segundo as previsões meteorológicas disponíveis (IPMA e modelos numéricos), com informação no relatório de apoio à decisão do SMPC (em anexo) com a previsão para o concelho de Braga (emitido a ${d.emitido.replace(' às ',', às ')}):`,'');
@@ -1234,16 +1235,10 @@ function relPdf(d,o){
   doc.setFillColor(...AZ).rect(0,0,W,29,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(8.5);T('CENTRO DE COORDENAÇÃO OPERACIONAL MUNICIPAL | SERVIÇO MUNICIPAL DE PROTEÇÃO CIVIL',M,8.5);
   doc.setFontSize(15);T('Apoio à Decisão · Resumo operacional',M,17.5);doc.setFont('helvetica','normal').setFontSize(9);T('Concelho de Braga · Janela: '+d.janela,M,24.5);
   T('Emitido a '+d.emitido,W-M,24.5,{align:'right'});
-  y=35;if(sx(o,'nivel')){doc.setTextColor(100,116,139).setFontSize(8);T('Proposta de nível a validar pelo CorMPC · não substitui os avisos do IPMA nem da ANEPC',M,y);y+=5;
-  doc.setFillColor(...COR[n]).roundedRect(M,y,CW,9,1.5,1.5,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(11);T('NÍVEL PROPOSTO: '+NOMEN[n].toUpperCase()+(o.n!=null?' (definido pelo CorMPC)':''),M+4,y+6.1);y+=14}doc.setTextColor(30,41,59);
+  y=35;if(sx(o,'nivel')){doc.setTextColor(100,116,139).setFontSize(8);T('Nível recomendado, a validar pelo CorMPC · não substitui os avisos do IPMA nem da ANEPC',M,y);y+=5;
+  doc.setFillColor(...COR[n]).roundedRect(M,y,CW,9,1.5,1.5,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(11);T('NÍVEL RECOMENDADO: '+NOMEN[n].toUpperCase()+(o.n!=null?' (definido pelo CorMPC)':''),M+4,y+6.1);y+=14}doc.setTextColor(30,41,59);
   {const hg=relGraficos(doc,d,M,y,CW,{sem:sx(o,'gsem'),chuva:sx(o,'gchuva'),raj:sx(o,'graj'),rio:sx(o,'grio')});if(hg)y+=hg+3}
   if(sx(o,'resumo')){const l=ft(o,'resumo',relResumo(d));if(l.length){sec('Mensagem-chave');l.forEach(x=>par(x,true))}}
-  {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));if(sx(o,'atual'))par(relAtualiza(d,o))}else if(sx(o,'atual')){sec('Atualização da informação');par(relAtualiza(d,o))}}
-  if(d.anepc&&sx(o,'anepc')){sec('Estados de prontidão ANEPC / CCOSR');const ds=d.anepc.disp?AN_DISP.filter(([k])=>d.anepc.disp[k]):[];
-    if(ds.length){falta(24);doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.5,cellPadding:1.6,halign:'center',textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},head:[ds.map(([k])=>k)],body:[ds.map(([k])=>san(AN_CURTO[d.anepc.disp[k]]))],
-      didParseCell:h=>{if(h.section==='body'){const v=d.anepc.disp[ds[h.column.index][0]];h.cell.styles.fillColor={N:[255,255,255],I:[192,192,192],II:[128,128,128],III:[64,64,64],IV:[0,0,0],X:[235,235,235]}[v];h.cell.styles.textColor=['II','III','IV'].includes(v)?[255,255,255]:[30,41,59];h.cell.styles.fontStyle='bold'}}});y=doc.lastAutoTable.finalY+2}
-    else par(d.anepc.est||'',true);
-    if(d.anepc.orig)par(d.anepc.orig)}
   if(d.contr&&sx(o,'contr')){sec('Previsão dedicada contratada');par(`Fornecedor: ${d.contr.nome}${d.contr.emitida?' · emitida em '+d.contr.emitida:''}. Os valores desta previsão foram incorporados no consenso dos modelos, com um peso de ${d.contr.peso} %.`);if(d.contr.div&&d.contr.texto.trim()){doc.setFont('helvetica','italic').setFontSize(8.5);const ls=doc.splitTextToSize(san(d.contr.texto.replace(/\s+/g,' ').trim().slice(0,900)+(d.contr.texto.length>900?' [...]':'')),CW);falta(ls.length*3.8+2);ls.forEach(l=>{T(l,M,y);y+=3.8});y+=1.5;doc.setFont('helvetica','normal')}}
   if(sx(o,'blocos')){sec(`Previsão por blocos de 6 h (${d.horas} h)`);
   doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
@@ -1255,6 +1250,12 @@ function relPdf(d,o){
   const ls=doc.splitTextToSize(san('Chuva mediana dos modelos por bloco de 6 h (intervalo entre modelos). Prontidão: aviso IPMA laranja ou superior, '+CFG.LIM.proChuva+' mm ou mais no bloco, ou probabilidade de 30 mm em 6 h igual ou superior a 15%. Vigilância: aviso amarelo, '+CFG.LIM.vigChuva+' mm ou mais, rajada P90 de '+CFG.LIM.vigRaj+' km/h ou mais, ou probabilidade de instabilidade forte igual ou superior a 30%. Para além das 48 h a previsão é uma tendência.'),CW);ls.forEach(l=>{T(l,M,y+3);y+=3.2});y+=3;doc.setTextColor(30,41,59)}}
   if(sx(o,'avisos')){sec('Avisos IPMA em vigor e previstos');
   if(!d.av.length)par('Neste momento, sem avisos meteorológicos em vigor nem previstos para Braga.');else d.av.forEach(a=>par(`${NOME_IPMA[a.n][0].toUpperCase()+NOME_IPMA[a.n].slice(1)} · ${a.vig?'em vigor':'previsto'} · ${a.tipo} · ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}${a.texto?' - '+String(a.texto).replace(/\s+/g,' ').slice(0,200):''}`,true))}
+  {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));if(sx(o,'atual'))par(relAtualiza(d,o))}else if(sx(o,'atual')){sec('Atualização da informação');par(relAtualiza(d,o))}}
+  if(d.anepc&&sx(o,'anepc')){sec('Estados de prontidão ANEPC / CCOSR');const ds=d.anepc.disp?AN_DISP.filter(([k])=>d.anepc.disp[k]):[];
+    if(ds.length){falta(24);doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.5,cellPadding:1.6,halign:'center',textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},head:[ds.map(([k])=>k)],body:[ds.map(([k])=>san(AN_CURTO[d.anepc.disp[k]]))],
+      didParseCell:h=>{if(h.section==='body'){const v=d.anepc.disp[ds[h.column.index][0]];h.cell.styles.fillColor={N:[255,255,255],I:[192,192,192],II:[128,128,128],III:[64,64,64],IV:[0,0,0],X:[235,235,235]}[v];h.cell.styles.textColor=['II','III','IV'].includes(v)?[255,255,255]:[30,41,59];h.cell.styles.fontStyle='bold'}}});y=doc.lastAutoTable.finalY+2}
+    else par(d.anepc.est||'',true);
+    if(d.anepc.orig)par(d.anepc.orig)}
   if(sx(o,'freg')){if(y>120){doc.addPage();y=16}sec('Freguesias a vigiar (próximas 48 h)');
     const h=relMapa(doc,d,M,y,CW,150,falta);y+=h+1;
     par('Nível de risco por freguesia: combina a precipitação prevista, a suscetibilidade da freguesia e o histórico de inundações do SMPC (2022-2026). Indicador relativo; não substitui a cartografia oficial de risco.')}
@@ -1407,7 +1408,7 @@ function munMarca(){
   const X=C.blocos,n=Math.max(0,...X.slice(0,8).map((_,i)=>nivelGeral(X,i)));
   const cor=['#10b981','#f59e0b','#ef4444'],txt=['#052e1c','#3b2300','#fff'],nm=['Normal','Vigilância','Prontidão'];
   e.style.setProperty('--mc',cor[n]);
-  e.innerHTML=`<span>Estados de prontidão do Município:</span> ${nm.map((t,i)=>`<span style="${i===n?`background:${cor[i]};color:${txt[i]};border:1px solid ${cor[i]}`:'background:#0b1220;color:#64748b;border:1px solid #334155'};border-radius:5px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap">${t}</span>`).join(' ')} <span class="ex" style="font-size:12px;opacity:.7">proposto pelo painel (pior nível nas próximas 48 h) · a validar pelo CorMPC</span>`}
+  e.innerHTML=`<span>Estados de prontidão do Município:</span> ${nm.map((t,i)=>`<span style="${i===n?`background:${cor[i]};color:${txt[i]};border:1px solid ${cor[i]}`:'background:#0b1220;color:#64748b;border:1px solid #334155'};border-radius:5px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap">${t}</span>`).join(' ')} <span class="ex" style="font-size:12px;opacity:.7">recomendado pelo painel (pior nível nas próximas 48 h) · a validar pelo CorMPC</span>`}
 function anMarca(){
   const e=$('faixaAnepc');if(!e)return;const a=S.anepc;
   if(!a||(!a.est&&!a.disp)){e.className='';e.innerHTML='';return}
@@ -1553,7 +1554,7 @@ function msgOpc(){return{n:+$('msgNivel').value<0?null:+$('msgNivel').value,ccom
 const semAcentos=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/[–—]/g,'-');
 function msgAtual(d,o){const t=new Date(d.agora.getTime()+o.at*3600e3),f=x=>new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit'}).format(x),h=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,hour:'2-digit',minute:'2-digit'}).format(t);return f(t)===f(d.agora)?'às '+h:'dia '+f(t)+', às '+h}
 function msgFatos(d,o){
-  const n=o.n==null?d.nivAuto:o.n,p=d.periodos[0],av=d.av[0];
+  const n=o.n==null?d.nivAuto:o.n,p=d.periodos.find(q=>q.n===d.nivAuto)||d.periodos[0],av=d.av[0];
   return{n,p,per:msgPeriodo(p),pico:p?Math.round(p.pico.chuva):0,raj:p?Math.round(p.rajMax):0,m24:Math.round(d.max24.cons),
     forte:p&&p.pico.chuva>=20,vento:p&&p.rajMax>=60,
     ipma:d.av.slice(0,3).map(a=>`Aviso ${NOME_IPMA[a.n]} do IPMA (${a.vig?'em vigor':'previsto'}): ${a.tipo.toLowerCase()}, de ${dm(a.ini)} ${a.ini.slice(11,16)} a ${dm(a.fim)} ${a.fim.slice(11,16)}.`)}}
@@ -1579,7 +1580,7 @@ function msgSms(d,o){
 function msgBlocos(d){return d.blocos.filter(b=>b.n>=1||b.mm>=1).slice(0,8).map(b=>`• ${b.rot.replace(' · ',' ')}: ${Math.round(b.mm)} mm, rajada ${Math.round(b.raj)} km/h, ${NOMEN[b.n]}`)}
 function msgEnt(d,o,tipo){
   const f=msgFatos(d,o),E=['🟢','🟡','🔴'][f.n],cc=relCcom(d,{ccom:o.ccom,per:o.per,nota:''});
-  const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,`*Nível proposto: ${NOMEN[f.n].toUpperCase()}* · ${d.emitido.replace(' às ',', ')}`,''];
+  const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,`*Nível recomendado: ${NOMEN[f.n].toUpperCase()}* · ${d.emitido.replace(' às ',', ')}`,''];
   if(!f.p)L.push('Sem períodos de Vigilância ou Prontidão previstos nas próximas '+d.horas+' h. Mantém-se a monitorização.');
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
     f.ipma.forEach(x=>L.push('⚠️ '+x));
