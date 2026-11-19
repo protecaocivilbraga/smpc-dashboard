@@ -366,10 +366,14 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
   <div class="rh"><h3 id="anTit">Briefing do CCOSR / ANEPC e estado de prontidão</h3><button id="anFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
     <div class="rc">
-      <p class="rn">Anexe o PDF do briefing (ou cole o texto). O painel procura o estado de prontidão e propõe-o; <b>confirme os campos</b> antes de guardar. Fica guardado só neste navegador.</p>
+      <p class="rn">Anexe o PDF do briefing (ou cole o texto). O painel tenta ler o sombreado das células de cada dispositivo; <b>confirme sempre</b> os estados antes de guardar. Fica guardado só neste navegador.</p>
       <label>Anexar PDF do briefing<input type="file" id="anPdf" accept=".pdf,application/pdf"></label>
-      <label>Estado do dispositivo<select id="anEst"><option value="">Sem estado determinado</option><option value="Normal">Normal</option><option value="Prontidão · Nível I">Prontidão · Nível I</option><option value="Prontidão · Nível II">Prontidão · Nível II</option><option value="Prontidão · Nível III">Prontidão · Nível III</option><option value="Prontidão · Nível IV">Prontidão · Nível IV</option><option value="Prontidão">Prontidão (nível por indicar)</option><option value="__o">Outro (escrever abaixo)</option></select></label>
-      <label id="anOutL" style="display:none">Estado (texto livre)<input id="anOut" placeholder="ex.: Prontidão reforçada"></label>
+      <p class="rn" style="margin:2px 0">Estado de cada dispositivo no briefing (cor das células: branco = Normal; cinzentos e preto = Nível I a IV; ponteado = não ativado / não aplicável).</p>
+      <label title="Dispositivo Integrado de Operações de Proteção e Socorro">DIOPS<select id="anD0"><option value="">Não indicado</option><option value="N">Prontidão Normal</option><option value="I">Prontidão Nível I</option><option value="II">Prontidão Nível II</option><option value="III">Prontidão Nível III</option><option value="IV">Prontidão Nível IV</option><option value="X">Não ativado / Não aplicável</option></select></label>
+      <label title="Dispositivo Especial de Combate a Incêndios Rurais">DECIR<select id="anD1"><option value="">Não indicado</option><option value="N">Prontidão Normal</option><option value="I">Prontidão Nível I</option><option value="II">Prontidão Nível II</option><option value="III">Prontidão Nível III</option><option value="IV">Prontidão Nível IV</option><option value="X">Não ativado / Não aplicável</option></select></label>
+      <label title="Dispositivo Integrado de Operações Nucleares, Radiológicas, Biológicas e Químicas">DIONRBQ<select id="anD2"><option value="">Não indicado</option><option value="N">Prontidão Normal</option><option value="I">Prontidão Nível I</option><option value="II">Prontidão Nível II</option><option value="III">Prontidão Nível III</option><option value="IV">Prontidão Nível IV</option><option value="X">Não ativado / Não aplicável</option></select></label>
+      <label title="Dispositivo Integrado de Resposta a Acidentes com Aeronaves">DIRACAERO<select id="anD3"><option value="">Não indicado</option><option value="N">Prontidão Normal</option><option value="I">Prontidão Nível I</option><option value="II">Prontidão Nível II</option><option value="III">Prontidão Nível III</option><option value="IV">Prontidão Nível IV</option><option value="X">Não ativado / Não aplicável</option></select></label>
+      <label title="Dispositivo Conjunto de Defesa da Floresta Contra Incêndios no Parque Nacional da Peneda-Gerês">DCDFCI-PNPG<select id="anD4"><option value="">Não indicado</option><option value="N">Prontidão Normal</option><option value="I">Prontidão Nível I</option><option value="II">Prontidão Nível II</option><option value="III">Prontidão Nível III</option><option value="IV">Prontidão Nível IV</option><option value="X">Não ativado / Não aplicável</option></select></label>
       <label>Origem e emissão<input id="anOrig" placeholder="ex.: CCOSR Cávado, briefing de 19/11 11h"></label>
       <label>Período de vigência<input id="anPer" placeholder="ex.: desde 19/11 18h até 22/11 12h"></label>
       <label>Válido até (opcional; depois disto o painel marca como expirado)<input type="datetime-local" id="anAte"></label>
@@ -1098,7 +1102,7 @@ function relDados(){
     let oc=null;if(S.ifpRes){const m={};(S.ifp||[]).forEach(o=>{const n=o.natureza||'Outras';m[n]=(m[n]||0)+1});oc={total:S.ifpRes.emCurso!=null?S.ifpRes.emCurso:(S.ifp||[]).length,por:Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6)}}
     return{agora,emitido:`${new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',year:'numeric'}).format(agora)} às ${fmtHM(agora)}`,
       janela:`${dm(S.blocos[0].ini)} ${hh(S.blocos[0].ini)}h a ${dm(S.blocos[X.length-1].fim)} ${hh(S.blocos[X.length-1].fim)}h`,
-      nivAuto,blocos,periodos,av,freg,fregTodas,oc,anepc:(S.anepc&&S.anepc.est)?{est:S.anepc.est,per:S.anepc.per,orig:S.anepc.orig,nota:S.anepc.nota}:null,contr:(S.contr&&S.contr.usar)?{nome:S.contr.nome,emitida:S.contr.emitida,peso:S.contr.peso,div:S.contr.div,texto:S.contr.texto||''}:null,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
+      nivAuto,blocos,periodos,av,freg,fregTodas,oc,anepc:(S.anepc&&(S.anepc.est||S.anepc.disp))?{est:S.anepc.est,disp:S.anepc.disp||null,per:S.anepc.per,orig:S.anepc.orig,nota:S.anepc.nota}:null,contr:(S.contr&&S.contr.usar)?{nome:S.contr.nome,emitida:S.contr.emitida,peso:S.contr.peso,div:S.contr.div,texto:S.contr.texto||''}:null,rio:(S.rio&&S.rio.daily&&S.rio.daily.time)?{t:S.rio.daily.time.slice(0,5),q:S.rio.daily.river_discharge.slice(0,5),mx:(S.rio.daily.river_discharge_max||[]).slice(0,5)}:null,total48:C.total48,max24:C.max24,rajMax48:Math.max(...X.slice(0,8).map(x=>x.raj90)),horas:X.length*CFG.BLOCO}
   }finally{S.cen=cen0;S.hor=hor0}
 }
 function relResumo(d){
@@ -1149,7 +1153,7 @@ function relEmail(d,o){
   const n=relNivel(d,o),h=+fmtHM(d.agora).slice(0,2),sd=h<13?'Bom dia':h<20?'Boa tarde':'Boa noite',L=[];
   L.push(sd+',','',`Segundo as previsões meteorológicas disponíveis (IPMA e modelos numéricos), com informação no relatório de apoio à decisão do SMPC (em anexo) com a previsão para o concelho de Braga (emitido a ${d.emitido.replace(' às ',', às ')}):`,'','Em resumo:');
   relResumo(d).forEach(l=>L.push('• '+l));L.push('');
-  if(d.anepc){L.push(`Estado do dispositivo ANEPC/CCOSR: ${d.anepc.est}${d.anepc.per?' ('+d.anepc.per+')':''}${d.anepc.orig?' · '+d.anepc.orig:''}.`,'')}
+  if(d.anepc){L.push(`Estados de prontidão ANEPC/CCOSR: ${anTexto(d.anepc)}${d.anepc.per?' ('+d.anepc.per+')':''}${d.anepc.orig?' · '+d.anepc.orig:''}.`,'')}
   if(d.contr){L.push(`Esta previsão incorpora a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' (emitida em '+d.contr.emitida+')':''}.`,'')}
   const cc=relCcom(d,o);if(cc){L.push('Informação CCOM:');cc.forEach(l=>L.push(l));L.push('')}
   if(o.med){
@@ -1176,7 +1180,11 @@ function relPdf(d,o){
   {const hg=relGraficos(doc,d,M,y,CW);y+=hg+3}
   sec('Mensagem-chave');relResumo(d).forEach(l=>par(l,true));
   {const cc=relCcom(d,o);if(cc){sec('Informação CCOM');cc.forEach(l=>par(l));par(relAtualiza(d,o))}}
-  if(d.anepc){sec('Estado do dispositivo ANEPC / CCOSR');par(`${d.anepc.est}${d.anepc.per?' · '+d.anepc.per:''}${d.anepc.orig?' · '+d.anepc.orig:''}`,true);if(d.anepc.nota)par(d.anepc.nota)}
+  if(d.anepc){sec('Estados de prontidão ANEPC / CCOSR');const ds=d.anepc.disp?AN_DISP.filter(([k])=>d.anepc.disp[k]):[];
+    if(ds.length){falta(24);doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.5,cellPadding:1.6,halign:'center',textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},head:[ds.map(([k])=>k)],body:[ds.map(([k])=>san(AN_CURTO[d.anepc.disp[k]]))],
+      didParseCell:h=>{if(h.section==='body'){const v=d.anepc.disp[ds[h.column.index][0]];h.cell.styles.fillColor={N:[255,255,255],I:[192,192,192],II:[128,128,128],III:[64,64,64],IV:[0,0,0],X:[235,235,235]}[v];h.cell.styles.textColor=['II','III','IV'].includes(v)?[255,255,255]:[30,41,59];h.cell.styles.fontStyle='bold'}}});y=doc.lastAutoTable.finalY+2}
+    else par(d.anepc.est||'',true);
+    const mt=[d.anepc.per,d.anepc.orig].filter(Boolean).join(' · ');if(mt)par(mt);if(d.anepc.nota)par(d.anepc.nota)}
   if(d.contr){sec('Previsão dedicada contratada');par(`Fornecedor: ${d.contr.nome}${d.contr.emitida?' · emitida em '+d.contr.emitida:''}. Os valores desta previsão foram incorporados no consenso dos modelos, com um peso de ${d.contr.peso} %.`);if(d.contr.div&&d.contr.texto.trim()){doc.setFont('helvetica','italic').setFontSize(8.5);const ls=doc.splitTextToSize(san(d.contr.texto.replace(/\s+/g,' ').trim().slice(0,900)+(d.contr.texto.length>900?' [...]':'')),CW);falta(ls.length*3.8+2);ls.forEach(l=>{T(l,M,y);y+=3.8});y+=1.5;doc.setFont('helvetica','normal')}}
   sec(`Previsão por blocos de 6 h (${d.horas} h)`);
   doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
@@ -1296,52 +1304,75 @@ function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onlo
 
 
 
-/* ============ Briefing CCOSR / ANEPC: estado de prontidão determinado (só neste navegador) ============ */
+/* ============ Briefing CCOSR / ANEPC: estados de prontidão por dispositivo (só neste navegador) ============ */
 const AN={pdfUrl:null,pdfNome:''};
 try{S.anepc=JSON.parse(localStorage.getItem('smpc_anepc')||'null')}catch(e){S.anepc=null}
-const anCor=e=>{e=String(e||'');const m=e.match(/N[íi]vel\s+(IV|III|II|I)\b/);if(m)return{I:'#3b82f6',II:'#f59e0b',III:'#f97316',IV:'#dc2626'}[m[1]];return/prontid/i.test(e)?'#f97316':/normal/i.test(e)?'#10b981':'#94a3b8'};
-const ROM={1:'I',2:'II',3:'III',4:'IV'};
-function anNiveis(x){const r=new Set(),re=/(?:[Nn][íi]vel|[Pp]rontid[ãa]o)\W{0,12}(IV|III|II|I|[1-4])(?![A-Za-zÀ-ÿ0-9])/g;let m;while((m=re.exec(x)))r.add(ROM[m[1]]||m[1]);return[...r]}
-function anExtrair(t){
-  const T0=t.replace(/ /g,' ').replace(/[ \t]+/g,' '),T=T0.replace(/([^.!?:;\n])\n(?=[a-zà-ÿ0-9(])/g,'$1 '),fr=T.split(/(?<=[.!?])\s+|\n+/).map(x=>x.trim()).filter(Boolean),res={est:'',nota:'',per:''};
-  const um=x=>{const n=anNiveis(x);return n.length===1?n[0]:''};
-  let f=fr.find(x=>/prontid[ãa]o/i.test(x)&&um(x))||fr.find(x=>um(x)&&/(ccosr|anepc|dispositivo|estado)/i.test(x));
-  if(f){res.est='Prontidão · Nível '+um(f);res.nota=f}
-  else if((f=fr.find(x=>/prontid[ãa]o/i.test(x)))){res.est='Prontidão';res.nota=f}
-  if(res.nota.length>400)res.nota=res.nota.slice(0,400)+' [...]';
+const AN_DISP=[['DIOPS','Dispositivo Integrado de Operações de Proteção e Socorro'],['DECIR','Dispositivo Especial de Combate a Incêndios Rurais'],['DIONRBQ','Dispositivo Integrado de Operações Nucleares, Radiológicas, Biológicas e Químicas'],['DIRACAERO','Dispositivo Integrado de Resposta a Acidentes com Aeronaves'],['DCDFCI-PNPG','Dispositivo Conjunto de Defesa da Floresta Contra Incêndios no Parque Nacional da Peneda-Gerês']];
+const AN_CURTO={N:'Normal',I:'Nível I',II:'Nível II',III:'Nível III',IV:'Nível IV',X:'não ativado'};
+const AN_LONGO={N:'Prontidão Normal',I:'Prontidão Nível I',II:'Prontidão Nível II',III:'Prontidão Nível III',IV:'Prontidão Nível IV',X:'Não ativado / Não aplicável'};
+function anTexto(a,comp){ // resumo em texto dos estados por dispositivo
+  const d=(a&&a.disp)||{},en=AN_DISP.map(([k])=>[k,d[k]]).filter(e=>e[1]);
+  if(!en.length)return (a&&a.est)||'';
+  if(!comp)return en.map(([k,v])=>`${k}: ${AN_CURTO[v]}`).join(' · ');
+  const nor=en.filter(e=>e[1]==='N').map(e=>e[0]),out=en.filter(e=>e[1]!=='N');
+  if(!out.length)return 'todos os dispositivos em Prontidão Normal';
+  return out.map(([k,v])=>`${k} ${AN_CURTO[v]}`).join('; ')+(nor.length?`; ${nor.join(', ')} em Normal`:'')}
+function anChip(k,v){const e={N:'background:#f8fafc;color:#0f172a',I:'background:#c0c0c0;color:#0f172a',II:'background:#808080;color:#fff',III:'background:#404040;color:#fff;border-color:#94a3b8',IV:'background:#000;color:#fff;border-color:#e2e8f0',X:'background:#0b1220;color:#94a3b8;border-style:dashed'}[v]||'';
+  const t=AN_DISP.find(x=>x[0]===k);return `<span title="${esc(t?t[1]:k)} · ${esc(AN_LONGO[v]||'')}" style="${e};border:1px solid #475569;border-radius:5px;padding:2px 8px;font-size:12px;font-weight:700;white-space:nowrap;${/border-color/.test(e)?'':''}"><span style="opacity:.85">${esc(k)}</span> ${esc(AN_CURTO[v]||'')}</span>`}
+function anExtrair(t){ // só período, origem e a frase que o determina; os estados (cores) preenchem-se à mão ou pela deteção no PDF
+  const T0=t.replace(/ /g,' ').replace(/[ \t]+/g,' '),T=T0.replace(/([^.!?:;\n])\n(?=[a-zà-ÿ0-9(])/g,'$1 '),fr=T.split(/(?<=[.!?])\s+|\n+/).map(x=>x.trim()).filter(Boolean),res={nota:'',per:''};
+  const f=fr.find(x=>/prontid[ãa]o/i.test(x)&&/\d{1,2}\s?h/i.test(x));if(f)res.nota=f.length>400?f.slice(0,400)+' [...]':f;
   const m=T.match(/(?:desde|a partir d[aeo]s?|entre)\s+(?:as\s+|às\s+)?\d{1,2}\s?[h:][^\n]{0,260}/i);
-  if(m){let p=m[0];const k=p.search(/\.(\s|$)/);if(k>0)p=p.slice(0,k);res.per=p.trim()}
+  if(m){let p=m[0];const k=p.search(/\.(\s|$)/);if(k>0)p=p.slice(0,k);p=p.split(/\s*,\s*(?=no âmbito|ao abrigo|determinad|por\s|nos termos|de acordo)/i)[0];if(p.length>170)p=p.slice(0,170).replace(/\s\S*$/,'')+'…';res.per=p.trim()}
   const o=T.match(/(CCOSR[^.\n]{0,40}|Comando Sub-?[Rr]egional[^.\n]{0,40})/i);if(o)res.orig=o[1].trim();
   return res}
-// migração: texto já guardado com a leitura antiga (sem nível / período cortado)
-(function(){const a=S.anepc;if(!a||!a.texto)return;const r=anExtrair(a.texto);let mud=false;
-  if(r.est&&/N[íi]vel/.test(r.est)&&!/N[íi]vel/.test(a.est)){a.est=r.est;if(r.nota)a.nota=r.nota;mud=true}
-  if(r.per&&a.per&&r.per.length>a.per.length&&r.per.startsWith(a.per.slice(0,30))){a.per=r.per;mud=true}
-  if(mud)try{localStorage.setItem('smpc_anepc',JSON.stringify(a))}catch(e){}})();
+// deteção pelo sombreado: lê as cores das células junto aos nomes dos dispositivos (só PDF com texto selecionável)
+async function anDetect(f){
+  const lib=await ctPdfJs(),doc=await lib.getDocument({data:await f.arrayBuffer()}).promise;
+  for(let pn=1;pn<=doc.numPages;pn++){
+    const page=await doc.getPage(pn),c=await page.getTextContent(),its=c.items.filter(i=>i.str.trim()),pos={};
+    AN_DISP.forEach(([k])=>{const it=its.find(i=>i.str.trim()===k);if(it)pos[k]=it});
+    if(Object.keys(pos).length<3)continue;
+    const vp=page.getViewport({scale:2}),cv=document.createElement('canvas');cv.width=Math.ceil(vp.width);cv.height=Math.ceil(vp.height);
+    const cx=cv.getContext('2d',{willReadFrequently:true});cx.fillStyle='#fff';cx.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext:cx,viewport:vp}).promise;
+    const out={};
+    for(const k in pos){const it=pos[k],p=vp.convertToViewportPoint(it.transform[4],it.transform[5]),h=Math.max(8,Math.abs(it.height)*vp.scale*1.0),w=it.width*vp.scale;
+      const patches=[[p[0]-h*0.4-h*0.8,p[0]-h*0.4],[p[0]+w+h*0.4,p[0]+w+h*0.4+h*0.8]],y0=p[1]-h*0.75,y1=p[1]-h*0.15;let vals=[];
+      patches.forEach(([a,b])=>{a=Math.max(0,Math.floor(a));b=Math.min(cv.width,Math.ceil(b));const yy0=Math.max(0,Math.floor(y0)),yy1=Math.min(cv.height,Math.ceil(y1));if(b-a<3||yy1-yy0<3)return;
+        const d=cx.getImageData(a,yy0,b-a,yy1-yy0).data;for(let i=0;i<d.length;i+=4)vals.push(.299*d[i]+.587*d[i+1]+.114*d[i+2])});
+      if(vals.length<20)continue;const m=vals.reduce((s,x)=>s+x,0)/vals.length,sd=Math.sqrt(vals.reduce((s,x)=>s+(x-m)*(x-m),0)/vals.length);
+      out[k]=sd>28?'X':m>225?'N':m>160?'I':m>96?'II':m>32?'III':'IV'}
+    if(Object.keys(out).length>=3)return out}
+  return null}
+const AN_COR_BORDA=a=>{const d=(a&&a.disp)||{};return Object.values(d).some(v=>['I','II','III','IV'].includes(v))?'#e2e8f0':'#475569'};
 function anMarca(){
   const e=$('faixaAnepc');if(!e)return;const a=S.anepc;
-  if(!a||!a.est){e.className='';e.innerHTML='';return}
-  const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16),cor=anCor(a.est);
-  e.style.setProperty('--anc',cor);e.className='on';
-  e.innerHTML=`<span>Estado do dispositivo ANEPC/CCOSR:</span> <span class="anE">${esc(a.est)}</span>${exp?' <span class="ex">(expirado)</span>':''}${a.per?` <span class="mono" style="white-space:normal;overflow-wrap:anywhere">${esc(a.per)}</span>`:''}${a.orig?` <span class="mono ex">${esc(a.orig)}</span>`:''}${a.nota?`<span style="flex-basis:100%;font-size:12px;color:#cbd5e1">${esc(a.nota)}</span>`:''}`}
-function anPreencher(r){if(r.est){$('anEst').value=r.est}if(r.orig&&!$('anOrig').value)$('anOrig').value=r.orig;if(r.per&&!$('anPer').value)$('anPer').value=r.per;if(r.nota&&!$('anNota').value)$('anNota').value=r.nota;$('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'}
+  if(!a||(!a.est&&!a.disp)){e.className='';e.innerHTML='';return}
+  const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16),d=a.disp||{},en=AN_DISP.filter(([k])=>d[k]);
+  e.style.setProperty('--anc',AN_COR_BORDA(a));e.className='on';
+  e.innerHTML=`<span>Estados de prontidão ANEPC/CCOSR:</span> ${en.length?en.map(([k])=>anChip(k,d[k])).join(' '):`<span class="anE">${esc(a.est)}</span>`}${exp?' <span class="ex">(expirado)</span>':''}${a.per?` <span style="flex:1 1 320px;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:12.5px">${esc(a.per)}</span>`:''}${a.orig?` <span class="ex" style="font-size:12px">${esc(a.orig)}</span>`:''}${a.nota?`<span style="flex-basis:100%;min-width:0;white-space:normal;overflow-wrap:anywhere;font-size:12px;color:#cbd5e1">${esc(a.nota)}</span>`:''}`}
+function anLerSel(){const d={};AN_DISP.forEach(([k],i)=>{const v=$('anD'+i).value;if(v)d[k]=v});return d}
+function anPoeSel(d){AN_DISP.forEach(([k],i)=>$('anD'+i).value=(d&&d[k])||'')}
+function anPreencher(r){if(r.orig&&!$('anOrig').value)$('anOrig').value=r.orig;if(r.per&&!$('anPer').value)$('anPer').value=r.per;if(r.nota&&!$('anNota').value)$('anNota').value=r.nota}
 function anAbrir(){const a=S.anepc;$('anOv').classList.add('on');
-  if(a&&!$('anOrig').dataset.on){$('anOrig').dataset.on=1;const lista=[...$('anEst').options].map(o=>o.value);if(lista.includes(a.est))$('anEst').value=a.est;else{$('anEst').value='__o';$('anOut').value=a.est}$('anOrig').value=a.orig||'';$('anPer').value=a.per||'';$('anNota').value=a.nota||'';$('anTxt').value=a.texto||'';$('anAte').value=a.ate||''}
-  $('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'}
-$('btnAn').onclick=anAbrir;$('anFecha').onclick=()=>$('anOv').classList.remove('on');$('anEst').onchange=()=>{$('anOutL').style.display=$('anEst').value==='__o'?'grid':'none'};
+  if(a&&!$('anOrig').dataset.on){$('anOrig').dataset.on=1;anPoeSel(a.disp);$('anOrig').value=a.orig||'';$('anPer').value=a.per||'';$('anNota').value=a.nota||'';$('anTxt').value=a.texto||'';$('anAte').value=a.ate||''}}
+$('btnAn').onclick=anAbrir;$('anFecha').onclick=()=>$('anOv').classList.remove('on');
 $('anPdf').onchange=async e=>{const f=e.target.files[0];if(!f)return;const m=$('anMsg');m.style.color='';m.textContent='A ler o PDF…';
   try{if(AN.pdfUrl)URL.revokeObjectURL(AN.pdfUrl);AN.pdfUrl=URL.createObjectURL(f);AN.pdfNome=f.name;$('anAbrePdf').style.display='';
-    const t=await ctLerPdf(f);$('anTxt').value=t;const r=anExtrair(t);$('anEst').value='';$('anNota').value='';$('anPer').value='';anPreencher(r);
-    m.style.color=r.est?'#6ee7b7':'#fbbf24';m.textContent=r.est?`Encontrei o estado "${r.est}". Confirme a frase e os campos e carregue em Guardar.`:(t.trim()?'Não encontrei um estado de prontidão no texto. Escolha-o na lista e escreva a nota.':'O PDF não tem texto selecionável (pode ser imagem). Escolha o estado na lista.')}
-  catch(err){m.style.color='#fca5a5';m.textContent='Não consegui ler o PDF: '+err.message+'. Escolha o estado na lista.'}e.target.value=''};
-let anT=null;$('anTxt').oninput=()=>{clearTimeout(anT);anT=setTimeout(()=>{if($('anEst').value)return;const r=anExtrair($('anTxt').value);anPreencher(r);$('anMsg').style.color=r.est?'#6ee7b7':'';$('anMsg').textContent=r.est?`Encontrei o estado "${r.est}". Confirme e guarde.`:''},500)};
+    let t='';try{t=await ctLerPdf(f)}catch(x){}$('anTxt').value=t;$('anNota').value='';$('anPer').value='';anPreencher(anExtrair(t));
+    let det=null;try{det=await anDetect(f)}catch(x){}
+    if(det){anPoeSel(det);m.style.color='#6ee7b7';m.textContent='Li os estados pelo sombreado das células: '+anTexto({disp:det})+'. Compare com o PDF e corrija se for preciso; depois carregue em Guardar.'}
+    else{m.style.color='#fbbf24';m.textContent='Não consegui ler o sombreado deste PDF (pode ser uma imagem). Escolha o estado de cada dispositivo nas listas, conforme o briefing, e carregue em Guardar.'}}
+  catch(err){m.style.color='#fca5a5';m.textContent='Não consegui ler o PDF: '+err.message+'. Escolha os estados nas listas.'}e.target.value=''};
+$('anTxt').oninput=()=>{};
 $('anAbrePdf').onclick=()=>{if(AN.pdfUrl)window.open(AN.pdfUrl,'_blank','noopener')};
 $('anGuarda').onclick=()=>{
-  const v=$('anEst').value,est=v==='__o'?$('anOut').value.trim():v;
-  S.anepc=est?{est,orig:$('anOrig').value.trim(),per:$('anPer').value.trim(),nota:$('anNota').value.trim(),ate:$('anAte').value,texto:$('anTxt').value,pdf:AN.pdfNome,guardado:new Date().toISOString()}:null;
+  const disp=anLerSel(),tem=Object.keys(disp).length>0;
+  S.anepc=tem?{disp,est:anTexto({disp},true),orig:$('anOrig').value.trim(),per:$('anPer').value.trim(),nota:$('anNota').value.trim(),ate:$('anAte').value,texto:$('anTxt').value,pdf:AN.pdfNome,guardado:new Date().toISOString()}:null;
   try{if(S.anepc)localStorage.setItem('smpc_anepc',JSON.stringify(S.anepc));else localStorage.removeItem('smpc_anepc')}catch(e){}
-  anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent=est?'Estado guardado e mostrado no painel. Passa também para o relatório e para as mensagens.':'Sem estado: a faixa foi retirada.'};
-$('anRemove').onclick=()=>{S.anepc=null;try{localStorage.removeItem('smpc_anepc')}catch(e){}['anEst','anOut','anOrig','anPer','anAte','anNota','anTxt'].forEach(i=>$(i).value='');$('anOrig').dataset.on='';anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent='Removido.'};
+  anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent=tem?'Estados guardados e mostrados no painel. Passam também para o relatório e para as mensagens.':'Sem estados: a faixa foi retirada.'};
+$('anRemove').onclick=()=>{S.anepc=null;try{localStorage.removeItem('smpc_anepc')}catch(e){}['anOrig','anPer','anAte','anNota','anTxt'].forEach(i=>$(i).value='');anPoeSel(null);$('anOrig').dataset.on='';anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent='Removido.'};
 
 /* ============ Previsão meteorológica contratada (texto/PDF, só neste navegador) ============ */
 const CT={draft:{},notas:[]};
@@ -1491,7 +1522,7 @@ function msgEnt(d,o,tipo){
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
     f.ipma.forEach(x=>L.push('⚠️ '+x));
     if(tipo==='ccom'){const b=msgBlocos(d);if(b.length)L.push('','*Blocos de 6 h:*',...b)}}
-  if(d.anepc)L.push(`🛡️ *ANEPC/CCOSR:* ${d.anepc.est}${d.anepc.per?' ('+d.anepc.per+')':''}`);
+  if(d.anepc)L.push(`🛡️ *ANEPC/CCOSR:* ${anTexto(d.anepc,true)}${d.anepc.per?' ('+d.anepc.per+')':''}`);
   if(d.contr)L.push('',`📑 Inclui a previsão dedicada de ${d.contr.nome}${d.contr.emitida?' ('+d.contr.emitida+')':''}.`);
   if(cc){L.push('',`🏛️ *CCOM:* ${cc[0]}`)}
   if(f.n>=1&&f.p){L.push('','*Medidas:*');
