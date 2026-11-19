@@ -50,7 +50,7 @@ main{padding:8px 12px 14px;display:grid;gap:8px}
 .ctl select,.ctl button,.ctl input[type=file]{background:var(--card2);color:var(--texto);border:1px solid var(--linha);border-radius:6px;padding:2px 6px;font:inherit;font-size:11px}
 .ctl button{cursor:pointer}.ctl button:hover{border-color:var(--azul)}
 .ctl input[type=range]{accent-color:var(--azul);vertical-align:middle}
-.blocos{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}
+.blocos{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
 .bl{border:1px solid var(--linha);border-radius:7px;padding:3px 2px;text-align:center;cursor:pointer;background:var(--card2);position:relative}
 .bl:hover{border-color:var(--azul)}.bl.sel{outline:2px solid var(--azul)}
 .bl .d{font-size:9px;color:var(--suave)}.bl .h{font-size:10px;font-weight:700}.bl .mm{font-size:13px;font-weight:800;margin-top:1px}
@@ -172,6 +172,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <label><input type="checkbox" id="chkApri" checked> ARPSI e cheias históricas (APA)</label>
         <label>Cenário:
           <select id="selCen"><option value="cons">Consenso dos modelos</option><option value="p90">Cenário elevado (P90)</option></select></label>
+        <label title="Risco das freguesias: pior situação prevista dentro do horizonte escolhido">Risco das freguesias:
+          <select id="selHor"><option value="24">Próximas 24 h</option><option value="48">Próximas 48 h</option><option value="72">Próximas 72 h</option><option value="b">Só o bloco selecionado</option></select></label>
         <label class="mono" style="color:var(--azul)" id="blocoSel"></label>
       </div>
       <div id="mapa"></div>
@@ -188,7 +190,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
           <input type="file" id="fileGj" accept=".json,.geojson"></label>
         <button id="btnLimpaGj" style="display:none">Remover</button>
       </div>
-      <p class="aviso-geral">O risco por freguesia é um <b>indicador relativo</b>: combina o nível de precipitação previsto com a suscetibilidade da freguesia. Esta sobe para <b>alta</b> quando a freguesia tem um troço ARPSI ou uma cheia histórica da APA (dados oficiais, snapshot de 18/11/2026); nas restantes usa a densidade de linhas de água (OpenStreetMap). Soma-se o <b>histórico de inundações do SMPC</b> (Ifprotec 2022-26): freguesias com 15 ou mais dias de inundação passam a suscetibilidade alta e, quando a chuva prevista em 24 h atinge o valor a partir do qual cada freguesia costuma ter ocorrências, o risco não fica abaixo de Vigilância (nunca se baixa o risco por este critério; cerca de metade dos registos não tem freguesia, pelo que as contagens são mínimos). Não substitui a cartografia oficial de zonas inundáveis (PMEPCB, PGRI). Os níveis Normal, Vigilância e Prontidão são propostas a validar pelo CorMPC.</p>
+      <p class="aviso-geral">O risco por freguesia é um <b>indicador relativo</b>: mostra a pior situação prevista no horizonte escolhido (24, 48 ou 72 h, ou só o bloco selecionado) e combina o nível de precipitação previsto com a suscetibilidade da freguesia. Esta sobe para <b>alta</b> quando a freguesia tem um troço ARPSI ou uma cheia histórica da APA (dados oficiais, snapshot de 18/11/2026); nas restantes usa a densidade de linhas de água (OpenStreetMap). Soma-se o <b>histórico de inundações do SMPC</b> (Ifprotec 2022-26): freguesias com 15 ou mais dias de inundação passam a suscetibilidade alta e, quando a chuva prevista em 24 h atinge o valor a partir do qual cada freguesia costuma ter ocorrências, o risco não fica abaixo de Vigilância (nunca se baixa o risco por este critério; cerca de metade dos registos não tem freguesia, pelo que as contagens são mínimos). Não substitui a cartografia oficial de zonas inundáveis (PMEPCB, PGRI). Os níveis Normal, Vigilância e Prontidão são propostas a validar pelo CorMPC.</p>
     </div>
     <div class="card" id="cardPrev">
         <h2>Prevenção de inundações <span class="nota">uso interno · níveis a partir da chuva observada em Braga, 2022-26</span></h2>
@@ -269,7 +271,7 @@ const CFG={
   PONTOS:{'Braga (centro)':[41.5503,-8.4200],'Sameiro (serra)':[41.5430,-8.3670]},
   MODELOS:['ecmwf_ifs025','ecmwf_aifs025','gfs025','icon_seamless_eps','ukmo_global_ensemble_20km','gem_global'],
   NOMES:{ecmwf_ifs025:'ECMWF ENS',ecmwf_aifs025:'ECMWF AIFS',gfs025:'GFS ENS',icon_seamless_eps:'ICON EPS',ukmo_global_ensemble_20km:'UKMO ENS',gem_global:'GEM ENS'},
-  HORAS:48,BLOCO:6,
+  HORAS:72,BLOCO:6,
   LIM:{vigChuva:10,proChuva:20,vigAcc24:30,proAcc24:50,vigRaj:60,proP30:.15,vigCape:.30},
   ATUALIZAR:{oc:30,ifp:30,av:300,mod:1800,sat:600,rio:10800},
   RELACIONADAS:/inunda|queda de [aá]rvore|movimento de massa|limpeza de via|deslizamento|[aá]gua|vento|estrutura|cheia|galeria|aluimento|desab/i
@@ -295,7 +297,7 @@ async function getJSON(url,ms=40000){const c=new AbortController();const t=setTi
 setInterval(()=>{$('relogio').textContent=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date())},1000);
 
 /* ============================== ESTADO ============================== */
-const S={ifp:[],ifpRes:null,ocorr:[],resumo:null,avisos:[],avisosOK:false,modelos:null,blocos:[],sel:0,cen:'cons',ponto:'Braga (centro)',
+const S={ifp:[],ifpRes:null,ocorr:[],resumo:null,avisos:[],avisosOK:false,modelos:null,blocos:[],sel:0,hor:'24',cen:'cons',ponto:'Braga (centro)',
   freg:null,fregGeo:null,agua:null,susc:{},rio:null,gjOficial:null};
 
 /* ============================== MAPA ============================== */
@@ -372,6 +374,7 @@ $('chkAgua').onchange=()=>$('chkAgua').checked?gAgua.addTo(mapa):mapa.removeLaye
 $('chkApri').onchange=()=>$('chkApri').checked?gApri.addTo(mapa):mapa.removeLayer(gApri);
 $('chkOc').onchange=()=>$('chkOc').checked?gIfp.addTo(mapa):mapa.removeLayer(gIfp);
 $('chkFogos').onchange=()=>$('chkFogos').checked?gOc.addTo(mapa):mapa.removeLayer(gOc);
+$('selHor').onchange=e=>{S.hor=e.target.value;desenharTudo()};
 $('selCen').onchange=e=>{S.cen=e.target.value;desenharTudo()};
 $('selPonto').onchange=e=>{S.ponto=e.target.value;desenharTudo()};
 $('fileGj').onchange=e=>{
@@ -407,7 +410,7 @@ async function carregarModelos(){
     for(const m of CFG.MODELOS){
       tarefas.push((async()=>{
         try{
-          let d=null;for(let t=0;t<3&&!d;t++){try{d=await getJSON(`https://ensemble-api.open-meteo.com/v1/ensemble?latitude=${la}&longitude=${lo}&hourly=precipitation,wind_gusts_10m,temperature_2m,cape&forecast_days=3&timezone=${TZ}&models=${m}`)}catch(e){if(t==2)throw e;await new Promise(r=>setTimeout(r,1500))}}
+          let d=null;for(let t=0;t<3&&!d;t++){try{d=await getJSON(`https://ensemble-api.open-meteo.com/v1/ensemble?latitude=${la}&longitude=${lo}&hourly=precipitation,wind_gusts_10m,temperature_2m,cape&forecast_days=4&timezone=${TZ}&models=${m}`)}catch(e){if(t==2)throw e;await new Promise(r=>setTimeout(r,1500))}}
           const h=d.hourly,t=h.time,i0=t.indexOf(inicio);
           if(i0<0||i0+CFG.HORAS>t.length)throw new Error('janela fora do alcance');
           const pr=membros(h,'precipitation'),ga=membros(h,'wind_gusts_10m'),te=membros(h,'temperature_2m'),ca=membros(h,'cape');
@@ -417,7 +420,7 @@ async function carregarModelos(){
             const pd=pr.filter(s=>V(s).length===CFG.BLOCO).map(s=>sum(V(s)));
             return{chuva:stat(pd),rajada:stat(ga.filter(s=>V(s).length).map(s=>Math.max(...V(s)))),tmax:stat(te.filter(s=>V(s).length).map(s=>Math.max(...V(s)))),tmin:stat(te.filter(s=>V(s).length).map(s=>Math.min(...V(s)))),cape:ca.filter(s=>V(s).length).map(s=>Math.max(...V(s)))}});
           const tot=[],m24=[];
-          for(const s of pr){const w=s.slice(i0,i0+CFG.HORAS);if(w.some(x=>x==null))continue;tot.push(sum(w));let mx=0;for(let a=0;a<=CFG.HORAS-24;a++)mx=Math.max(mx,sum(w.slice(a,a+24)));m24.push(mx)}
+          for(const s of pr){const w=s.slice(i0,i0+48);if(w.length<48||w.some(x=>x==null))continue;tot.push(sum(w));let mx=0;for(let a=0;a<=48-24;a++)mx=Math.max(mx,sum(w.slice(a,a+24)));m24.push(mx)}
           out.pontos[nome][m]={blocos:B,total48:stat(tot),max24:stat(m24)};
         }catch(e){out.falhas.push(`${nome}/${CFG.NOMES[m]}: ${e.message}`)}
       })());
@@ -604,7 +607,7 @@ function desenharKpis(){
   let h='';
   if(C){
     const X=C.blocos,n0=nivelGeral(X,0),nmax=Math.max(...X.slice(0,4).map((_,i)=>nivelGeral(X,i)));
-    const a24=sum(X.slice(0,4).map(valChuva)),rmax=Math.max(...X.map(x=>x.raj90));
+    const a24=sum(X.slice(0,4).map(valChuva)),rmax=Math.max(...X.slice(0,8).map(x=>x.raj90));
     h+=cel('Nível agora (bloco atual)',NOMEN[n0],`Próximas 24 h: pior nível ${NOMEN[nmax]}`,'c'+n0);
     h+=cel('Chuva próximas 24 h',a24.toFixed(0)+' mm',S.cen==='p90'?'cenário elevado (P90)':'consenso de 6 modelos');
     h+=cel('Chuva 48 h',(S.cen==='p90'?C.total48.p90:C.total48.cons).toFixed(0)+' mm',`intervalo entre modelos ${C.total48.min.toFixed(0)} a ${C.total48.max.toFixed(0)}`);
@@ -626,7 +629,7 @@ function desenharBlocos(){
   S.blocos.forEach((b,k)=>{const n=nivelGeral(X,k),mm=valChuva(X[k]);
     h+=`<div class="bl n${n} ${k===S.sel?'sel':''}" data-k="${k}"><div class="d">${dow(b.ini)} ${b.ini.slice(8,10)}</div><div class="h">${b.ini.slice(11,13)}–${b.fim.slice(11,13)}h</div><div class="mm">${mm.toFixed(0)}<span style="font-size:10px;font-weight:600"> mm</span></div><div class="n c${n}">${NOMEN[n]}</div></div>`});
   $('blocos').innerHTML=h;
-  $('blocos').querySelectorAll('.bl').forEach(e=>e.onclick=()=>{S.sel=+e.dataset.k;desenharTudo()});
+  $('blocos').querySelectorAll('.bl').forEach(e=>e.onclick=()=>{S.sel=+e.dataset.k;S.hor='b';$('selHor').value='b';desenharTudo()});
   $('notaSem').textContent=`${S.ponto} · ${S.cen==='p90'?'cenário elevado P90':'consenso'}`;
   const b=S.blocos[S.sel];$('blocoSel').textContent=`Bloco: ${dow(b.ini)} ${b.ini.slice(8,10)}/${b.ini.slice(5,7)} ${b.ini.slice(11,13)}–${b.fim.slice(11,13)}h`;
 }
@@ -700,7 +703,12 @@ function ocInundacao(nomeFreg){
 }
 function desenharRisco(){
   desenharIfp();gFreg.clearLayers();gAgua.clearLayers();
-  const C=dataAtual();if(!C)return;const X=C.blocos,H=nivelCheia(X,S.sel),b=S.blocos[S.sel];
+  const C=dataAtual();if(!C)return;const X=C.blocos;
+  // Horizonte: pior bloco (nível de precipitação e chuva em 24 h) dentro das próximas 24/48/72 h; 'b' = só o bloco selecionado
+  const nB=S.hor==='b'?1:Math.min(X.length,(+S.hor||24)/CFG.BLOCO),k0=S.hor==='b'?S.sel:0;
+  let kRef=k0,Hm=-1,aMax=0;
+  for(let k=k0;k<k0+nB&&k<X.length;k++){const nv=nivelCheia(X,k),a=acc24(X,k);if(nv>Hm||(nv===Hm&&a>aMax))kRef=k;Hm=Math.max(Hm,nv);aMax=Math.max(aMax,a)}
+  const H=Math.max(0,Hm),b=S.blocos[kRef];
   const nota=[];if(!S.freg)nota.push('freguesias indisponíveis');if(!S.agua)nota.push('linhas de água indisponíveis (susceptibilidade neutra)');
   $('notaMapa').textContent=nota.join(' · ');
   const lista=[];
@@ -709,9 +717,9 @@ function desenharRisco(){
       let s=S.susc[i]?S.susc[i].cls:2;const of=(S.oficial&&S.oficial[i])||null;if(of){s=3}else if(S.agua&&s===3){s=2}
       const hh=HIST[f.nome]||{d:0,l:0};if(hh.d>=15)s=3; // histórico de inundações do SMPC: freguesia muito afetada
       let r=H+(s===3?1:(s===1?-1:0));r=Math.max(0,Math.min(2,H===0?(s===3&&H>0?1:0):r));
-      const a24=acc24(X,S.sel),gat=hh.l>0&&a24>=hh.l;if(gat)r=Math.max(r,1); // chuva em 24 h já atingiu o limiar histórico desta freguesia
+      const a24=aMax,gat=hh.l>0&&a24>=hh.l;if(gat)r=Math.max(r,1); // chuva em 24 h já atingiu o limiar histórico desta freguesia
       const inu=ocInundacao(f.nome);if(inu)r=Math.max(r,1);
-      const motivo=`Precipitação do bloco: ${NOMEN[H]}; ${of?(of.arpsi?'troço ARPSI da APA; ':'')+(of.evento?'cheia histórica registada pela APA; ':''):''}linhas de água: ${['','densidade baixa','densidade média','densidade alta'][s]}${hh.d?`; histórico SMPC: ${hh.d} dias com inundação (2022-26)${hh.l?`, costuma reagir a partir de ~${hh.l} mm/24 h`:''}`:''}${gat?'; limiar histórico da freguesia atingido':''}${inu?'; ocorrência de inundação em curso':''}`;
+      const motivo=`${S.hor==='b'?'Precipitação do bloco':'Pior precipitação nas próximas '+S.hor+' h'}: ${NOMEN[H]}; ${of?(of.arpsi?'troço ARPSI da APA; ':'')+(of.evento?'cheia histórica registada pela APA; ':''):''}linhas de água: ${['','densidade baixa','densidade média','densidade alta'][s]}${hh.d?`; histórico SMPC: ${hh.d} dias com inundação (2022-26)${hh.l?`, costuma reagir a partir de ~${hh.l} mm/24 h`:''}`:''}${gat?'; limiar histórico da freguesia atingido':''}${inu?'; ocorrência de inundação em curso':''}`;
       lista.push({nome:f.nome,r,s,H,inu,of,dens:S.susc[i]?.dens,hd:hh.d,hl:hh.l,gat,a24});
       const cor=['#10b981','#fbbf24','#f43f5e'][r];
       L.geoJSON({type:'Feature',geometry:f.geom},{pane:'risco',style:{color:'#0b1220',weight:1,fillColor:cor,fillOpacity:[.14,.35,.5][r]}}).bindTooltip(`<b>${esc(f.nome)}</b><br>Risco: ${NOMEN[r]}<br><span style="color:#94a3b8">${motivo}</span>`,{sticky:true}).addTo(gFreg);
@@ -725,7 +733,7 @@ function desenharRisco(){
   const rk=$('rank');
   if(!lista.length){rk.innerHTML='<div class="vazio">'+(S.freg?'Sem dados.':'A carregar freguesias…')+'</div>';return}
   lista.sort((a,b)=>b.r-a.r||(b.hd||0)-(a.hd||0)||(b.dens||0)-(a.dens||0));S.risco=lista;
-  $('notaRank').textContent=`bloco ${dow(b.ini)} ${b.ini.slice(8,10)} ${b.ini.slice(11,13)}–${b.fim.slice(11,13)}h · precipitação ${NOMEN[H]}`;
+  $('notaRank').textContent=(S.hor==='b'?'bloco ':`próximas ${S.hor} h · pior bloco `)+`${dow(b.ini)} ${b.ini.slice(8,10)} ${b.ini.slice(11,13)}–${b.fim.slice(11,13)}h · precipitação ${NOMEN[H]}`;
   rk.innerHTML=lista.slice(0,8).map(x=>`<div>${esc(x.nome)}<span class="sub">${x.of?(x.of.arpsi?'troço ARPSI (APA)':'cheia histórica (APA)')+(x.of.arpsi&&x.of.evento?' e cheia histórica':'')+' · ':''}${S.agua?`linhas de água: densidade ${['','baixa','média','alta'][x.s]}`:'linhas de água indisponíveis'}${x.hd?` · ${x.hd} dias c/ inundação (2022-26)`:''}${x.gat?` · já atingiu ~${x.hl} mm/24 h`:''}${x.inu?' · inundação em curso':''}</span></div><div><span class="pill p${x.r}">${NOMEN[x.r]}</span></div>`).join('');
 }
 function desenharRio(){
@@ -779,7 +787,7 @@ function verificarNovasIfp(){
   novas.forEach(o=>mostrarAlerta('Nova ocorrência',`<b>Nova ocorrência: ${esc(o.natureza||'')}</b><br>${esc(o.entidadeNome||o.entidade||'')} · ${esc(o.estado||'')} · ${esc(freguesiaDe(o)||'freguesia n/d')}`))}
 function verificarProntidao(){
   const C=dataAtual();if(!C||!S.blocos.length)return;const X=C.blocos;let k=-1;
-  for(let i=0;i<X.length;i++)if(nivelCheia(X,i)===2){k=i;break}
+  for(let i=0;i<Math.min(8,X.length);i++)if(nivelCheia(X,i)===2){k=i;break}
   if(k<0)return;const b=S.blocos[k],chave=b.ini.slice(0,10);
   let reg={};try{reg=JSON.parse(localStorage.getItem('smpc_alerta_pront')||'{}')}catch(e){}
   const agora=Date.now();if(reg[chave]&&agora-reg[chave]<12*3600e3)return;
@@ -792,7 +800,7 @@ const NIVP=['Sem ação','Atenção','Alerta','Crítico'],CORP=['#475569','#fbbf
 S.prev=null;S.prevJan=0;
 function carregarPrev(){try{const t=localStorage.getItem('smpc_prev');if(t)S.prev=JSON.parse(t)}catch(e){}}
 function janelasPrev(){const C=dataAtual();if(!C)return null;const X=C.blocos;
-  return[[0,4,'Próximas 24 h'],[4,8,'24 a 48 h']].map(([a,b,n])=>{const v=X.slice(a,b).map(valChuva);const mm=sum(v),m6=Math.max(...v);
+  return[[0,4,'Próximas 24 h'],[4,8,'24 a 48 h'],[8,12,'48 a 72 h']].filter(([a,b])=>X.slice(a,b).length).map(([a,b,n])=>{const v=X.slice(a,b).map(valChuva);const mm=sum(v),m6=Math.max(...v);
     const N=S.prev?.niveis||{atencao:15,alerta:30,critico:50};let nv=mm>=N.critico?3:mm>=N.alerta?2:mm>=N.atencao?1:0;if(m6>=30&&nv<2)nv=2;return{n,mm,m6,nv}})}
 function aguaPrev(){ // distância de cada local à linha de água mais próxima (OpenStreetMap, as mesmas do mapa)
   if(!S.prev||!S.agua||S.prev._ag===S.agua)return;const k=111320,kx=k*Math.cos(41.55*Math.PI/180);
