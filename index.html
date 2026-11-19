@@ -1158,7 +1158,7 @@ function relResumo(d){
   if(!d.periodos.length)L.push(`Nas próximas ${d.horas} h não se prevê nenhum período que atinja o nível de Vigilância.`);
   d.periodos.forEach(p=>{const dn=t=>{const x=DIAS_EXT[new Date(t+':00Z').getUTCDay()];return x[0].toUpperCase()+x.slice(1)};
     const quando=p.ini.slice(0,10)===p.fim.slice(0,10)?`${dn(p.ini)} ${dm(p.ini)}, das ${hh(p.ini)}h às ${hh(p.fim)}h`:`De ${dn(p.ini).toLowerCase()} ${dm(p.ini)}, às ${hh(p.ini)}h, a ${dn(p.fim).toLowerCase()} ${dm(p.fim)}, às ${hh(p.fim)}h`;
-    L.push(`${quando}: Nível recomendado: ${NOMEN[p.n]}; pico de cerca de ${Math.round(p.pico.chuva)} mm em 6 h (${Math.round(p.pico.min)} a ${Math.round(p.pico.max)} mm entre modelos), rajada P90 até ${Math.round(p.rajMax)} km/h${p.k0>=8?' (tendência, maior incerteza)':''}.`)});
+    L.push(`${quando}: Nível recomendado: ${NOMEN[p.n].toUpperCase()}; pico de cerca de ${Math.round(p.pico.chuva)} mm em 6 h (${Math.round(p.pico.min)} a ${Math.round(p.pico.max)} mm entre modelos), rajada P90 até ${Math.round(p.rajMax)} km/h${p.k0>=8?' (tendência, maior incerteza)':''}.`)});
   L.push(`O total previsto em 48 h é de cerca de ${Math.round(d.total48.cons)} mm, com um intervalo entre modelos de ${Math.round(d.total48.min)} a ${Math.round(d.total48.max)} mm; máximo em 24 h consecutivas: ${Math.round(d.max24.cons)} mm.`);
   return L}
 function relEfeitos(d,n){
@@ -1231,6 +1231,12 @@ function relPdf(d,o){
   const falta=h=>{if(y+h>278){doc.addPage();y=16}};
   const sec=t=>{falta(14);y+=2;doc.setFont('helvetica','bold').setFontSize(11).setTextColor(...AZ);T(t,M,y);doc.setDrawColor(...AZ).setLineWidth(.3).line(M,y+1.5,W-M,y+1.5);y+=6;doc.setTextColor(30,41,59)};
   const par=(t,bul)=>{doc.setFont('helvetica','normal').setFontSize(9.5);const ls=doc.splitTextToSize(san((bul?'- ':'')+t),CW-(bul?0:0));falta(ls.length*4.6+1);ls.forEach((l,i)=>{T((bul&&i>0?'  ':'')+l,M,y);y+=4.6});y+=.8};
+  const parRico=(t,bul)=>{const m=t.match(/Nível recomendado: [A-ZÁÂÃÀÉÊÍÓÔÕÚÇ]+/);if(!m)return par(t,bul);
+    const a=t.slice(0,m.index),b=m[0],c=t.slice(m.index+b.length),tk=[];if(bul)tk.push(['- ',0]);
+    [[a,0],[b,1],[c,0]].forEach(([x,bd])=>x.split(/(?<= )/).forEach(w=>{if(w)tk.push([w,bd])}));
+    doc.setFontSize(9.5);const wd=(w,bd)=>{doc.setFont('helvetica',bd?'bold':'normal');return doc.getTextWidth(san(w))};
+    const ind=bul?wd('- ',0):0,lines=[[]];let x=0;tk.forEach(([w,bd])=>{const ww=wd(w,bd);if(x+ww>CW-(lines.length>1?ind:0)&&lines[lines.length-1].length){lines.push([]);x=0}lines[lines.length-1].push([w,bd,ww]);x+=ww});
+    falta(lines.length*4.6+1);lines.forEach((ln,i)=>{let xx=M+(i>0?ind:0);ln.forEach(([w,bd,ww])=>{doc.setFont('helvetica',bd?'bold':'normal');T(w.replace(/ $/,''),xx,y);xx+=ww});y+=4.6});y+=.8};
   // cabeçalho
   doc.setFillColor(...AZ).rect(0,0,W,29,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(8.5);T('CENTRO DE COORDENAÇÃO OPERACIONAL MUNICIPAL | SERVIÇO MUNICIPAL DE PROTEÇÃO CIVIL',M,8.5);
   doc.setFontSize(15);T('Apoio à Decisão · Resumo operacional',M,17.5);doc.setFont('helvetica','normal').setFontSize(9);T('Concelho de Braga · Janela: '+d.janela,M,24.5);
@@ -1238,7 +1244,7 @@ function relPdf(d,o){
   y=35;if(sx(o,'nivel')){doc.setTextColor(100,116,139).setFontSize(8);T('Nível recomendado, a validar pelo CorMPC · não substitui os avisos do IPMA nem da ANEPC',M,y);y+=5;
   doc.setFillColor(...COR[n]).roundedRect(M,y,CW,9,1.5,1.5,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(11);T('NÍVEL RECOMENDADO: '+NOMEN[n].toUpperCase()+(o.n!=null?' (definido pelo CorMPC)':''),M+4,y+6.1);y+=14}doc.setTextColor(30,41,59);
   {const hg=relGraficos(doc,d,M,y,CW,{sem:sx(o,'gsem'),chuva:sx(o,'gchuva'),raj:sx(o,'graj'),rio:sx(o,'grio')});if(hg)y+=hg+3}
-  if(sx(o,'resumo')){const l=ft(o,'resumo',relResumo(d));if(l.length){sec('Mensagem-chave');l.forEach(x=>par(x,true))}}
+  if(sx(o,'resumo')){const l=ft(o,'resumo',relResumo(d));if(l.length){sec('Mensagem-chave');l.forEach(x=>parRico(x,true))}}
   if(d.contr&&sx(o,'contr')){sec('Previsão dedicada contratada');par(`Fornecedor: ${d.contr.nome}${d.contr.emitida?' · emitida em '+d.contr.emitida:''}. Os valores desta previsão foram incorporados no consenso dos modelos, com um peso de ${d.contr.peso} %.`);if(d.contr.div&&d.contr.texto.trim()){doc.setFont('helvetica','italic').setFontSize(8.5);const ls=doc.splitTextToSize(san(d.contr.texto.replace(/\s+/g,' ').trim().slice(0,900)+(d.contr.texto.length>900?' [...]':'')),CW);falta(ls.length*3.8+2);ls.forEach(l=>{T(l,M,y);y+=3.8});y+=1.5;doc.setFont('helvetica','normal')}}
   if(sx(o,'blocos')){sec(`Previsão por blocos de 6 h (${d.horas} h)`);
   doc.autoTable({startY:y,margin:{left:M,right:M},theme:'grid',styles:{font:'helvetica',fontSize:8.2,cellPadding:1.3,textColor:[30,41,59],lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},
@@ -1580,7 +1586,7 @@ function msgSms(d,o){
 function msgBlocos(d){return d.blocos.filter(b=>b.n>=1||b.mm>=1).slice(0,8).map(b=>`• ${b.rot.replace(' · ',' ')}: ${Math.round(b.mm)} mm, rajada ${Math.round(b.raj)} km/h, ${NOMEN[b.n]}`)}
 function msgEnt(d,o,tipo){
   const f=msgFatos(d,o),E=['🟢','🟡','🔴'][f.n],cc=relCcom(d,{ccom:o.ccom,per:o.per,nota:''});
-  const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,`*Nível recomendado: ${NOMEN[f.n].toUpperCase()}* · ${d.emitido.replace(' às ',', ')}`,''];
+  const L=[`${E} *${tipo==='ccom'?'CCOM BRAGA':'PROTEÇÃO CIVIL BRAGA'} | PREVISÃO METEOROLÓGICA*`,(f.n>=1?`*Nível recomendado: ${NOMEN[f.n].toUpperCase()}*`:`Nível recomendado: ${NOMEN[f.n]}`)+` · ${d.emitido.replace(' às ',', ')}`,''];
   if(!f.p)L.push('Sem períodos de Vigilância ou Prontidão previstos nas próximas '+d.horas+' h. Mantém-se a monitorização.');
   else{L.push(`📍 *Período:* ${f.per}`,`🌧️ *Chuva:* pico de cerca de ${f.pico} mm em 6 h (${Math.round(f.p.pico.min)} a ${Math.round(f.p.pico.max)} mm entre modelos); até ${f.m24} mm em 24 h`,`💨 *Rajada P90:* até ${f.raj} km/h`);
     f.ipma.forEach(x=>L.push('⚠️ '+x));
