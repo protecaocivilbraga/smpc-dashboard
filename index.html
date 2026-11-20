@@ -234,9 +234,32 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #anFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}#anBox{width:min(900px,97vw);height:min(92vh,820px)}#anBox .rg{grid-template-columns:minmax(0,340px) minmax(0,1fr)}#anBox .tabs{display:flex;flex-wrap:wrap;gap:6px}#anBox .tabs button{background:#1e293b;border:1px solid #334155}#anBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}#anTxt{min-height:300px;flex:1;font-size:13px!important;line-height:1.4}#ctCont{font-size:11px;color:#94a3b8}#ctCont.mau{color:#fbbf24}#anBox .rp{padding:10px 14px;gap:8px}
 #anBox table{border-collapse:collapse;width:100%;font-size:12px}#anBox th,#anBox td{border-bottom:1px solid #1e2b47;padding:3px 5px;text-align:left}#anBox td input{width:70px!important;padding:2px 4px!important}#anBox tr.nc td{color:#64748b}#anTab{overflow:auto;flex:1}#anBox .rp{overflow:auto}
 #faixaMun{display:flex;padding:7px 14px;border-bottom:1px solid var(--linha);border-left:6px solid var(--mc,#64748b);background:#0b1220;font-size:13px;gap:10px;align-items:center;flex-wrap:wrap}#faixaMun:empty{display:none}#faixaAnepc{display:none;padding:7px 14px;border-bottom:1px solid var(--linha);border-left:6px solid var(--anc,#64748b);background:#0b1220;font-size:13px;gap:10px;align-items:center;flex-wrap:wrap}#faixaAnepc.on{display:flex}#faixaAnepc .anE{font-weight:700;color:var(--anc,#e2e8f0)}#faixaAnepc .ex{opacity:.6}
+.semAcesso{display:none!important}
+#loginOv,#usrOv{position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.96);padding:16px}
+#loginOv.on,#usrOv.on{display:flex}#usrOv{background:rgba(2,6,23,.75);z-index:9998}
+#loginBox,#usrBox{background:#0f172a;border:1px solid #1e2b47;border-radius:14px;padding:26px 28px;width:min(380px,100%);box-shadow:0 20px 60px rgba(0,0,0,.5);color:#e2e8f0}
+#loginBox h2,#usrBox h3{margin:0 0 4px;font-size:16px;letter-spacing:.5px}#loginBox .sub{color:#94a3b8;font-size:12px;margin-bottom:16px;line-height:1.4}
+#loginBox label,#usrBox label{display:block;font-size:11px;color:#94a3b8;margin:10px 0 4px;text-transform:uppercase;letter-spacing:.6px}
+#loginBox input,#usrBox input,#usrBox select{width:100%;box-sizing:border-box;background:#0b1220;border:1px solid #28375a;border-radius:8px;color:#e2e8f0;padding:10px 11px;font-size:14px;font-family:inherit}
+#loginBox button,#usrBox button{margin-top:14px;width:100%;padding:10px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+#usrBox button.sec{background:#334155}#loginBox button:disabled{opacity:.6;cursor:wait}
+#lgMsg,#usrMsg{min-height:18px;margin-top:10px;font-size:12px;color:#fca5a5}#usrMsg.ok{color:#6ee7b7}#usrBox hr{border:0;border-top:1px solid #1e2b47;margin:16px 0 4px}
 </style>
 </head>
 <body>
+<div id="loginOv" role="dialog" aria-modal="true" aria-labelledby="lgTit"><form id="loginBox" autocomplete="on">
+  <h2 id="lgTit">CCOM BRAGA</h2><div class="sub">Centro de Coordenação Operacional Municipal · Apoio à Decisão<br>Acesso reservado. Entre com o utilizador e a palavra-passe da sua entidade.</div>
+  <label for="lgU">Utilizador</label><input id="lgU" name="username" autocomplete="username" autocapitalize="characters" spellcheck="false" required>
+  <label for="lgP">Palavra-passe</label><input id="lgP" name="password" type="password" autocomplete="current-password" required>
+  <div id="lgMsg" role="alert"></div><button id="lgOk" type="submit">Entrar</button></form></div>
+<div id="usrOv" role="dialog" aria-modal="true"><div id="usrBox">
+  <h3 id="usrTit">Sessão</h3><div id="usrInfo" style="font-size:12px;color:#94a3b8;margin-top:4px"></div>
+  <button class="sec" id="usrSai" type="button">Terminar sessão</button>
+  <div id="usrAdm" style="display:none"><hr><h3 style="font-size:13px">Alterar palavra-passe de uma entidade</h3>
+   <label for="usrEnt">Entidade</label><select id="usrEnt"><option>CORMPC</option><option>CCOM</option><option>CMPC</option><option>ULPC</option></select>
+   <label for="usrNova">Nova palavra-passe (mín. 10 caracteres)</label><input id="usrNova" type="password" autocomplete="new-password">
+   <button id="usrPw" type="button">Alterar palavra-passe</button></div>
+  <div id="usrMsg" role="status"></div><button class="sec" id="usrFecha" type="button" style="margin-top:8px">Fechar</button></div></div>
 <header>
   <div class="hleft">
     <div>
@@ -244,10 +267,10 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <small>SMPC Braga · previsão multimodelo + satélite EUMETSAT + ocorrências · não substitui os avisos oficiais</small></h1>
     </div>
     <div class="hbtns">
-    <button class="btnRel" id="btnAn" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;">Briefing ANEPC</button>
-    <button class="btnRel" id="btnCt" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
-    <button class="btnRel" id="btnRel" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
-    <button class="btnRel" id="btnMsg" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
+    <button class="btnRel" id="btnAn" data-mod="briefing" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;">Briefing ANEPC</button>
+    <button class="btnRel" id="btnCt" data-mod="contratada" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
+    <button class="btnRel" id="btnRel" data-mod="relatorio" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
+    <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
     </div>
   </div>
   <div id="relPainel">
@@ -262,25 +285,26 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </div>
   <div class="estados">
-    <span><i class="dot load" id="e-oc"></i>Ocorrências <b id="t-oc">…</b></span>
-    <span><i class="dot load" id="e-ifp"></i>Ifprotec <b id="t-ifp">…</b></span>
+    <span data-mod="anepc_oc"><i class="dot load" id="e-oc"></i>Ocorrências <b id="t-oc">…</b></span>
+    <span data-mod="ifprotec"><i class="dot load" id="e-ifp"></i>Ifprotec <b id="t-ifp">…</b></span>
     <span><i class="dot load" id="e-av"></i>Avisos IPMA <b id="t-av">…</b></span>
     <span><i class="dot load" id="e-mod"></i>Modelos <b id="t-mod">…</b></span>
     <span><i class="dot load" id="e-sat"></i>Satélite <b id="t-sat">…</b></span>
     <span><i class="dot load" id="e-rio"></i>Caudais <b id="t-rio">…</b></span>
     <span><i class="dot load" id="e-hid"></i>Linhas de água <b id="t-hid">…</b></span>
+    <span id="pilUser" role="button" tabindex="0" title="Sessão, terminar sessão e palavras-passe" style="cursor:pointer;color:#cbd5e1;border-left:1px solid #1e2b47;padding-left:10px">&#128100; <b id="pilUserV">–</b></span>
   </div>
 </header>
-<div id="faixaMun" role="region" aria-label="Estado de prontidão do Município"></div>
-<div id="faixaAnepc" role="region" aria-label="Estado do dispositivo ANEPC / CCOSR"></div>
-<div id="faixaAvisos" role="region" aria-label="Avisos IPMA em vigor e previstos"></div>
+<div id="faixaMun" data-mod="prontidao" role="region" aria-label="Estado de prontidão do Município"></div>
+<div id="faixaAnepc" data-mod="prontidao" role="region" aria-label="Estado do dispositivo ANEPC / CCOSR"></div>
+<div id="faixaAvisos" data-mod="avisos" role="region" aria-label="Avisos IPMA em vigor e previstos"></div>
 
 <main>
-  <section class="kpis" id="kpis"></section>
+  <section class="kpis" id="kpis" data-mod="kpis"></section>
 
   <section class="grid">
     <div style="display:grid;gap:8px;min-width:0">
-    <div class="card">
+    <div class="card" data-mod="mapa">
       <h2>Mapa operacional <span class="nota" id="notaMapa"></span></h2>
       <div class="ctl">
         <label>Satélite:
@@ -300,7 +324,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <label><input type="checkbox" id="chkFreg" checked> Risco por freguesia</label>
         <label title="Chuva acumulada prevista no horizonte escolhido (24/48/72 h ou bloco), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva" checked> Chuva prevista (mm)</label>
         <label><input type="checkbox" id="chkAgua" checked> Linhas de água</label>
-        <label><input type="checkbox" id="chkOc" checked> Ocorrências (Ifprotec)</label>
+        <label data-mod="ifprotec"><input type="checkbox" id="chkOc" checked> Ocorrências (Ifprotec)</label>
         <label><input type="checkbox" id="chkFogos" checked> Fogos.pt</label>
         <label><input type="checkbox" id="chkApri" checked> ARPSI e cheias históricas (APA)</label>
         <label>Cenário:
@@ -317,7 +341,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <span><i style="background:#f43f5eaa"></i>Elevado (Prontidão)</span>
         <span><i style="background:#a78bfa;height:4px;vertical-align:3px"></i>Troço ARPSI (APA)</span>
         <span><i style="background:#0b1220;border:2px solid #a78bfa;border-radius:50%"></i>Cheia histórica (APA)</span>
-        <span>Ocorrências Ifprotec: <i style="background:#38bdf8;border-radius:50%"></i>SMPC <i style="background:#f59e0b;border-radius:50%"></i>Sapadores <i style="background:#f87171;border-radius:50%"></i>Voluntários</span>
+        <span data-mod="ifprotec">Ocorrências Ifprotec: <i style="background:#38bdf8;border-radius:50%"></i>SMPC <i style="background:#f59e0b;border-radius:50%"></i>Sapadores <i style="background:#f87171;border-radius:50%"></i>Voluntários</span>
       </div>
       <div class="ctl" style="margin-top:8px">
         <label>Camada oficial (GeoJSON, p. ex. PMEPCB/ARPSI):
@@ -326,7 +350,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       </div>
       <p class="aviso-geral">O risco por freguesia é um <b>indicador relativo</b>: mostra a pior situação prevista no horizonte escolhido (24, 48 ou 72 h, ou só o bloco selecionado) e combina o nível de precipitação previsto com a suscetibilidade da freguesia. Esta sobe para <b>alta</b> quando a freguesia tem um troço ARPSI ou uma cheia histórica da APA (dados oficiais, snapshot de 18/11/2026); nas restantes usa a densidade de linhas de água (OpenStreetMap). Soma-se o <b>histórico de inundações do SMPC</b> (Ifprotec 2022-26): freguesias com 15 ou mais dias de inundação passam a suscetibilidade alta e, quando a chuva prevista em 24 h atinge o valor a partir do qual cada freguesia costuma ter ocorrências, o risco não fica abaixo de Vigilância (nunca se baixa o risco por este critério; cerca de metade dos registos não tem freguesia, pelo que as contagens são mínimos). Não substitui a cartografia oficial de zonas inundáveis (PMEPCB, PGRI). Os níveis Normal, Vigilância e Prontidão são propostas a validar pelo CorMPC.</p>
     </div>
-    <div class="card" id="cardPrev">
+    <div class="card" id="cardPrev" data-mod="prevencao">
         <h2>Prevenção de inundações <span class="nota">uso interno · níveis a partir da chuva observada em Braga, 2022-26</span></h2>
         <div class="ctl">
           <label>Locais (ficheiro privado): <input type="file" id="filePrev" accept=".json"></label>
@@ -336,38 +360,38 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="prevJan" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0"></div>
         <div id="prevLista" class="aviso-geral"><div class="vazio">Carregue o ficheiro prevencao_inundacoes.json (fica só neste navegador).</div></div>
       </div>
-    <div class="card" id="cardIfp">
+    <div class="card" id="cardIfp" data-mod="ifprotec">
         <h2>Ocorrências SMPC e bombeiros <span class="nota">Ifprotec · SMPC: últimas 24 h · Bombeiros: enquanto ativas · SMPC: todas · Bombeiros: todas exceto doença súbita e trauma</span></h2>
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
-      <div class="card">
+      <div class="card" data-mod="anepc_oc">
         <h2>Ocorrências em curso ANEPC <span class="nota">Fogos.pt (ANEPC) via CENTCOM · concelho de Braga</span></h2>
         <div id="resumoHoje" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ocLista"><div class="vazio">A carregar…</div></div>
       </div>
-      <div class="card">
+      <div class="card" data-mod="freguesias">
         <h2>Freguesias a vigiar <span class="nota" id="notaRank"></span></h2>
         <div class="rank" id="rank"><div class="vazio">A carregar…</div></div>
       </div>
     </div>
 
     <div style="display:grid;gap:8px">
-      <div class="card">
+      <div class="card" data-mod="semaforo">
         <h2>Semáforo por blocos de 6 h <span class="nota" id="notaSem"></span></h2>
         <div class="blocos" id="blocos"></div>
         <div id="grafChuva" style="margin-top:10px"></div>
         <div id="grafRaj"></div>
       </div>
-      <div class="card">
+      <div class="card" data-mod="caudal">
         <h2>Caudal modelado <span class="nota">GloFAS via Open-Meteo · grelha de 5 km · indicativo</span></h2>
         <div id="rio"><div class="vazio">A carregar…</div></div>
       </div>
-      <div class="card">
+      <div class="card" data-mod="avisos">
         <h2 id="cardAvisos">Avisos IPMA em vigor e previstos <span class="nota">emitidos para o concelho, mesmo que comecem mais tarde · amarelo, laranja e vermelho, todos os tipos · agitação marítima não considerada (não se aplica a Braga)</span></h2>
         <div id="avisos"><div class="vazio">A carregar…</div></div>
       </div>
-        <div class="card">
+        <div class="card" data-mod="previsao">
         <h2>Previsão por bloco <span class="nota">Braga (centro) · consenso e intervalo entre 6 modelos</span>
           <select id="selPonto" style="margin-left:auto;background:#0d1526;color:#f8fafc;border:1px solid #1e2b47;border-radius:6px;padding:3px 6px"></select></h2>
         <div style="overflow:auto"><table id="tabela"></table></div>
@@ -376,7 +400,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </section>
 
-  <section class="card">
+  <section class="card" data-mod="fontes">
     <h2>Fontes e limitações</h2>
     <p class="aviso-geral">
       <b>Previsão:</b> ensembles Open-Meteo (ECMWF IFS ENS e AIFS, GFS, ICON-EPS, UKMO, GEM). O consenso é a mediana das medianas dos 6 modelos; o intervalo é o mínimo e o máximo entre modelos; o cenário elevado é a mediana dos P90.
@@ -523,6 +547,58 @@ async function getJSON(url,ms=40000){const c=new AbortController();const t=setTi
 const S={ifp:[],ifpRes:null,ocorr:[],resumo:null,avisos:[],avisosOK:false,modelos:null,blocos:[],sel:0,hor:'24',cen:'cons',ponto:'Braga (centro)',
 
   freg:null,fregGeo:null,agua:null,susc:{},rio:null,gjOficial:null};
+/* ============ Acesso por utilizador e palavra-passe (1 conta por entidade) ============
+   O servidor (Apps Script, Auth.gs) é quem protege os dados do Ifprotec; aqui só se mostram ou escondem os módulos. */
+const AUTH={s:null};
+try{AUTH.s=JSON.parse(localStorage.getItem('smpc_sessao')||'null');if(AUTH.s&&!(AUTH.s.exp>Date.now()))AUTH.s=null}catch(e){AUTH.s=null}
+function temAcesso(m){const s=AUTH.s;return !!(s&&((s.ver||[]).includes(m)||(s.editar||[]).includes(m)))}
+function podeEditar(m){const s=AUTH.s;return !!(s&&(s.editar||[]).includes(m))}
+function sessaoGuarda(r){AUTH.s={t:r.t,exp:r.exp,id:r.id,nome:r.nome,ver:r.ver||[],editar:r.editar||[],admin:!!r.admin};try{localStorage.setItem('smpc_sessao',JSON.stringify(AUTH.s))}catch(e){}}
+function aplicarPerfil(){
+  document.querySelectorAll('[data-mod]').forEach(el=>el.classList.toggle('semAcesso',!temAcesso(el.dataset.mod)));
+  $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
+  try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
+}
+async function authPost(o){
+  if(!CFG.IFPROTEC)throw new Error('Ligação ao servidor por configurar.');
+  const r=await fetch(CFG.IFPROTEC,{method:'POST',body:JSON.stringify(o),redirect:'follow'});
+  if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();
+}
+function loginMostra(msg){$('loginOv').classList.add('on');$('lgMsg').textContent=msg||'';setTimeout(()=>{try{$('lgU').focus()}catch(e){}},50)}
+function sessaoExpirada(){AUTH.s=null;try{localStorage.removeItem('smpc_sessao')}catch(e){}document.querySelectorAll('[data-mod]').forEach(el=>el.classList.add('semAcesso'));loginMostra('A sessão terminou. Entre de novo.')}
+$('loginBox').onsubmit=async ev=>{
+  ev.preventDefault();const b=$('lgOk');b.disabled=true;b.textContent='A entrar…';$('lgMsg').textContent='';
+  try{
+    const r=await authPost({acao:'login',u:$('lgU').value.trim(),p:$('lgP').value});
+    if(!r.ok){$('lgMsg').textContent=r.erro||'Não foi possível entrar.';$('lgP').value='';return}
+    sessaoGuarda(r);$('lgP').value='';$('loginOv').classList.remove('on');aplicarPerfil();carregarIfp();
+  }catch(e){$('lgMsg').textContent='Sem ligação ao servidor. Tente de novo.'}
+  finally{b.disabled=false;b.textContent='Entrar'}
+};
+function usrAbre(){
+  if(!AUTH.s)return;const d=new Date(AUTH.s.exp),f=n=>String(n).padStart(2,'0');
+  $('usrTit').textContent='Sessão: '+AUTH.s.nome;
+  $('usrInfo').textContent='Válida até '+f(d.getDate())+'/'+f(d.getMonth()+1)+' '+f(d.getHours())+':'+f(d.getMinutes())+'.';
+  $('usrAdm').style.display=AUTH.s.admin?'block':'none';$('usrMsg').textContent='';$('usrMsg').className='';$('usrNova').value='';$('usrOv').classList.add('on');
+}
+$('pilUser').onclick=usrAbre;$('pilUser').onkeydown=e=>{if(e.key==='Enter'||e.key===' ')usrAbre()};
+$('usrFecha').onclick=()=>$('usrOv').classList.remove('on');
+$('usrSai').onclick=()=>{AUTH.s=null;try{localStorage.removeItem('smpc_sessao')}catch(e){}location.reload()};
+$('usrPw').onclick=async()=>{
+  const m=$('usrMsg');m.className='';const n=$('usrNova').value;
+  if(n.length<10){m.textContent='A palavra-passe deve ter pelo menos 10 caracteres.';return}
+  try{const r=await authPost({acao:'pw',t:AUTH.s.t,entidade:$('usrEnt').value,nova:n});
+    if(r.erro==='sessao'){$('usrOv').classList.remove('on');sessaoExpirada();return}
+    if(!r.ok){m.textContent=r.erro||'Não foi possível alterar.';return}
+    $('usrNova').value='';m.className='ok';m.textContent='Palavra-passe de '+$('usrEnt').value+' alterada. Entregue-a só a essa entidade.'
+  }catch(e){m.textContent='Sem ligação ao servidor.'}
+};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('usrOv').classList.remove('on')});
+(function arranque(){
+  if(!AUTH.s){document.querySelectorAll('[data-mod]').forEach(el=>el.classList.add('semAcesso'));loginMostra();return}
+  aplicarPerfil(); // sessão guardada: mostra já, e confirma no servidor (as permissões podem ter mudado)
+  authPost({acao:'sessao',t:AUTH.s.t}).then(r=>{if(r.ok){sessaoGuarda(r);aplicarPerfil();carregarIfp()}else if(r.erro==='sessao')sessaoExpirada()}).catch(()=>{});
+})();
 function relogioPainel(){const d=new Date(),f=o=>new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,...o}).format(d);
   $('hhH').textContent=f({hour:'2-digit',hourCycle:'h23'});$('hhM').textContent=f({minute:'2-digit'}).padStart(2,'0');const sg=f({second:'2-digit'}).padStart(2,'0');$('hhS').textContent=sg;$('hhC').classList.toggle('off',+sg%2===1);
   $('calMes').textContent=f({month:'short'}).replace('.','').toUpperCase();$('calDia').textContent=f({day:'numeric'});
@@ -820,9 +896,11 @@ function freguesiaDe(o){ // usa a da plataforma; se vier vazia, deduz pelas coor
 }
 async function carregarIfp(){
   if(!CFG.IFPROTEC){estado('ifp','load','por configurar');desenharIfp();return}
+  if(!AUTH.s||!temAcesso('ifprotec'))return;
   try{
-    const j=await getJSON(`${CFG.IFPROTEC}?_=${Date.now()}`,30000);
-    if(j.erro)throw new Error(j.erro);
+    const j=await getJSON(`${CFG.IFPROTEC}?t=${encodeURIComponent(AUTH.s.t)}&_=${Date.now()}`,30000);
+    if(j.erro==='sessao'){sessaoExpirada();return}
+    if(j.erro)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro);
     S.ifp=j.ocorrencias||[];S.ifpRes={horas:j.horas||24,total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,emCurso:(j.emCurso!=null?j.emCurso:null),porFreg:j.outrasPorFreguesia||{}};
     estado('ifp','ok',fmtHM(new Date(j.atualizado||Date.now())));
     verificarNovasIfp();
@@ -894,7 +972,7 @@ function desenharKpis(){
   h+=cel('Avisos IPMA',av.length||'0',av.length?`mais alto: ${['','amarelo','laranja','vermelho'][top]} · ${av.filter(avVigor).length} em vigor, ${av.filter(a=>!avVigor(a)).length} previstos`:'sem avisos para Braga',top>=2?'c2':top==1?'c1':'c0');
   const relI=S.ifp.filter(o=>CFG.RELACIONADAS.test(o.natureza||'')).length;
   const nI=S.ifpRes?(S.ifpRes.emCurso!=null?S.ifpRes.emCurso:S.ifp.length):null;
-  h+=CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em resolução, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
+  h+=!temAcesso('ifprotec')?'':CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em resolução, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
   if(S.rio&&S.rio.daily){const r=S.rio.daily.river_discharge;const hoje=r[0],mx=Math.max(...r),i=r.indexOf(mx);
     h+=cel('Caudal modelado (pico 7 d)',mx.toFixed(1)+' m³/s',`${S.rio.daily.time[i].slice(8,10)}/${S.rio.daily.time[i].slice(5,7)} · hoje ${hoje.toFixed(1)}`)}
   k.innerHTML=h;
