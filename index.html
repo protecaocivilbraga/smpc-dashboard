@@ -243,6 +243,20 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #loginBox input,#usrBox input,#usrBox select{width:100%;box-sizing:border-box;background:#0b1220;border:1px solid #28375a;border-radius:8px;color:#e2e8f0;padding:10px 11px;font-size:14px;font-family:inherit}
 #loginBox button,#usrBox button{margin-top:14px;width:100%;padding:10px;border:0;border-radius:8px;background:#2563eb;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 #usrBox button.sec{background:#334155}#loginBox button:disabled{opacity:.6;cursor:wait}
+#brOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}#brOv.on{display:flex}
+#brBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(720px,97vw);max-height:92vh;overflow:auto}
+#brBox .rh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #334155;position:sticky;top:0;background:#0f172a}
+#brBox h3{margin:0;font-size:15px}#brBox .bc{padding:12px 14px;display:grid;gap:10px}
+#brBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#brBox input,#brBox textarea,#brBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
+#brBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer}#brBox button.sec{background:#334155}#brBox button:disabled{opacity:.6;cursor:wait}
+#brBox .rn{font-size:11px;color:#94a3b8;margin:0;line-height:1.4}#brBox a{color:#60a5fa}
+#brBox .av{display:flex;gap:8px;align-items:flex-start;border:1px solid #334155;border-radius:8px;padding:8px 10px;font-size:12px}#brBox .av b{display:block}#brBox .av small{color:#94a3b8}
+#brBox .av .nv{flex:none;border-radius:99px;padding:2px 8px;font-size:10px;font-weight:700;color:#0f172a}
+#brBox .av.exp{opacity:.55}#brBox .av button{flex:none;margin-left:auto;padding:4px 9px;background:#7f1d1d}
+#brBox fieldset{border:1px solid #475569;border-radius:8px;padding:8px 10px;display:grid;gap:8px}#brBox legend{font-size:11px;color:#fbbf24;padding:0 4px}
+#brMsg{font-size:12px;min-height:16px}#brMsg.ok{color:#34d399}#brMsg.err{color:#f87171}
+#brFecha{background:none!important;border:0;color:#e2e8f0;font-size:24px;line-height:1;padding:0 4px!important}
 #lgMsg,#usrMsg{min-height:18px;margin-top:10px;font-size:12px;color:#fca5a5}#usrMsg.ok{color:#6ee7b7}#usrBox hr{border:0;border-top:1px solid #1e2b47;margin:16px 0 4px}
 </style>
 </head>
@@ -271,6 +285,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <button class="btnRel" id="btnCt" data-mod="contratada" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
     <button class="btnRel" id="btnRel" data-mod="relatorio" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
     <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
+    <button class="btnRel semAcesso" id="btnBR" title="Publicar avisos municipais na aplicação Braga Resiliente (só administrador)" style="background:#0b5cab">Braga Resiliente</button>
     </div>
   </div>
   <div id="relPainel">
@@ -485,6 +500,28 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </div>
 </div></div>
+<div id="brOv" role="dialog" aria-modal="true" aria-labelledby="brTit"><div id="brBox">
+  <div class="rh"><h3 id="brTit">Braga Resiliente · Avisos municipais</h3><button id="brFecha" title="Fechar (Esc)">×</button></div>
+  <div class="bc">
+    <p class="rn">Os avisos publicados aqui aparecem na aplicação <b>Braga Resiliente</b>, <b>visíveis ao público</b>, cerca de um minuto depois. Não há notificações no telemóvel: quem tem a app vê o aviso quando a abre. Para chegar a toda a gente use também o canal de avisos do Município.</p>
+    <div id="brMsg" role="status"></div>
+    <fieldset><legend>Avisos em vigor na aplicação</legend><div id="brLista" style="display:grid;gap:6px"></div><div><button class="sec" id="brLimpa">Remover os expirados</button> <button class="sec" id="brRecarrega">Atualizar lista</button></div></fieldset>
+    <fieldset><legend>Novo aviso</legend>
+      <label>Nível<select id="brNivel"><option value="info">Informação</option><option value="amarelo">Amarelo</option><option value="laranja">Laranja</option><option value="vermelho">Vermelho</option></select></label>
+      <label>Título (obrigatório)<input id="brTit2" maxlength="80" placeholder="ex.: Chuva forte esta tarde"></label>
+      <label>Texto<textarea id="brTxt" rows="4" maxlength="500" placeholder="O que deve a população fazer? Em emergência, ligue 112."></textarea></label>
+      <label>Validade<select id="brVal"><option value="6">6 horas</option><option value="12">12 horas</option><option value="24" selected>24 horas</option><option value="48">48 horas</option><option value="72">72 horas</option><option value="0">Sem fim (até remover)</option></select></label>
+      <div><button id="brPub">Publicar na aplicação</button></div>
+    </fieldset>
+    <details id="brCfg"><summary class="rn" style="cursor:pointer">Ligação ao GitHub <span id="brTokSt"></span></summary>
+      <div style="display:grid;gap:8px;margin-top:8px">
+        <p class="rn">Para publicar é preciso uma chave do GitHub, guardada <b>só neste navegador</b>. Crie-a em <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>: repositório <b>apenas</b> <code>vmazevedo0303/braga-resiliente</code>, permissão <b>Contents: Read and write</b>, validade até 1 ano. Cole-a abaixo.</p>
+        <label>Chave<input id="brTokIn" type="password" autocomplete="off" placeholder="github_pat_…"></label>
+        <div><button id="brTokSave">Guardar chave</button> <button class="sec" id="brTokDel">Apagar chave deste navegador</button></div>
+      </div>
+    </details>
+  </div>
+</div></div>
 <div id="relOv" role="dialog" aria-modal="true" aria-labelledby="relTit"><div id="relBox">
   <div class="rh"><h3 id="relTit">Relatório de apoio à decisão</h3><button id="relFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
@@ -560,6 +597,7 @@ function podeEditar(m){const s=AUTH.s;return !!(s&&(s.editar||[]).includes(m))}
 function sessaoGuarda(r){AUTH.s={t:r.t,exp:r.exp,id:r.id,nome:r.nome,ver:r.ver||[],editar:r.editar||[],admin:!!r.admin};try{localStorage.setItem('smpc_sessao',JSON.stringify(AUTH.s))}catch(e){}}
 function aplicarPerfil(){
   document.querySelectorAll('[data-mod]').forEach(el=>el.classList.toggle('semAcesso',!temAcesso(el.dataset.mod)));
+  try{$('btnBR').classList.toggle('semAcesso',!(AUTH.s&&AUTH.s.admin))}catch(e){}
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -598,6 +636,84 @@ $('usrPw').onclick=async()=>{
   }catch(e){m.textContent='Sem ligação ao servidor.'}
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('usrOv').classList.remove('on')});
+/* ============ Braga Resiliente: avisos municipais da aplicação pública ============
+   Escreve o ficheiro avisos.json do repositório braga-resiliente através da API do GitHub. A chave fica só no navegador do administrador. */
+const BR={REPO:'vmazevedo0303/braga-resiliente',FICH:'avisos.json',KEY:'br_token',avisos:[],sha:null,ocupado:false};
+const BR_NV={info:['Informação','#60a5fa'],amarelo:['Amarelo','#fbbf24'],laranja:['Laranja','#fb923c'],vermelho:['Vermelho','#f87171']};
+const brTok=()=>{try{return localStorage.getItem(BR.KEY)||''}catch(e){return ''}};
+const brHdr=()=>{const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};const t=brTok();if(t)h.Authorization='Bearer '+t;return h};
+const brB64=t=>{const b=new TextEncoder().encode(t);let x='';b.forEach(c=>x+=String.fromCharCode(c));return btoa(x)};
+const brUnB64=t=>new TextDecoder().decode(Uint8Array.from(atob(String(t).replace(/\s/g,'')),c=>c.charCodeAt(0)));
+function brMsg(t,c){const m=$('brMsg');m.textContent=t||'';m.className=c||''}
+async function brLer(){
+  const r=await fetch('https://api.github.com/repos/'+BR.REPO+'/contents/'+BR.FICH+'?ref=main&t='+Date.now(),{headers:brHdr(),cache:'no-store'});
+  if(r.status===401||r.status===403)throw new Error('O GitHub recusou o pedido ('+r.status+'). Confirme a chave em "Ligação ao GitHub".');
+  if(!r.ok)throw new Error('Não foi possível ler o ficheiro de avisos (GitHub '+r.status+').');
+  const j=await r.json();BR.sha=j.sha;let d={};try{d=JSON.parse(brUnB64(j.content))}catch(e){}
+  BR.avisos=Array.isArray(d.avisos)?d.avisos.filter(a=>a&&a.titulo):[];
+}
+async function brPut(msg){
+  const corpo={message:msg,branch:'main',sha:BR.sha,content:brB64(JSON.stringify({atualizado:localNaive(new Date())+':00',avisos:BR.avisos},null,2)+'\n')};
+  const r=await fetch('https://api.github.com/repos/'+BR.REPO+'/contents/'+BR.FICH,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},brHdr()),body:JSON.stringify(corpo)});
+  if(r.status===409||r.status===422){const e=new Error('conflito');e.conflito=true;throw e}
+  if(r.status===401||r.status===403)throw new Error('O GitHub recusou a gravação ('+r.status+'). A chave precisa de "Contents: Read and write" neste repositório.');
+  if(!r.ok){let m='';try{m=(await r.json()).message}catch(e){}throw new Error('GitHub '+r.status+(m?': '+m:''))}
+  const j=await r.json();BR.sha=j.content&&j.content.sha;
+}
+/* aplica "alterar" sobre a lista mais recente e grava; se o ficheiro mudou entretanto, repete uma vez */
+async function brAplicar(alterar,msg){
+  await brLer();alterar(BR.avisos);
+  try{await brPut(msg)}catch(e){if(!e.conflito)throw e;await brLer();alterar(BR.avisos);await brPut(msg)}
+}
+const brExp=a=>!!(a.validoAte&&String(a.validoAte).slice(0,16)<=localNaive(new Date()));
+function brDesenha(){
+  const L=$('brLista');
+  L.innerHTML=BR.avisos.length?BR.avisos.map((a,i)=>{const n=BR_NV[String(a.nivel||'').toLowerCase()]||BR_NV.info,ex=brExp(a);
+    return `<div class="av${ex?' exp':''}"><span class="nv" style="background:${n[1]}">${n[0]}</span><span><b>${esc(a.titulo)}</b>${esc(a.texto||'')}<br><small>${a.validoAte?(ex?'Expirou':'Válido até')+' '+esc(fmtDH(new Date(a.validoAte))):'Sem fim: fica até ser removido'}</small></span><button data-i="${i}">Remover</button></div>`}).join(''):'<p class="rn">Não há avisos municipais publicados.</p>';
+  L.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>brRemove(+b.dataset.i));
+  $('brTokSt').textContent=brTok()?'· configurada ✓':'· por configurar';
+}
+async function brCarrega(){
+  brMsg('A ler os avisos da aplicação…');
+  try{await brLer();brDesenha();brMsg('')}catch(e){BR.avisos=[];brDesenha();brMsg(e.message,'err')}
+}
+async function brAbre(){
+  $('brOv').classList.add('on');brDesenha();
+  if(!brTok()){$('brCfg').open=true;brMsg('Falta configurar a ligação ao GitHub (ver "Ligação ao GitHub" em baixo).','err');return}
+  $('brCfg').open=false;await brCarrega();
+}
+async function brOperacao(alterar,msg,ok){
+  if(BR.ocupado)return;BR.ocupado=true;['brPub','brLimpa','brRecarrega'].forEach(i=>$(i).disabled=true);
+  brMsg('A publicar…');
+  try{await brAplicar(alterar,msg);brDesenha();brMsg(ok+' Fica visível na aplicação dentro de cerca de 1 minuto.','ok');return true}
+  catch(e){brMsg(e.message==='conflito'?'O ficheiro foi alterado por outra pessoa. Atualize a lista e tente de novo.':e.message,'err');return false}
+  finally{BR.ocupado=false;['brPub','brLimpa','brRecarrega'].forEach(i=>$(i).disabled=false)}
+}
+async function brPublica(){
+  if(!brTok()){brMsg('Falta configurar a ligação ao GitHub.','err');$('brCfg').open=true;return}
+  const titulo=$('brTit2').value.trim(),texto=$('brTxt').value.trim(),nivel=$('brNivel').value,h=+$('brVal').value;
+  if(!titulo){brMsg('Escreva o título do aviso.','err');return}
+  if(!confirm('Publicar este aviso na aplicação Braga Resiliente?\n\n'+titulo+'\n\nFicará visível ao público.'))return;
+  const novo={nivel,titulo,texto};if(h>0)novo.validoAte=addH(localNaive(new Date()),h)+':00';
+  const ok=await brOperacao(l=>{l.unshift(novo)},'Aviso: '+titulo.slice(0,60),'Aviso publicado.');
+  if(ok){$('brTit2').value='';$('brTxt').value=''}
+}
+async function brRemove(i){
+  const a=BR.avisos[i];if(!a)return;
+  if(!confirm('Remover o aviso "'+a.titulo+'" da aplicação?'))return;
+  await brOperacao(l=>{const k=l.findIndex(x=>x.titulo===a.titulo&&(x.texto||'')===(a.texto||'')&&(x.validoAte||'')===(a.validoAte||''));if(k>=0)l.splice(k,1)},'Remover aviso: '+String(a.titulo).slice(0,60),'Aviso removido.');
+}
+async function brLimpa(){
+  if(!BR.avisos.some(brExp)){brMsg('Não há avisos expirados.');return}
+  await brOperacao(l=>{for(let k=l.length-1;k>=0;k--)if(brExp(l[k]))l.splice(k,1)},'Remover avisos expirados','Avisos expirados removidos.');
+}
+$('btnBR').onclick=brAbre;$('brFecha').onclick=()=>$('brOv').classList.remove('on');
+$('brPub').onclick=brPublica;$('brLimpa').onclick=brLimpa;$('brRecarrega').onclick=brCarrega;
+$('brTokSave').onclick=()=>{const v=$('brTokIn').value.trim();if(!/^(github_pat_|ghp_)/.test(v)){brMsg('A chave deve começar por github_pat_ (ou ghp_).','err');return}
+  try{localStorage.setItem(BR.KEY,v)}catch(e){brMsg('Este navegador não deixa guardar a chave.','err');return}
+  $('brTokIn').value='';$('brCfg').open=false;brCarrega()};
+$('brTokDel').onclick=()=>{try{localStorage.removeItem(BR.KEY)}catch(e){}brDesenha();brMsg('Chave apagada deste navegador.')};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('brOv').classList.remove('on')});
 (function arranque(){
   if(!AUTH.s){document.querySelectorAll('[data-mod]').forEach(el=>el.classList.add('semAcesso'));loginMostra();return}
   aplicarPerfil(); // sessão guardada: mostra já, e confirma no servidor (as permissões podem ter mudado)
@@ -1063,9 +1179,14 @@ function ocInundacao(nomeFreg){
   const k=norm(nomeFreg);const todas=S.ocorr.concat(S.ifp.filter(o=>!/encerrad/i.test(o.estado||'')).map(o=>({natureza:o.natureza||'',freguesia:freguesiaDe(o)})));
   return todas.some(o=>/inunda|cheia|galeria|[aá]gua/i.test(o.natureza)&&norm(o.freguesia||'')&&(k.includes(norm(o.freguesia))||norm(o.freguesia).includes(k)))
 }
+function desenharAgua(H){
+  const cor='#3b82f6',wd={river:4,canal:2,stream:2};
+  S.agua.forEach(w=>L.polyline(w.pts.map(p=>[p[1],p[0]]),{color:cor,weight:(wd[w.tipo]||2)+H,opacity:H?.9:.55,pane:'agua',interactive:!!w.nome}).bindTooltip(w.nome||'',{sticky:true}).addTo(gAgua));
+}
 function desenharRisco(){
   desenharIfp();gFreg.clearLayers();gAgua.clearLayers();
-  const C=dataAtual();if(!C)return;const X=C.blocos;
+  const C=dataAtual();if(!C){if(S.agua)desenharAgua(0);return} // sem previsão, as linhas de água aparecem na mesma
+  const X=C.blocos;
   // Horizonte: pior bloco (nível de precipitação e chuva em 24 h) dentro das próximas 24/48/72 h; 'b' = só o bloco selecionado
   const nB=S.hor==='b'?1:Math.min(X.length,(+S.hor||24)/CFG.BLOCO),k0=S.hor==='b'?S.sel:0;
   let kRef=k0,Hm=-1,aMax=0;
@@ -1090,10 +1211,7 @@ function desenharRisco(){
       L.geoJSON({type:'Feature',geometry:f.geom},{pane:'risco',style:{color:'#0b1220',weight:1,fillColor:cor,fillOpacity:Math.min(.7,[.12,.3,.45][r]*.5+Math.min(1,mmH/50)*[.3,.3,.3][r]+(r?0:Math.min(1,mmH/50)*.1))}}).bindTooltip(`<b>${esc(f.nome)}</b><br>Risco: ${NOMEN[r]}<br>Chuva prevista (${S.hor==='b'?'bloco':S.hor+' h'}): ${mmH.toFixed(0)} mm · máx. ${m6H.toFixed(0)} mm/6 h<br><span style="color:#94a3b8">${motivo}</span>`,{sticky:true}).addTo(gFreg);
     });
   }
-  if(S.agua){
-    const cor='#3b82f6',wd={river:4,canal:2,stream:2};
-    S.agua.forEach(w=>L.polyline(w.pts.map(p=>[p[1],p[0]]),{color:cor,weight:(wd[w.tipo]||2)+H,opacity:H?.9:.55,pane:'agua',interactive:!!w.nome}).bindTooltip(w.nome||'',{sticky:true}).addTo(gAgua));
-  }
+  if(S.agua)desenharAgua(H);
   // ranking
   const rk=$('rank');
   if(!lista.length){rk.innerHTML='<div class="vazio">'+(S.freg?'Sem dados.':'A carregar freguesias…')+'</div>';return}
