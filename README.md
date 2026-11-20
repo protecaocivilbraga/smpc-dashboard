@@ -16,3 +16,7 @@ Quadro "Briefing técnico-operacional CCOS Cávado" no painel: carrega-se o PDF 
 - Entra no relatório PDF e no email (opções "Briefing CCOS Cávado" e "Aviso Planoclima") e na mensagem **Entidades · grupos CCOM e Agentes de PC**. Nunca nas mensagens à população (WhatsApp e SMS).
 
 O aviso da Planoclima nunca altera o nível sozinho. Se tiver menos de 48 h, ultrapassar os limiares do painel e coincidir com um nível já proposto ou com um aviso do IPMA, aparece uma sugestão de subir um nível nos diálogos "Relatório" e "Mensagens", com o botão "Aplicar sugestão".
+
+## Botão "Braga Resiliente" (só administrador)
+
+Publica avisos municipais na aplicação pública Braga Resiliente (repositório `braga-resiliente`, ficheiro `avisos.json`). Mostra-se apenas à conta administrador. A publicação usa a API do GitHub com uma chave pessoal (fine-grained, só `braga-resiliente`, Contents: Read and write) que fica **apenas no `localStorage` do navegador do administrador**; nunca é enviada para este repositório. Os avisos ficam **públicos**.
