@@ -674,6 +674,22 @@ function psOcorr(){ // ativas (S.ifp) + já encerradas (hist), sem duplicados
 }
 function psIntervalo(h){const f=new Date(),i=new Date(f.getTime()-h*3600e3);$('psDe').value=localNaive(i);$('psAte').value=localNaive(f)}
 const PS_EXCL=/busca e resgate terrestre de animais|abertura de elevadores|preven[cç][aã]o a atividades de lazer|intoxica/i;
+/* Naturezas ligadas a cada tipo de aviso IPMA (texto sem acentos). Só estas entram no POSIT. */
+const PS_REL={
+  'Precipitação':/inunda|cheia|galeria|alaga|movimento de massa|deslizamento|aluimento|desabamento|limpeza de via/,
+  'Vento':/arvore|vento|estrutura|desabamento|derrube|limpeza de via|andaime|placard|toldo|ramos/,
+  'Trovoada':/trovoada|raio|descarga|inunda|arvore/,
+  'Tempo Frio':/gelo|neve|geada|arvore/,
+  'Tempo Quente':/incendio|fogo|calor/,
+  'Nevoeiro':/nevoeiro|visibilidade/
+};
+function psRelacao(){ // avisos em vigor (sem agitação marítima) e função que diz se uma ocorrência lhes diz respeito
+  const agora=localNaive(new Date()),tipos=[...new Set(avisosRel().filter(w=>w.inicio.slice(0,16)<=agora&&w.fim.slice(0,16)>agora).map(w=>w.tipo))];
+  if(!tipos.length)return{tipos:[],ok:o=>CFG.RELACIONADAS.test(o.natureza||'')};
+  ['Precipitação','Vento'].forEach(t=>{if(!tipos.includes(t))tipos.push(t)}); // precipitação e vento contam sempre juntos
+  tipos.sort((x,y)=>(x==='Precipitação'?0:x==='Vento'?1:2)-(y==='Precipitação'?0:y==='Vento'?1:2));
+  return{tipos,ok:o=>{const n=norm(o.natureza||'');return tipos.some(t=>PS_REL[t]?PS_REL[t].test(n):CFG.RELACIONADAS.test(o.natureza||''))}};
+}
 const PS_COR=[null,'#22c55e','#facc15','#ef4444'],PS_EMO=['','🟢','🟡','🔴'];
 PS.M=1;const psNivel=n=>{if(n<1)return 0;const r=n/PS.M;return r>2/3?3:r>1/3?2:1}; // relativo à freguesia com mais ocorrências no período: vermelho > 2/3, amarelo > 1/3, verde o resto
 function psFreguesia(o){const n=norm(psNomeF(freguesiaDe(o)));if(!n||!S.freg)return null;
@@ -707,7 +723,8 @@ function psGerar(){
   if(de<localNaive(new Date(Date.now()-24*3600e3)))av.push('O painel só recebe as ocorrências das últimas 24 h; o que for mais antigo não entra.');
   if(S.ifpRes&&!S.ifpHist)av.push('Só entram as ocorrências ativas: para incluir as encerradas é preciso atualizar o Code.gs do Ifprotec.');
   $('psAv').textContent=av.join(' ');
-  const L=psOcorr().filter(o=>String(o.data).slice(0,16)>=de&&String(o.data).slice(0,16)<=ate&&!PS_EXCL.test(o.natureza||''));
+  const REL=psRelacao();
+  const L=psOcorr().filter(o=>String(o.data).slice(0,16)>=de&&String(o.data).slice(0,16)<=ate&&!PS_EXCL.test(o.natureza||'')&&REL.ok(o));
   const por={},fr={},cont={};
   L.forEach(o=>{const n=(o.natureza||'Outras').trim()||'Outras';por[n]=(por[n]||0)+1;
     const f=psNomeF(freguesiaDe(o))||'Sem freguesia';fr[f]=(fr[f]||0)+1;const g=psFreguesia(o);if(g)cont[g]=(cont[g]||0)+1});
@@ -715,10 +732,10 @@ function psGerar(){
   const ord=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt'));
   const per=`${psDM(de)} ${psHM(de)} às ${psDM(ate)} ${psHM(ate)}`;
   const T=['*POSIT · CCOM Braga*',`${per} · emitido às ${fmtHM(new Date())}`,''];
-  T.push(`*Ocorrências: ${L.length}*`);
+  T.push(`*Ocorrências relacionadas com ${REL.tipos.length?'Aviso em vigor ('+REL.tipos.join(' e ')+')':'mau tempo (sem aviso em vigor)'}: ${L.length}*`);
   if(L.length){ord(por).forEach(([n,v])=>T.push(`• ${n}: ${v}`));
     T.push('','*Freguesias afetadas*');ord(fr).forEach(([n,v])=>T.push(`${PS_EMO[psNivel(v)]} ${n}: ${v}`))}
-  else T.push('Sem ocorrências registadas neste período.');
+  else T.push('Sem ocorrências relacionadas neste período.');
   if(S.ifpRes&&!S.ifpHist)T.push('','Nota: não inclui ocorrências já encerradas.');
   T.push('');
   const C=S.calc&&S.calc['Braga (centro)'];
