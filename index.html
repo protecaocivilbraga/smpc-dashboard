@@ -164,7 +164,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 .btnRel{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer}
 
 #relBox button.sec{background:#334155}
-.chuvaNum{font:600 9px/14px system-ui;color:#0f172a;text-align:center;text-shadow:0 0 2px #fff,0 0 2px #fff}
+.chuvaNum{font:800 16px/20px system-ui,sans-serif;color:#fff;text-align:center;text-shadow:0 0 3px #000,0 0 3px #000,0 0 5px #000,1px 1px 2px #000;letter-spacing:.2px}
 #msgOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}
 #msgOv.on{display:flex}
 #msgBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(1180px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
@@ -262,7 +262,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #psBox h3{margin:0;font-size:15px}#psBox .bc{padding:12px 14px;display:grid;gap:10px}
 #psBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
 #psBox input,#psBox textarea{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:6px 8px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
-#psBox textarea{font-family:ui-monospace,Consolas,monospace;line-height:1.45;min-height:340px}
+#psBox textarea{font-family:ui-monospace,Consolas,monospace;line-height:1.45;min-height:300px}
 #psBox .dt{display:grid;grid-template-columns:1fr 1fr;gap:10px}#psBox .rb{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 #psBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:8px 12px;font-size:12px;cursor:pointer}#psBox button.sec{background:#334155}#psBox button.at{background:#334155;padding:4px 9px;font-size:11px}
 #psBox .rn{font-size:11px;color:#94a3b8;margin:0;line-height:1.4}#psAv{font-size:11px;color:#fbbf24;min-height:14px}#psMsg{font-size:12px;min-height:16px;color:#6ee7b7}
@@ -342,6 +342,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
           </select></label>
         <label><input type="checkbox" id="chkLi"> Descargas elétricas (LI)</label>
         <label title="Radar de precipitação (composição de radares, RainViewer). Resolução ~1 km, últimas 2 h"><input type="checkbox" id="chkRadar"> Radar de chuva</label>
+        <label>Mapa base:
+          <select id="selBase"><option value="escuro">Escuro</option><option value="satelite">Satélite</option><option value="terreno">Terreno</option><option value="ruas">Ruas</option></select></label>
         <label>Opacidade <input type="range" id="opSat" min="0" max="100" value="45" style="width:80px"></label>
         <button id="btnPlay" title="Animar as últimas 3 h">▶ Animar</button>
         <input type="range" id="selTempo" min="0" max="18" value="0" style="width:120px" title="Recuar no tempo (10 min por passo)">
@@ -349,15 +351,15 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       </div>
       <div class="ctl">
         <label><input type="checkbox" id="chkFreg" checked> Risco por freguesia</label>
-        <label title="Chuva acumulada prevista no horizonte escolhido (24/48/72 h ou bloco), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva" checked> Chuva prevista (mm)</label>
-        <label><input type="checkbox" id="chkAgua" checked> Linhas de água</label>
-        <label data-mod="ifprotec"><input type="checkbox" id="chkOc" checked> Ocorrências (Ifprotec)</label>
-        <label><input type="checkbox" id="chkFogos" checked> Fogos.pt</label>
-        <label><input type="checkbox" id="chkApri" checked> Troços ARPSI (APA)</label>
-        <label><input type="checkbox" id="chkCheias" checked> Cheias históricas (APA)</label>
-        <label data-mod="prevencao"><input type="checkbox" id="chkPrevMapa" checked> Prevenção de inundações</label>
+        <label title="Chuva acumulada prevista no horizonte escolhido (24/48/72 h ou bloco), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label>
+        <label><input type="checkbox" id="chkAgua"> Linhas de água</label>
+        <label data-mod="ifprotec"><input type="checkbox" id="chkOc"> Ocorrências (Ifprotec)</label>
+        <label><input type="checkbox" id="chkFogos"> Fogos.pt</label>
+        <label><input type="checkbox" id="chkApri"> Troços ARPSI (APA)</label>
+        <label><input type="checkbox" id="chkCheias"> Cheias históricas (APA)</label>
+        <label data-mod="prevencao"><input type="checkbox" id="chkPrevMapa"> Prevenção de inundações</label>
         <label><input type="checkbox" id="chkLimite" checked> Limite do concelho</label>
-        <label id="lblOficial" style="display:none"><input type="checkbox" id="chkOficial" checked> Camada oficial carregada</label>
+        <label id="lblOficial" style="display:none"><input type="checkbox" id="chkOficial"> Camada oficial carregada</label>
         <label>Cenário:
           <select id="selCen"><option value="cons">Consenso dos modelos</option><option value="p90">Cenário elevado (P90)</option></select></label>
         <label title="Risco das freguesias: pior situação prevista dentro do horizonte escolhido">Risco das freguesias:
@@ -386,7 +388,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div class="ctl">
           <label>Locais (ficheiro privado): <input type="file" id="filePrev" accept=".json"></label>
           <button id="btnPrevLimpa" style="display:none">Remover</button>
-          <label><input type="checkbox" id="chkPrev" checked> Mostrar no mapa</label>
+          <label><input type="checkbox" id="chkPrev"> Mostrar no mapa</label>
         </div>
         <div id="prevJan" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0"></div>
         <div id="prevLista" class="aviso-geral"><div class="vazio">Carregue o ficheiro prevencao_inundacoes.json (fica só neste navegador).</div></div>
@@ -519,6 +521,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <div class="dt"><label>De<input type="datetime-local" id="psDe"></label><label>Até<input type="datetime-local" id="psAte"></label></div>
     <div class="rb"><button class="at" data-h="3">Últimas 3 h</button><button class="at" data-h="6">Últimas 6 h</button><button class="at" data-h="12">Últimas 12 h</button><button class="at" data-h="24">Últimas 24 h</button><button id="psGera">Gerar</button></div>
     <div id="psAv" role="status"></div>
+    <canvas id="psMapa" width="1000" height="720" style="width:100%;border-radius:8px;border:1px solid #334155;background:#0b1220"></canvas>
+    <div class="rb"><button id="psImgCopia" class="sec">Copiar mapa (imagem)</button><button id="psImgDown" class="sec">Descarregar mapa (PNG)</button><span class="rn">Cores relativas: comparam cada freguesia com a que teve mais ocorrências no período</span></div>
     <textarea id="psTxt" spellcheck="false"></textarea>
     <div class="rb"><button id="psCopia">Copiar texto</button><button id="psWa" class="sec">Abrir no WhatsApp</button></div>
     <div id="psMsg" role="status"></div>
@@ -669,6 +673,32 @@ function psOcorr(){ // ativas (S.ifp) + já encerradas (hist), sem duplicados
   const m=new Map();(S.ifpHist||[]).concat(S.ifp||[]).forEach(o=>{if(o&&o.data)m.set(String(o.id??o.data+o.natureza),o)});return [...m.values()];
 }
 function psIntervalo(h){const f=new Date(),i=new Date(f.getTime()-h*3600e3);$('psDe').value=localNaive(i);$('psAte').value=localNaive(f)}
+const PS_EXCL=/busca e resgate terrestre de animais|abertura de elevadores|preven[cç][aã]o a atividades de lazer|intoxica/i;
+const PS_COR=[null,'#22c55e','#facc15','#ef4444'],PS_EMO=['','🟢','🟡','🔴'];
+PS.M=1;const psNivel=n=>{if(n<1)return 0;const r=n/PS.M;return r>2/3?3:r>1/3?2:1}; // relativo à freguesia com mais ocorrências no período: vermelho > 2/3, amarelo > 1/3, verde o resto
+function psFreguesia(o){const n=norm(psNomeF(freguesiaDe(o)));if(!n||!S.freg)return null;
+  let f=S.freg.find(x=>norm(x.nome)===n);if(!f)f=S.freg.find(x=>norm(x.nome).includes(n)||n.includes(norm(x.nome)));return f?f.nome:null}
+function psCentro(g){let best=null,ba=-1;for(const p of polys(g)){const r=p[0];let a=0,cx=0,cy=0;for(let i=0,j=r.length-1;i<r.length;j=i++){const f=r[j][0]*r[i][1]-r[i][0]*r[j][1];a+=f;cx+=(r[j][0]+r[i][0])*f;cy+=(r[j][1]+r[i][1])*f}
+  if(Math.abs(a)>ba){ba=Math.abs(a);best=a?[cx/(3*a),cy/(3*a)]:r[0]}}return best}
+function psDesenhaMapa(cont,tit){
+  const cv=$('psMapa');if(!cv||!S.freg){if(cv)cv.style.display='none';return}cv.style.display='';
+  const c=cv.getContext('2d'),W=cv.width,H=cv.height,k=Math.cos(41.55*Math.PI/180);
+  let b=[1e9,1e9,-1e9,-1e9];S.freg.forEach(f=>{b=[Math.min(b[0],f.bbox[0]),Math.min(b[1],f.bbox[1]),Math.max(b[2],f.bbox[2]),Math.max(b[3],f.bbox[3])]});
+  const pad=34,top=52,sc=Math.min((W-2*pad)/((b[2]-b[0])*k),(H-top-pad)/(b[3]-b[1])),ox=(W-(b[2]-b[0])*k*sc)/2,oy=top+(H-top-pad-(b[3]-b[1])*sc)/2;
+  const X=lo=>ox+(lo-b[0])*k*sc,Y=la=>oy+(b[3]-la)*sc;
+  c.fillStyle='#0b1220';c.fillRect(0,0,W,H);
+  c.fillStyle='#e2e8f0';c.font='600 22px system-ui,sans-serif';c.textAlign='left';c.fillText('Ocorrências por freguesia',pad,28);
+  c.fillStyle='#94a3b8';c.font='15px system-ui,sans-serif';c.fillText(tit,pad,46);
+  const lab=[];
+  S.freg.forEach(f=>{const n=cont[f.nome]||0,lv=psNivel(n);
+    c.beginPath();polys(f.geom).forEach(p=>p.forEach(r=>r.forEach((q,i)=>i?c.lineTo(X(q[0]),Y(q[1])):c.moveTo(X(q[0]),Y(q[1])))));
+    c.fillStyle=lv?PS_COR[lv]+'cc':'#162033';c.fill('evenodd');c.strokeStyle=lv?'#0b1220':'#334155';c.lineWidth=lv?1.6:1;c.stroke();
+    if(lv){const ct=psCentro(f.geom);lab.push([f.nome,n,X(ct[0]),Y(ct[1])])}});
+  c.textAlign='center';lab.forEach(([nm,n,x,y])=>{const t=nm.replace(/^União das freguesias de\s+/i,'UF ').replace(/\s*\(.*?\)/g,'').split(/ e |, /)[0].slice(0,18);
+    c.font='700 15px system-ui,sans-serif';c.lineWidth=4;c.strokeStyle='#0b1220cc';c.strokeText(t+' '+n,x,y);c.fillStyle='#fff';c.fillText(t+' '+n,x,y)});
+  c.textAlign='left';c.font='14px system-ui,sans-serif';[1,2,3].forEach((lv,i)=>{const v=[];for(let n=1;n<=PS.M;n++)if(psNivel(n)===lv)v.push(n);const tx=v.length?(v.length>1?v[0]+' a '+v[v.length-1]:String(v[0])):'–';
+    const y=H-pad+8-(2-i)*22;c.fillStyle=PS_COR[lv];c.fillRect(pad,y-12,16,14);c.fillStyle='#cbd5e1';c.fillText(['Verde','Amarelo','Vermelho'][lv-1]+': '+tx+(tx==='1'?' ocorrência':' ocorrências'),pad+24,y)});
+}
 function psGerar(){
   const de=$('psDe').value,ate=$('psAte').value;
   if(!de||!ate||de>=ate){$('psAv').textContent='Indique um período válido (a hora de início tem de ser anterior à de fim).';return}
@@ -677,34 +707,35 @@ function psGerar(){
   if(de<localNaive(new Date(Date.now()-24*3600e3)))av.push('O painel só recebe as ocorrências das últimas 24 h; o que for mais antigo não entra.');
   if(S.ifpRes&&!S.ifpHist)av.push('Só entram as ocorrências ativas: para incluir as encerradas é preciso atualizar o Code.gs do Ifprotec.');
   $('psAv').textContent=av.join(' ');
-  const L=psOcorr().filter(o=>String(o.data).slice(0,16)>=de&&String(o.data).slice(0,16)<=ate);
-  const enc=L.filter(o=>/encerrad/i.test(o.estado||'')).length;
-  const por={};L.forEach(o=>{const n=(o.natureza||'Outras').trim()||'Outras',f=psNomeF(freguesiaDe(o))||'sem freguesia';(por[n]=por[n]||{n:0,f:{}});por[n].n++;por[n].f[f]=(por[n].f[f]||0)+1});
-  const fr={};L.forEach(o=>{const f=psNomeF(freguesiaDe(o))||'sem freguesia';fr[f]=(fr[f]||0)+1});
-  const lst=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt')).map(([k,v])=>k+(v>1?` (${v})`:'')).join('; ');
-  const T=[];
-  T.push('*POSIT · CCOM Braga*',`Período: ${psDM(de)} ${psHM(de)} às ${psDM(ate)} ${psHM(ate)} · emitido às ${fmtHM(new Date())}`,'');
-  T.push(`*Ocorrências: ${L.length}*`+(L.length?` (ativas: ${L.length-enc} · encerradas: ${enc})`:''));
-  if(L.length){Object.entries(por).sort((a,b)=>b[1].n-a[1].n||a[0].localeCompare(b[0],'pt')).forEach(([n,v])=>T.push(`• ${n}: ${v.n} · ${lst(v.f)}`));
-    T.push('',`*Freguesias:* ${lst(fr)}`)}
+  const L=psOcorr().filter(o=>String(o.data).slice(0,16)>=de&&String(o.data).slice(0,16)<=ate&&!PS_EXCL.test(o.natureza||''));
+  const por={},fr={},cont={};
+  L.forEach(o=>{const n=(o.natureza||'Outras').trim()||'Outras';por[n]=(por[n]||0)+1;
+    const f=psNomeF(freguesiaDe(o))||'Sem freguesia';fr[f]=(fr[f]||0)+1;const g=psFreguesia(o);if(g)cont[g]=(cont[g]||0)+1});
+  PS.M=Math.max(1,...Object.values(fr),...Object.values(cont));
+  const ord=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt'));
+  const per=`${psDM(de)} ${psHM(de)} às ${psDM(ate)} ${psHM(ate)}`;
+  const T=['*POSIT · CCOM Braga*',`${per} · emitido às ${fmtHM(new Date())}`,''];
+  T.push(`*Ocorrências: ${L.length}*`);
+  if(L.length){ord(por).forEach(([n,v])=>T.push(`• ${n}: ${v}`));
+    T.push('','*Freguesias afetadas*');ord(fr).forEach(([n,v])=>T.push(`${PS_EMO[psNivel(v)]} ${n}: ${v}`))}
   else T.push('Sem ocorrências registadas neste período.');
-  if(S.ifpRes&&S.ifpRes.outras)T.push('',`Não inclui doença súbita, trauma e outras naturezas sem detalhe no painel (${S.ifpRes.outras} nas últimas ${S.ifpRes.horas||24} h).`);
-  if(S.ifpRes&&!S.ifpHist)T.push('Nota: não inclui ocorrências já encerradas.');
-  // previsão próximas 12 h = blocos 0 e 1 (6 h cada, a partir da hora atual)
+  if(S.ifpRes&&!S.ifpHist)T.push('','Nota: não inclui ocorrências já encerradas.');
   T.push('');
   const C=S.calc&&S.calc['Braga (centro)'];
   if(C&&S.blocos&&S.blocos.length>1){
     const b0=S.blocos[0],b1=S.blocos[1];
-    T.push(`*Previsão próximas 12 h* (${psHM(b0.ini)} de ${psDM(b0.ini)} às ${psHM(b1.fim)} de ${psDM(b1.fim)})`);
+    T.push(`*Previsão próximas 12 h* (até às ${psHM(b1.fim)} de ${psDM(b1.fim)})`);
     [0,1].forEach(k=>{const b=S.blocos[k],x=C.blocos[k],n=nivelGeral(C.blocos,k);
-      T.push(`• ${psHM(b.ini)}–${psHM(b.fim)}: chuva ${Math.round(x.chuva)} mm (entre ${Math.round(x.min)} e ${Math.round(x.max)}), rajadas até ${Math.round(x.raj)} km/h · ${NOMEN[n]}`)});
+      T.push(`• ${psHM(b.ini)}–${psHM(b.fim)}: chuva ${Math.round(x.chuva)} mm (${Math.round(x.min)}-${Math.round(x.max)}), rajadas até ${Math.round(x.raj)} km/h · ${NOMEN[n]}`)});
     const J={ini:b0.ini,fim:b1.fim},N={yellow:'amarelo',orange:'laranja',red:'vermelho'};
     const A=avisosRel().filter(w=>sobrepoe(w,J));
-    T.push(A.length?'*Avisos IPMA:* '+A.map(w=>`${N[w.nivel]||w.nivel} · ${w.tipo} (${psDM(w.inicio)} ${psHM(w.inicio)} a ${psDM(w.fim)} ${psHM(w.fim)})`).join('; '):'*Avisos IPMA:* sem avisos nas próximas 12 h.');
+    T.push(A.length?'Avisos IPMA: '+A.map(w=>`${N[w.nivel]||w.nivel} · ${w.tipo} (até ${psDM(w.fim)} ${psHM(w.fim)})`).join('; '):'Avisos IPMA: nenhum nas próximas 12 h.');
   }else T.push('*Previsão próximas 12 h:* indisponível neste momento.');
-  T.push('','Fontes: Ifprotec (SMPC e bombeiros), previsão multimodelo do painel, IPMA.');
   $('psTxt').value=T.join('\n');$('psMsg').textContent='';
+  psDesenhaMapa(cont,per);
 }
+$('psImgDown').onclick=()=>{const a=document.createElement('a');a.href=$('psMapa').toDataURL('image/png');a.download='POSIT_freguesias_'+localNaive(new Date()).replace(/[-:T]/g,'').slice(0,12)+'.png';document.body.appendChild(a);a.click();a.remove()};
+$('psImgCopia').onclick=()=>$('psMapa').toBlob(async bl=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':bl})]);$('psMsg').textContent='Mapa copiado: cole-o no WhatsApp (Ctrl+V).'}catch(e){$('psMsg').textContent='Este navegador não deixa copiar a imagem; use "Descarregar mapa".'}});
 $('btnPos').onclick=()=>{$('psOv').classList.add('on');psIntervalo(12);psGerar()};
 $('psFecha').onclick=()=>$('psOv').classList.remove('on');
 $('psGera').onclick=psGerar;
@@ -815,17 +846,34 @@ ecraMarca();somMarca();ecraLiga();relogioPainel();
 
 /* ============================== MAPA ============================== */
 const mapa=L.map('mapa',{zoomControl:true,attributionControl:true}).setView([41.5503,-8.42],11);
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',{attribution:'© Esri, HERE, Garmin, OpenStreetMap · Satélite © EUMETSAT',maxZoom:16}).addTo(mapa);
 mapa.createPane('rotulos');mapa.getPane('rotulos').style.zIndex=450;mapa.getPane('rotulos').style.pointerEvents='none';
-L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{pane:'rotulos',maxZoom:16}).addTo(mapa);
+/* Mapas de base (Esri, sem chave): escuro, satélite, terreno e ruas */
+const ESRI='https://server.arcgisonline.com/ArcGIS/rest/services/';
+const BASES={
+  escuro:{base:ESRI+'Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',rot:ESRI+'Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',max:16,att:'© Esri, HERE, Garmin, OpenStreetMap'},
+  satelite:{base:ESRI+'World_Imagery/MapServer/tile/{z}/{y}/{x}',rot:ESRI+'Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',max:18,att:'© Esri, Maxar, Earthstar Geographics'},
+  terreno:{base:ESRI+'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',rot:null,max:18,att:'© Esri, HERE, Garmin, USGS, NGA, OpenStreetMap'},
+  ruas:{base:ESRI+'World_Street_Map/MapServer/tile/{z}/{y}/{x}',rot:null,max:18,att:'© Esri, HERE, Garmin, OpenStreetMap'}
+};
+let lyrBase=null,lyrRot=null;
+function mapaBase(k){
+  const B=BASES[k]||BASES.escuro;try{localStorage.setItem('smpc_base',k)}catch(e){}
+  if(lyrBase)mapa.removeLayer(lyrBase);if(lyrRot){mapa.removeLayer(lyrRot);lyrRot=null}
+  lyrBase=L.tileLayer(B.base,{attribution:B.att+' · Satélite © EUMETSAT',maxZoom:B.max}).addTo(mapa);lyrBase.bringToBack();
+  if(B.rot)lyrRot=L.tileLayer(B.rot,{pane:'rotulos',maxZoom:B.max}).addTo(mapa);
+}
+{let k='escuro';try{k=localStorage.getItem('smpc_base')||'escuro'}catch(e){}if(!BASES[k])k='escuro';$('selBase').value=k;mapaBase(k)}
+$('selBase').onchange=e=>mapaBase(e.target.value);
 mapa.createPane('sat');mapa.getPane('sat').style.zIndex=250;
 mapa.createPane('li');mapa.getPane('li').style.zIndex=255;
 mapa.createPane('radar');mapa.getPane('radar').style.zIndex=258;
 mapa.createPane('chuva');mapa.getPane('chuva').style.zIndex=280;mapa.getPane('chuva').style.pointerEvents='none';
+mapa.createPane('chuvaTxt');mapa.getPane('chuvaTxt').style.zIndex=440;mapa.getPane('chuvaTxt').style.pointerEvents='none'; // números da chuva por cima do risco
 mapa.createPane('risco');mapa.getPane('risco').style.zIndex=300;
 mapa.createPane('agua');mapa.getPane('agua').style.zIndex=350;
 mapa.createPane('apri');mapa.getPane('apri').style.zIndex=360;
 const gApri=L.layerGroup().addTo(mapa),gCheias=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gChuva=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
+[gApri,gCheias,gChuva,gAgua,gOc,gIfp,gOficial,gPrev].forEach(g=>mapa.removeLayer(g)); // ao abrir, só o risco por freguesia fica ligado
 let gLimite=null;
 const WMS='https://view.eumetsat.int/geoserver/wms';
 let lyrSat=null,lyrLi=null,satOffset=0,playTimer=null;
@@ -915,9 +963,9 @@ function desenharChuva(){
   const bil=(u,v)=>{const i=Math.floor(u),j=Math.floor(v),fu=u-i,fv=v-j;return Z(i,j)*(1-fu)*(1-fv)+Z(i+1,j)*fu*(1-fv)+Z(i,j+1)*(1-fu)*fv+Z(i+1,j+1)*fu*fv};
   for(let j=0;j<M*F;j++)for(let i=0;i<N*F;i++){const mm=bil((i+.5)/F-.5,(j+.5)/F-.5),[,cor,op]=corChuva(mm),la0=GRELHA.la[0]+j*dla/F,lo0=GRELHA.lo[0]+i*dlo/F;
     L.rectangle([[la0,lo0],[la0+dla/F,lo0+dlo/F]],{pane:'chuva',stroke:false,fillColor:cor,fillOpacity:op*.8,interactive:false}).addTo(gChuva)}
-  V.forEach((mm,i)=>{const la=+S.grelha.la[i],lo=+S.grelha.lo[i];L.marker([la,lo],{pane:'chuva',interactive:false,icon:L.divIcon({className:'chuvaNum',html:mm.toFixed(mm<10?1:0),iconSize:[30,14],iconAnchor:[15,7]})}).addTo(gChuva)});
+  V.forEach((mm,i)=>{const la=+S.grelha.la[i],lo=+S.grelha.lo[i];L.marker([la,lo],{pane:'chuvaTxt',interactive:false,icon:L.divIcon({className:'chuvaNum',html:mm.toFixed(mm<10?1:0),iconSize:[44,20],iconAnchor:[22,10]})}).addTo(gChuva)});
   if(lg)lg.textContent=`Chuva prevista ${S.hor==='b'?'no bloco':'nas próximas '+S.hor+' h'} (mm, máx. ${mx.toFixed(0)}): 0 · 1 · 5 · 10 · 20 · 40 · 80+`}
-$('chkChuva').onchange=()=>{desenharChuva()};
+$('chkChuva').onchange=()=>{$('chkChuva').checked?gChuva.addTo(mapa):mapa.removeLayer(gChuva);desenharChuva()};
 $('selHor').onchange=e=>{S.hor=e.target.value;desenharTudo()};
 $('selCen').onchange=e=>{S.cen=e.target.value;desenharTudo()};
 $('selPonto').onchange=e=>{S.ponto=e.target.value;desenharTudo()};
