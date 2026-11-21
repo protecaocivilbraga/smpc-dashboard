@@ -508,8 +508,14 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <fieldset><legend>Avisos em vigor na aplicação</legend><div id="brLista" style="display:grid;gap:6px"></div><div><button class="sec" id="brLimpa">Remover os expirados</button> <button class="sec" id="brRecarrega">Atualizar lista</button></div></fieldset>
     <fieldset><legend>Novo aviso</legend>
       <label>Nível<select id="brNivel"><option value="info">Informação</option><option value="amarelo">Amarelo</option><option value="laranja">Laranja</option><option value="vermelho">Vermelho</option></select></label>
+      <label>Modelo já traduzido para todas as línguas da app (opcional)<select id="brMod"><option value="">Sem modelo: texto livre</option><option value="cheias">Risco de cheias</option><option value="incendio">Risco de incêndio rural</option><option value="calor">Calor intenso</option><option value="vento">Vento forte e tempestade</option><option value="agua">Falta de água</option><option value="apagao">Corte de eletricidade</option></select></label>
+      <p class="rn" id="brModNota" style="display:none">Modelo escolhido: o aviso aparece traduzido (inglês, espanhol, francês, hindi, nepalês, urdu e chinês) com texto fixo. As traduções dos modelos ainda aguardam revisão por falantes nativos. Se alterar o título ou o texto, o modelo deixa de se aplicar e o aviso fica só em português, a não ser que preencha as traduções abaixo.</p>
       <label>Título (obrigatório)<input id="brTit2" maxlength="80" placeholder="ex.: Chuva forte esta tarde"></label>
       <label>Texto<textarea id="brTxt" rows="4" maxlength="500" placeholder="O que deve a população fazer? Em emergência, ligue 112."></textarea></label>
+      <details id="brTrad"><summary class="rn" style="cursor:pointer">Traduções (opcional)</summary>
+        <p class="rn">Preencha só as línguas em que tem a tradução revista. Onde ficar em branco, a app mostra o texto em português com a indicação "em português". Um título é obrigatório para a tradução contar.</p>
+        <div id="brTradLs" style="display:grid;gap:8px"></div>
+      </details>
       <label>Validade<select id="brVal"><option value="6">6 horas</option><option value="12">12 horas</option><option value="24" selected>24 horas</option><option value="48">48 horas</option><option value="72">72 horas</option><option value="0">Sem fim (até remover)</option></select></label>
       <div><button id="brPub">Publicar na aplicação</button></div>
     </fieldset>
@@ -669,7 +675,7 @@ const brExp=a=>!!(a.validoAte&&String(a.validoAte).slice(0,16)<=localNaive(new D
 function brDesenha(){
   const L=$('brLista');
   L.innerHTML=BR.avisos.length?BR.avisos.map((a,i)=>{const n=BR_NV[String(a.nivel||'').toLowerCase()]||BR_NV.info,ex=brExp(a);
-    return `<div class="av${ex?' exp':''}"><span class="nv" style="background:${n[1]}">${n[0]}</span><span><b>${esc(a.titulo)}</b>${esc(a.texto||'')}<br><small>${a.validoAte?(ex?'Expirou':'Válido até')+' '+esc(fmtDH(new Date(a.validoAte))):'Sem fim: fica até ser removido'}</small></span><button data-i="${i}">Remover</button></div>`}).join(''):'<p class="rn">Não há avisos municipais publicados.</p>';
+    return `<div class="av${ex?' exp':''}"><span class="nv" style="background:${n[1]}">${n[0]}</span><span><b>${esc(a.titulo)}</b>${esc(a.texto||'')}<br><small>${a.modelo?'Modelo traduzido · ':(a.trad?'Traduções: '+Object.keys(a.trad).join(', ')+' · ':'Só em português · ')}${a.validoAte?(ex?'Expirou':'Válido até')+' '+esc(fmtDH(new Date(a.validoAte))):'Sem fim: fica até ser removido'}</small></span><button data-i="${i}">Remover</button></div>`}).join(''):'<p class="rn">Não há avisos municipais publicados.</p>';
   L.querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>brRemove(+b.dataset.i));
   $('brTokSt').textContent=brTok()?'· configurada ✓':'· por configurar';
 }
@@ -677,8 +683,9 @@ async function brCarrega(){
   brMsg('A ler os avisos da aplicação…');
   try{await brLer();brDesenha();brMsg('')}catch(e){BR.avisos=[];brDesenha();brMsg(e.message,'err')}
 }
+function brLiga(){brTradInit();const m=$('brMod');if(m&&!m.dataset.on){m.dataset.on=1;m.onchange=brModSel}}
 async function brAbre(){
-  $('brOv').classList.add('on');brDesenha();
+  $('brOv').classList.add('on');brLiga();brDesenha();
   if(!brTok()){$('brCfg').open=true;brMsg('Falta configurar a ligação ao GitHub (ver "Ligação ao GitHub" em baixo).','err');return}
   $('brCfg').open=false;await brCarrega();
 }
@@ -689,14 +696,33 @@ async function brOperacao(alterar,msg,ok){
   catch(e){brMsg(e.message==='conflito'?'O ficheiro foi alterado por outra pessoa. Atualize a lista e tente de novo.':e.message,'err');return false}
   finally{BR.ocupado=false;['brPub','brLimpa','brRecarrega'].forEach(i=>$(i).disabled=false)}
 }
+const BR_MODELOS={"cheias": {"l": "Risco de cheias", "t": "Risco de cheias: mantenha-se afastado de zonas inundáveis", "x": "Não atravesse zonas alagadas a pé nem de carro. Evite túneis, passagens inferiores e margens de rios e ribeiras. Siga as indicações das autoridades. Em emergência, ligue 112."}, "incendio": {"l": "Risco de incêndio rural", "t": "Risco de incêndio rural: não faça lume", "x": "Evite queimas, fogueiras e trabalhos que possam originar faíscas. Se vir fogo ou fumo, ligue 112. Se lhe pedirem para sair, siga as indicações das autoridades."}, "calor": {"l": "Calor intenso", "t": "Calor intenso: proteja-se e beba água", "x": "Beba água com frequência, evite o sol entre as 11h e as 17h e proteja crianças, idosos e animais. Nunca deixe pessoas ou animais dentro de carros estacionados. Em emergência, ligue 112; para aconselhamento de saúde, SNS 24: 808 24 24 24."}, "vento": {"l": "Vento forte e tempestade", "t": "Vento forte e tempestade: fique em segurança", "x": "Fique em casa, longe de janelas, e evite deslocações desnecessárias. Retire ou prenda objetos soltos em varandas e quintais. Afaste-se de árvores, andaimes e fios caídos. Em emergência, ligue 112."}, "agua": {"l": "Falta de água", "t": "Interrupção no abastecimento de água", "x": "Poderá haver falta de água. Faça reserva de água potável e poupe a que tiver. Siga as informações do Município e da entidade gestora. Em emergência, ligue 112."}, "apagao": {"l": "Corte de eletricidade", "t": "Corte de eletricidade", "x": "Use lanternas em vez de velas e mantenha o frigorífico e o congelador fechados. Desligue aparelhos sensíveis e poupe a bateria do telemóvel. Veja se vizinhos idosos precisam de ajuda. Em emergência, ligue 112."}};
+const BR_LANGS=[['en','Inglês'],['es','Espanhol'],['fr','Francês'],['hi','Hindi'],['ne','Nepalês'],['ur','Urdu'],['zh','Chinês']];
+function brTradInit(){
+  const D=$('brTradLs');if(!D||D.children.length)return;
+  D.innerHTML=BR_LANGS.map(([c,n])=>`<fieldset><legend>${n}</legend><input id="brT_${c}_t" maxlength="80" placeholder="Título em ${n.toLowerCase()}"${c==='ur'?' dir="rtl"':''}><textarea id="brT_${c}_x" rows="2" maxlength="500" placeholder="Texto em ${n.toLowerCase()}"${c==='ur'?' dir="rtl"':''}></textarea></fieldset>`).join('');
+}
+function brModSel(){
+  const k=$('brMod').value,m=BR_MODELOS[k];$('brModNota').style.display=m?'block':'none';
+  if(m){$('brTit2').value=m.t;$('brTxt').value=m.x}
+}
+const brModAtivo=()=>{const k=$('brMod').value,m=BR_MODELOS[k];return m&&$('brTit2').value.trim()===m.t&&$('brTxt').value.trim()===m.x?k:''};
+function brTradLer(){
+  const o={};BR_LANGS.forEach(([c])=>{const t=$('brT_'+c+'_t').value.trim(),x=$('brT_'+c+'_x').value.trim();if(t)o[c]={titulo:t,texto:x}});
+  return o;
+}
 async function brPublica(){
   if(!brTok()){brMsg('Falta configurar a ligação ao GitHub.','err');$('brCfg').open=true;return}
   const titulo=$('brTit2').value.trim(),texto=$('brTxt').value.trim(),nivel=$('brNivel').value,h=+$('brVal').value;
   if(!titulo){brMsg('Escreva o título do aviso.','err');return}
-  if(!confirm('Publicar este aviso na aplicação Braga Resiliente?\n\n'+titulo+'\n\nFicará visível ao público.'))return;
+  const lg=brModAtivo()?'todas as línguas da app (modelo)':Object.keys(brTradLer()).join(', ')||'só em português';
+
+  if(!confirm('Publicar este aviso na aplicação Braga Resiliente?\n\n'+titulo+'\n\nLínguas: '+lg+'\n\nFicará visível ao público.'))return;
   const novo={nivel,titulo,texto};if(h>0)novo.validoAte=addH(localNaive(new Date()),h)+':00';
+  const mod=brModAtivo();if(mod)novo.modelo=mod;
+  const tr=brTradLer();if(Object.keys(tr).length)novo.trad=tr;
   const ok=await brOperacao(l=>{l.unshift(novo)},'Aviso: '+titulo.slice(0,60),'Aviso publicado.');
-  if(ok){$('brTit2').value='';$('brTxt').value=''}
+  if(ok){$('brTit2').value='';$('brTxt').value='';$('brMod').value='';$('brModNota').style.display='none';BR_LANGS.forEach(([c])=>{$('brT_'+c+'_t').value='';$('brT_'+c+'_x').value=''})}
 }
 async function brRemove(i){
   const a=BR.avisos[i];if(!a)return;
