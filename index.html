@@ -351,7 +351,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       </div>
       <div class="ctl">
         <label><input type="checkbox" id="chkFreg" checked> Risco por freguesia</label>
-        <label title="Chuva acumulada prevista no horizonte escolhido (24/48/72 h ou bloco), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label>
+        <label title="Chuva acumulada prevista nas próximas 6 h (ou no bloco selecionado), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label>
         <label><input type="checkbox" id="chkAgua"> Linhas de água</label>
         <label data-mod="ifprotec"><input type="checkbox" id="chkOc"> Ocorrências (Ifprotec)</label>
         <label><input type="checkbox" id="chkFogos"> Fogos.pt</label>
@@ -972,7 +972,7 @@ async function carregarGrelha(){
 function desenharChuva(){
   gChuva.clearLayers();const lg=$('legChuva');if(lg)lg.textContent='';
   if(!$('chkChuva').checked||!S.grelha||!S.blocos)return;
-  const nB=S.hor==='b'?1:Math.min(S.blocos.length,(+S.hor||24)/CFG.BLOCO),k0=S.hor==='b'?S.sel:0;
+  const nB=1,k0=S.hor==='b'?S.sel:0; // 6 h: só o bloco atual (ou o bloco selecionado)
   const ini=S.blocos[k0].ini,fim=S.blocos[Math.min(S.blocos.length-1,k0+nB-1)].fim,T=S.grelha.time;
   const i0=T.indexOf(ini),i1=T.indexOf(fim);if(i0<0)return;const e=i1<0?T.length:i1;
   const N=GRELHA.n,M=GRELHA.m,dla=(GRELHA.la[1]-GRELHA.la[0])/M,dlo=(GRELHA.lo[1]-GRELHA.lo[0])/N,V=S.grelha.pr.map(p=>{let mm=0;for(let t=i0;t<e;t++)mm+=p[t]||0;return mm});
@@ -981,7 +981,7 @@ function desenharChuva(){
   for(let j=0;j<M*F;j++)for(let i=0;i<N*F;i++){const mm=bil((i+.5)/F-.5,(j+.5)/F-.5),[,cor,op]=corChuva(mm),la0=GRELHA.la[0]+j*dla/F,lo0=GRELHA.lo[0]+i*dlo/F;
     L.rectangle([[la0,lo0],[la0+dla/F,lo0+dlo/F]],{pane:'chuva',stroke:false,fillColor:cor,fillOpacity:op*.8,interactive:false}).addTo(gChuva)}
   V.forEach((mm,i)=>{const la=+S.grelha.la[i],lo=+S.grelha.lo[i];L.marker([la,lo],{pane:'chuvaTxt',interactive:false,icon:L.divIcon({className:'chuvaNum',html:mm.toFixed(mm<10?1:0),iconSize:[44,20],iconAnchor:[22,10]})}).addTo(gChuva)});
-  if(lg)lg.textContent=`Chuva prevista ${S.hor==='b'?'no bloco':'nas próximas '+S.hor+' h'} (mm, máx. ${mx.toFixed(0)}): 0 · 1 · 5 · 10 · 20 · 40 · 80+`}
+  if(lg)lg.textContent=`Chuva prevista ${S.hor==='b'?'no bloco selecionado':'nas próximas 6 h'} (mm, máx. ${mx.toFixed(0)}): 0 · 1 · 5 · 10 · 20 · 40 · 80+`}
 $('chkChuva').onchange=()=>{$('chkChuva').checked?gChuva.addTo(mapa):mapa.removeLayer(gChuva);desenharChuva()};
 $('selHor').onchange=e=>{S.hor=e.target.value;desenharTudo()};
 $('selCen').onchange=e=>{S.cen=e.target.value;desenharTudo()};
