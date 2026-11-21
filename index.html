@@ -692,8 +692,15 @@ function psRelacao(){ // avisos em vigor (sem agitação marítima) e função q
 }
 const PS_COR=[null,'#22c55e','#facc15','#ef4444'],PS_EMO=['','🟢','🟡','🔴'];
 PS.M=1;const psNivel=n=>{if(n<1)return 0;const r=n/PS.M;return r>2/3?3:r>1/3?2:1}; // relativo à freguesia com mais ocorrências no período: vermelho > 2/3, amarelo > 1/3, verde o resto
-function psFreguesia(o){const n=norm(psNomeF(freguesiaDe(o)));if(!n||!S.freg)return null;
-  let f=S.freg.find(x=>norm(x.nome)===n);if(!f)f=S.freg.find(x=>norm(x.nome).includes(n)||n.includes(norm(x.nome)));return f?f.nome:null}
+function psChave(n){return norm(psNomeF(n)).replace(/victor/g,'vitor').replace(/\buf\b/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function psFreguesia(o){ // devolve o nome do polígono; primeiro pelas coordenadas, depois pelo nome
+  if(!S.freg)return null;
+  if(o.lat!=null&&o.lon!=null){const p=[+o.lon,+o.lat];
+    for(const f of S.freg){const b=f.bbox;if(p[0]<b[0]||p[0]>b[2]||p[1]<b[1]||p[1]>b[3])continue;if(dentro(p,f.geom))return f.nome}}
+  const n=psChave(freguesiaDe(o));if(!n)return null;
+  let f=S.freg.find(x=>psChave(x.nome)===n);
+  if(!f){const c=S.freg.filter(x=>{const k=psChave(x.nome);return k.includes(n)||n.includes(k)});if(c.length===1)f=c[0]}
+  return f?f.nome:null}
 function psCentro(g){let best=null,ba=-1;for(const p of polys(g)){const r=p[0];let a=0,cx=0,cy=0;for(let i=0,j=r.length-1;i<r.length;j=i++){const f=r[j][0]*r[i][1]-r[i][0]*r[j][1];a+=f;cx+=(r[j][0]+r[i][0])*f;cy+=(r[j][1]+r[i][1])*f}
   if(Math.abs(a)>ba){ba=Math.abs(a);best=a?[cx/(3*a),cy/(3*a)]:r[0]}}return best}
 function psDesenhaMapa(cont,tit){
@@ -710,7 +717,7 @@ function psDesenhaMapa(cont,tit){
     c.beginPath();polys(f.geom).forEach(p=>p.forEach(r=>r.forEach((q,i)=>i?c.lineTo(X(q[0]),Y(q[1])):c.moveTo(X(q[0]),Y(q[1])))));
     c.fillStyle=lv?PS_COR[lv]+'cc':'#162033';c.fill('evenodd');c.strokeStyle=lv?'#0b1220':'#334155';c.lineWidth=lv?1.6:1;c.stroke();
     if(lv){const ct=psCentro(f.geom);lab.push([f.nome,n,X(ct[0]),Y(ct[1])])}});
-  c.textAlign='center';lab.forEach(([nm,n,x,y])=>{const t=nm.replace(/^União das freguesias de\s+/i,'UF ').replace(/\s*\(.*?\)/g,'').split(/ e |, /)[0].slice(0,18);
+  c.textAlign='center';lab.forEach(([nm,n,x,y])=>{const t0=nm.replace(/^União das freguesias de\s+/i,'UF ');const pm=t0.match(/\(([^)]*)\)/);const t=((pm?pm[1]:t0.replace(/^UF /,'')).split(/ e |, /)[0]).slice(0,20);
     c.font='700 15px system-ui,sans-serif';c.lineWidth=4;c.strokeStyle='#0b1220cc';c.strokeText(t+' '+n,x,y);c.fillStyle='#fff';c.fillText(t+' '+n,x,y)});
   c.textAlign='left';c.font='14px system-ui,sans-serif';[1,2,3].forEach((lv,i)=>{const v=[];for(let n=1;n<=PS.M;n++)if(psNivel(n)===lv)v.push(n);const tx=v.length?(v.length>1?v[0]+' a '+v[v.length-1]:String(v[0])):'–';
     const y=H-pad+8-(2-i)*22;c.fillStyle=PS_COR[lv];c.fillRect(pad,y-12,16,14);c.fillStyle='#cbd5e1';c.fillText(['Verde','Amarelo','Vermelho'][lv-1]+': '+tx+(tx==='1'?' ocorrência':' ocorrências'),pad+24,y)});
@@ -725,10 +732,10 @@ function psGerar(){
   $('psAv').textContent=av.join(' ');
   const REL=psRelacao();
   const L=psOcorr().filter(o=>String(o.data).slice(0,16)>=de&&String(o.data).slice(0,16)<=ate&&!PS_EXCL.test(o.natureza||'')&&REL.ok(o));
-  const por={},fr={},cont={};
+  const por={},fr={},cont={};let semMapa=0;
   L.forEach(o=>{const n=(o.natureza||'Outras').trim()||'Outras';por[n]=(por[n]||0)+1;
-    const f=psNomeF(freguesiaDe(o))||'Sem freguesia';fr[f]=(fr[f]||0)+1;const g=psFreguesia(o);if(g)cont[g]=(cont[g]||0)+1});
-  PS.M=Math.max(1,...Object.values(fr),...Object.values(cont));
+    const g=psFreguesia(o);const f=g||psNomeF(freguesiaDe(o))||'Sem freguesia';fr[f]=(fr[f]||0)+1;if(g)cont[g]=(cont[g]||0)+1;else semMapa++});
+  PS.M=Math.max(1,...Object.values(fr));
   const ord=o=>Object.entries(o).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt'));
   const per=`${psDM(de)} ${psHM(de)} às ${psDM(ate)} ${psHM(ate)}`;
   const T=['*POSIT · CCOM Braga*',`${per} · emitido às ${fmtHM(new Date())}`,''];
@@ -749,6 +756,7 @@ function psGerar(){
     T.push(A.length?'Avisos IPMA: '+A.map(w=>`${N[w.nivel]||w.nivel} · ${w.tipo} (até ${psDM(w.fim)} ${psHM(w.fim)})`).join('; '):'Avisos IPMA: nenhum nas próximas 12 h.');
   }else T.push('*Previsão próximas 12 h:* indisponível neste momento.');
   $('psTxt').value=T.join('\n');$('psMsg').textContent='';
+  if(semMapa)$('psAv').textContent=($('psAv').textContent+' '+semMapa+' ocorrência(s) sem freguesia identificável: constam da lista mas não do mapa.').trim();
   psDesenhaMapa(cont,per);
 }
 $('psImgDown').onclick=()=>{const a=document.createElement('a');a.href=$('psMapa').toDataURL('image/png');a.download='POSIT_freguesias_'+localNaive(new Date()).replace(/[-:T]/g,'').slice(0,12)+'.png';document.body.appendChild(a);a.click();a.remove()};
