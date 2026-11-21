@@ -70,6 +70,6 @@ Identificadores: `cheias`, `incendio`, `calor`, `vento`, `agua`, `apagao`.
 
 ## Pendente
 
-- Mudança dos dois repositórios para a conta institucional da Proteção Civil: atualizar `BR.REPO` no painel, criar nova chave do GitHub nessa conta, README, código QR e link, e deixar aviso de mudança no endereço antigo.
+- Mudança dos dois repositórios para a conta institucional da Proteção Civil: atualizar `BR.REPO` no painel, criar nova chave do GitHub nessa conta, README, código QR e link, os endereços absolutos `og:url` e `og:image` das etiquetas de pré-visualização no `index.html` da app (cartão que o WhatsApp mostra), e deixar aviso de mudança no endereço antigo.
 - Contador anónimo de acessos e instalações: por decidir (proteção de dados).
 - Revisão das traduções por falantes nativos (ficheiro de revisão enviado ao administrador).
