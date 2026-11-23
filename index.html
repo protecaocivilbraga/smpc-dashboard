@@ -1153,7 +1153,7 @@ async function carregarIfp(){
     const j=await getJSON(`${CFG.IFPROTEC}?t=${encodeURIComponent(AUTH.s.t)}&_=${Date.now()}`,30000);
     if(j.erro==='sessao'){sessaoExpirada();return}
     if(j.erro)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro);
-    S.ifp=j.ocorrencias||[];S.ifpHist=Array.isArray(j.hist)?j.hist:null;S.ifpRes={horas:j.horas||24,total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,emCurso:(j.emCurso!=null?j.emCurso:null),porFreg:j.outrasPorFreguesia||{}};
+    S.ifp=j.ocorrencias||[];S.ifpHist=Array.isArray(j.hist)?j.hist:null;S.ifpRes={api:(j.api!=null?j.api:null),horas:j.horas||24,total:j.total||0,outras:j.outras||0,enc:j.encerradas||0,emCurso:(j.emCurso!=null?j.emCurso:null),porFreg:j.outrasPorFreguesia||{}};
     estado('ifp','ok',fmtHM(new Date(j.atualizado||Date.now())));
     verificarNovasIfp();
   }catch(e){estado('ifp','err','erro: '+e.message)}
@@ -1171,7 +1171,7 @@ function desenharIfp(){
   if(!CFG.IFPROTEC){r.textContent='';l.innerHTML='<div class="vazio">Ligação ao Ifprotec por configurar.</div>';return}
   const R=S.ifpRes;
   if(R){const pf=Object.entries(R.porFreg||{}).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n,c])=>`${esc(n.replace(/^Uni[aã]o das freguesias de\s+/i,'UF '))} (${c})`).join(' · ');
-    r.innerHTML=`<b>${R.total}</b> ocorrências (SMPC nas últimas ${R.horas||24} h, bombeiros enquanto ativas); <b>${S.ifp.length}</b> com detalhe aqui`+(R.enc?` (mais ${R.enc} encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (doença súbita, trauma e outras entidades) só contam no total${pf?': '+pf:''}.`:'')}
+    r.innerHTML=(R.api===0?'<span style="color:#fca5a5">⚠ O Ifprotec devolveu 0 registos ao intermediário (confirme o acesso/palavra-passe da conta de leitura). </span>':(R.api>0&&!R.total?`<span style="color:#fca5a5">⚠ O Ifprotec devolveu ${R.api} registos mas nenhum passou os filtros (possível alteração de campos). </span>`:''))+`<b>${R.total}</b> ocorrências (SMPC nas últimas ${R.horas||24} h, bombeiros enquanto ativas); <b>${S.ifp.length}</b> com detalhe aqui`+(R.enc?` (mais ${R.enc} encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (doença súbita, trauma e outras entidades) só contam no total${pf?': '+pf:''}.`:'')}
   const lista=[...S.ifp].sort((a,b)=>String(b.data).localeCompare(String(a.data)));
   if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências ativas nem do SMPC nas últimas 24 h.</div>';return}
   l.innerHTML=lista.map((o,i)=>{const enc=/encerrad/i.test(o.estado||'');const fr=freguesiaDe(o);
