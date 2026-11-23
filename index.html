@@ -312,7 +312,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </div>
   </div>
   <div class="estados">
-    <span data-mod="anepc_oc"><i class="dot load" id="e-oc"></i>Ocorrências <b id="t-oc">…</b></span>
     <span data-mod="ifprotec"><i class="dot load" id="e-ifp"></i>Ifprotec <b id="t-ifp">…</b></span>
     <span><i class="dot load" id="e-av"></i>Avisos IPMA <b id="t-av">…</b></span>
     <span><i class="dot load" id="e-mod"></i>Modelos <b id="t-mod">…</b></span>
@@ -354,7 +353,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <label title="Chuva acumulada prevista nas próximas 6 h (ou no bloco selecionado), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label>
         <label><input type="checkbox" id="chkAgua"> Linhas de água</label>
         <label data-mod="ifprotec"><input type="checkbox" id="chkOc"> Ocorrências (Ifprotec)</label>
-        <label><input type="checkbox" id="chkFogos"> Fogos.pt</label>
         <label><input type="checkbox" id="chkApri"> Troços ARPSI (APA)</label>
         <label><input type="checkbox" id="chkCheias"> Cheias históricas (APA)</label>
         <label data-mod="prevencao"><input type="checkbox" id="chkPrevMapa"> Prevenção de inundações</label>
@@ -398,11 +396,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
-      <div class="card" data-mod="anepc_oc">
-        <h2>Ocorrências em curso ANEPC <span class="nota">Fogos.pt (ANEPC) via CENTCOM · concelho de Braga</span></h2>
-        <div id="resumoHoje" class="aviso-geral" style="margin-bottom:6px"></div>
-        <div id="ocLista"><div class="vazio">A carregar…</div></div>
-      </div>
       <div class="card" data-mod="freguesias">
         <h2>Freguesias a vigiar <span class="nota" id="notaRank"></span></h2>
         <div class="rank" id="rank"><div class="vazio">A carregar…</div></div>
@@ -440,7 +433,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
       <b>Avisos:</b> IPMA (api.ipma.pt), área BRG.
       <b>Radar:</b> composição de radares (RainViewer), estimativa da precipitação, não substitui o radar do IPMA nem mede a chuva no local; fora do limite de zoom 7 a imagem é ampliada.<br>
       <b>Satélite:</b> EUMETSAT View (Meteosat Terceira Geração, FCI e LI), imagem real, não é previsão.
-      <b>Ocorrências:</b> Fogos.pt (dados ANEPC) através do intermediário do CENTCOM/BSB; apoio à consciência situacional, não substitui o sistema de despacho.
+      <b>Ocorrências:</b> plataforma Ifprotec (leitura), através de intermediário próprio; apoio à consciência situacional, não substitui o sistema de despacho.
       <b>ARPSI e cheias históricas:</b> APA, Diretiva 2007/60/CE (3.º ciclo, proposta em consulta pública), incorporados como cópia de 18/11/2026. <b>Linhas de água:</b> OpenStreetMap (Overpass). <b>Freguesias:</b> geoapi.pt.
       <b>Limitações:</b> a grelha dos modelos é de cerca de 25 km, pelo que os vales do concelho não se distinguem bem; o satélite não mede a precipitação à superfície; os caudais são modelados e não substituem as estações hidrométricas (SNIRH); não há observações de pluviómetros neste painel.
     </p>
@@ -581,8 +574,6 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 <script>
 /* ============================== CONFIGURAÇÃO ============================== */
 const CFG={
-  DICO:'0303',
-  ENDPOINT:'https://script.google.com/macros/s/AKfycbzVvoPqEBcY0HkyDbSXyqSOCy3b4pTg7KEIBXsAo7qow5B8hjlM3-QdAckbgfySf2iupA/exec', // intermediário Fogos.pt (CENTCOM/BSB)
   IFPROTEC:'https://script.google.com/macros/s/AKfycbyQMJGLSTO7dFcdOkwpMOqWmYGaW2IUvrn0y2adx3XUQFbWuRdbL8SXLnLkWZqMUfPZMQ/exec', // endereço /exec do intermediário Ifprotec (Apps Script). Vazio = desligado
   PONTOS:{'Braga (centro)':[41.5503,-8.4200],'Sameiro (serra)':[41.5430,-8.3670]},
   MODELOS:['ecmwf_ifs025','ecmwf_aifs025','gfs025','icon_seamless_eps','ukmo_global_ensemble_20km','gem_global'],
@@ -590,7 +581,7 @@ const CFG={
   HORAS:72,BLOCO:6,CCOM_TEL:'253 264 077', // contacto do CCOM que consta nas medidas do relatório (editável)
 
   LIM:{vigChuva:10,proChuva:20,vigAcc24:30,proAcc24:50,vigRaj:60,proP30:.15,vigCape:.30},
-  ATUALIZAR:{oc:30,ifp:30,av:300,mod:1800,sat:600,rio:10800},
+  ATUALIZAR:{ifp:30,av:300,mod:1800,sat:600,rio:10800},
   RELACIONADAS:/inunda|queda de [aá]rvore|movimento de massa|limpeza de via|deslizamento|[aá]gua|vento|estrutura|cheia|galeria|aluimento|desab/i
 };
 /* Snapshot de 18/11/2026: APA, Diretiva 2007/60/CE. ARPSI 3.º ciclo (proposta em consulta pública) e eventos de cheia históricos (avaliação preliminar do risco), recorte para Braga.
@@ -898,8 +889,8 @@ mapa.createPane('chuvaTxt');mapa.getPane('chuvaTxt').style.zIndex=440;mapa.getPa
 mapa.createPane('risco');mapa.getPane('risco').style.zIndex=300;
 mapa.createPane('agua');mapa.getPane('agua').style.zIndex=350;
 mapa.createPane('apri');mapa.getPane('apri').style.zIndex=360;
-const gApri=L.layerGroup().addTo(mapa),gCheias=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gChuva=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gOc=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
-[gApri,gCheias,gChuva,gAgua,gOc,gIfp,gOficial,gPrev].forEach(g=>mapa.removeLayer(g)); // ao abrir, só o risco por freguesia fica ligado
+const gApri=L.layerGroup().addTo(mapa),gCheias=L.layerGroup().addTo(mapa),gFreg=L.layerGroup().addTo(mapa),gChuva=L.layerGroup().addTo(mapa),gAgua=L.layerGroup().addTo(mapa),gIfp=L.layerGroup().addTo(mapa),gOficial=L.layerGroup().addTo(mapa),gPrev=L.layerGroup().addTo(mapa);
+[gApri,gCheias,gChuva,gAgua,gIfp,gOficial,gPrev].forEach(g=>mapa.removeLayer(g)); // ao abrir, só o risco por freguesia fica ligado
 let gLimite=null;
 const WMS='https://view.eumetsat.int/geoserver/wms';
 let lyrSat=null,lyrLi=null,satOffset=0,playTimer=null;
@@ -964,7 +955,6 @@ $('chkCheias').onchange=()=>$('chkCheias').checked?gCheias.addTo(mapa):mapa.remo
 $('chkLimite').onchange=()=>{if(!gLimite)return;$('chkLimite').checked?gLimite.addTo(mapa):mapa.removeLayer(gLimite)};
 $('chkOficial').onchange=()=>$('chkOficial').checked?gOficial.addTo(mapa):mapa.removeLayer(gOficial);
 $('chkOc').onchange=()=>$('chkOc').checked?gIfp.addTo(mapa):mapa.removeLayer(gIfp);
-$('chkFogos').onchange=()=>$('chkFogos').checked?gOc.addTo(mapa):mapa.removeLayer(gOc);
 
 /* ---------- Camada de chuva prevista (grelha), acompanha o horizonte ---------- */
 const GRELHA={n:4,m:3,la:[41.465,41.615],lo:[-8.525,-8.295]};
@@ -1148,17 +1138,6 @@ function calcularSusceptibilidade(){
 }
 
 /* ============================== OCORRÊNCIAS E AVISOS ============================== */
-async function carregarOcorrencias(){
-  try{
-    const j=await getJSON(`${CFG.ENDPOINT}?dico=${CFG.DICO}&_=${Date.now()}`,30000);
-    if(!j.ok)throw new Error(j.erro||'resposta inválida');
-    S.ocorr=(j.ocorrencias||[]).filter(o=>String(o.dico).padStart(4,'0')===CFG.DICO);
-    S.resumo=j.resumoHoje||null;S.avisosGAS=j.avisosIpma||null;
-    estado('oc',j.desatualizado?'load':'ok',fmtHM(new Date(j.atualizado||Date.now()))+(j.desatualizado?' (desatualizado)':''));
-    verificarNovasFogos();
-  }catch(e){estado('oc','err','erro: '+e.message)}
-  desenharOc();desenharRisco();desenharKpis();
-}
 /* ---- Ifprotec (via intermediário Apps Script, só leitura, campos mínimos) ---- */
 const corEnt=n=>/SMPC/i.test(n||'')?'#38bdf8':/BS\b|sapador/i.test(n||'')?'#f59e0b':/BV\b|volunt/i.test(n||'')?'#f87171':'#94a3b8';
 function freguesiaDe(o){ // usa a da plataforma; se vier vazia, deduz pelas coordenadas
@@ -1209,7 +1188,7 @@ async function carregarAvisos(){
     S.avisos=w.filter(x=>x.idAreaAviso==='BRG'&&x.awarenessLevelID!=='green').map(x=>({tipo:x.awarenessTypeName,nivel:x.awarenessLevelID,inicio:x.startTime,fim:x.endTime,texto:x.text||''}));
     S.avisosOK=true;estado('av','ok',fmtHM(new Date()));
   }catch(e){
-    if(S.avisosGAS){S.avisos=S.avisosGAS;S.avisosOK=true;estado('av','load','via CENTCOM')}else estado('av','err','erro')}
+    estado('av','err','erro')}
   const agora=localNaive(new Date());S.avisos=S.avisos.filter(a=>a.fim.slice(0,16)>agora);
   desenharAvisos();desenharTudo();verificarAvisosIpma();
 }
@@ -1313,20 +1292,8 @@ function desenharAvisos(){
   const av=avisosOrd();
   $('avisos').innerHTML=av.length?av.map(a=>`<div class="aviso ${a.nivel}"><b>${esc(a.tipo)} · ${{yellow:'amarelo',orange:'laranja',red:'vermelho'}[a.nivel]||a.nivel}</b> <span class="mono" style="color:${avVigor(a)?'#fca5a5':'#fcd34d'}">${avVigor(a)?'EM VIGOR':'PREVISTO'}</span><br>${esc(a.texto)}<br><span class="mono" style="color:#94a3b8">${a.inicio.slice(8,10)}/${a.inicio.slice(5,7)} ${a.inicio.slice(11,16)} → ${a.fim.slice(8,10)}/${a.fim.slice(5,7)} ${a.fim.slice(11,16)}</span></div>`).join(''):(S.avisosOK?'<div class="vazio">Sem avisos IPMA para Braga (excluída a agitação marítima).</div>':'<div class="vazio">A carregar…</div>');
 }
-function desenharOc(){
-  gOc.clearLayers();
-  const rs=S.resumo;
-  $('resumoHoje').innerHTML=rs?`Hoje: <b>${rs.total}</b> ocorrências. `+(rs.porNatureza||[]).slice(0,5).map(([n,c])=>`${esc(n)} (${c})`).join(' · '):'';
-  const l=$('ocLista');
-  if(!S.ocorr.length){l.innerHTML='<div class="vazio">Sem ocorrências em curso no concelho.</div>';return}
-  l.innerHTML=S.ocorr.map((o,i)=>{const rel=CFG.RELACIONADAS.test(o.natureza);
-    return `<div class="oc ${rel?'rel':''}" data-i="${i}"><div class="hr mono">${fmtHM(new Date(o.inicio))}</div><div><span class="nt">${esc(o.natureza)}</span><div class="es">${esc(o.estado)} · ${esc(o.freguesia)}${o.localidade?' · '+esc(o.localidade):''} · ${o.operacionais||0} operac.</div></div></div>`}).join('');
-  l.querySelectorAll('.oc').forEach(e=>e.onclick=()=>{const o=S.ocorr[+e.dataset.i];mapa.flyTo([o.lat,o.lng],14)});
-  S.ocorr.forEach(o=>{if(o.lat==null)return;const rel=CFG.RELACIONADAS.test(o.natureza);
-    L.circleMarker([o.lat,o.lng],{radius:rel?9:6,color:rel?'#38bdf8':'#0b1220',weight:rel?3:1.5,fillColor:'#'+(o.cor||'B81E1F'),fillOpacity:.95,pane:'agua'}).bindTooltip(`<b>${esc(o.natureza)}</b><br>${esc(o.estado)}<br>${esc(o.freguesia)}`).addTo(gOc)});
-}
 function ocInundacao(nomeFreg){
-  const k=norm(nomeFreg);const todas=S.ocorr.concat(S.ifp.filter(o=>!/encerrad/i.test(o.estado||'')).map(o=>({natureza:o.natureza||'',freguesia:freguesiaDe(o)})));
+  const k=norm(nomeFreg);const todas=S.ifp.filter(o=>!/encerrad/i.test(o.estado||'')).map(o=>({natureza:o.natureza||'',freguesia:freguesiaDe(o)}));
   return todas.some(o=>/inunda|cheia|galeria|[aá]gua/i.test(o.natureza)&&norm(o.freguesia||'')&&(k.includes(norm(o.freguesia))||norm(o.freguesia).includes(k)))
 }
 function desenharAgua(H){
@@ -1405,13 +1372,6 @@ function mostrarAlerta(tit,html){
   $('alertaItens').innerHTML=ALERTA.itens.join('');$('alertaOv').classList.add('on');beep();
   if(!document.title.startsWith('⚠'))document.title='⚠ '+document.title}
 $('alertaOk').onclick=()=>{ALERTA.itens=[];$('alertaOv').classList.remove('on');document.title=document.title.replace(/^⚠ /,'')};
-let fogosVistas=null;
-function verificarNovasFogos(){
-  const chave=o=>String(o.id??`${o.inicio}|${o.natureza}|${o.localidade||o.freguesia||''}`);
-  const ids=new Set((S.ocorr||[]).map(chave));
-  if(fogosVistas===null){fogosVistas=ids;return}
-  const novas=(S.ocorr||[]).filter(o=>!fogosVistas.has(chave(o)));fogosVistas=new Set([...fogosVistas,...ids]);
-  novas.forEach(o=>mostrarAlerta('Nova ocorrência (Fogos.pt)',`<b>Nova ocorrência (Fogos.pt): ${esc(o.natureza||'')}</b><br>${esc(o.estado||'')} · ${esc(o.freguesia||'')}${o.localidade?' · '+esc(o.localidade):''}${o.operacionais?' · '+o.operacionais+' operac.':''}`))}
 let ifpVistas=null;
 function verificarNovasIfp(){
   const ids=new Set((S.ifp||[]).map(o=>String(o.id)));
@@ -1471,8 +1431,8 @@ carregarPrev();
 desenharPrev();
 criarSat();
 carregarFreguesias().then(carregarAgua);
-carregarOcorrencias();carregarIfp();carregarAvisos();carregarModelos();carregarRio();
-setInterval(carregarOcorrencias,CFG.ATUALIZAR.oc*1000);setInterval(carregarIfp,CFG.ATUALIZAR.ifp*1000);
+carregarIfp();carregarAvisos();carregarModelos();carregarRio();
+setInterval(carregarIfp,CFG.ATUALIZAR.ifp*1000);
 setInterval(carregarAvisos,CFG.ATUALIZAR.av*1000);
 setInterval(carregarModelos,CFG.ATUALIZAR.mod*1000);
 setInterval(()=>{if(!playTimer&&satOffset===0)criarSat()},CFG.ATUALIZAR.sat*1000);
