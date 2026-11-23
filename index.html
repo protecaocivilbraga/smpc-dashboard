@@ -1603,13 +1603,14 @@ function relPdf(d,o){
   // cabeçalho (modelo do briefing técnico-operacional, adaptado ao SMPC de Braga)
   const RED=[214,32,39],pg=n=>String(n).padStart(2,'0');
   try{doc.addImage(LOGOS_B64,'JPEG',M,7,60,60*138/468)}catch(e){}
-  doc.setTextColor(...AZ).setFont('helvetica','bold').setFontSize(16);T('Apoio à Decisão · Previsão Meteorológica',W-M,15,{align:'right'});
-  doc.setFontSize(8.6);T('Serviço Municipal de Proteção Civil · Município de Braga',W-M,20.6,{align:'right'});
-  doc.setFont('helvetica','normal').setFontSize(8);doc.setTextColor(71,85,105);T('Concelho de Braga · Janela: '+d.janela,W-M,25.4,{align:'right'});
+  doc.setTextColor(...AZ).setFont('helvetica','bold').setFontSize(12.5);T('Centro de Coordenação Operacional Municipal (CCOM)',W-M,11.5,{align:'right'});
+  doc.setFontSize(16);T('Apoio à Decisão',W-M,18.5,{align:'right'});
+  doc.setFontSize(8.6);T('Serviço Municipal de Proteção Civil · Município de Braga',W-M,23.4,{align:'right'});
+  doc.setFont('helvetica','normal').setFontSize(8);doc.setTextColor(71,85,105);T('Concelho de Braga · Janela: '+d.janela,W-M,27.2,{align:'right'});
   {const y0=29.5,h=2.8,w=3.4,sk=2.2;doc.setFillColor(...RED);for(let x=M+sk;x<W-M-w;x+=w*2){doc.triangle(x,y0,x+w,y0,x+w-sk,y0+h,'F');doc.triangle(x,y0,x+w-sk,y0+h,x-sk,y0+h,'F')}}
   const ag=localNaive(d.agora),dv=`${ag.slice(8,10)}-${ag.slice(5,7)}-${ag.slice(0,4)} ${ag.slice(11,16)}`;
   doc.setTextColor(30,41,59).setFontSize(9.5);doc.setFont('helvetica','normal');T('Informação válida em:',M,40);doc.setFont('helvetica','bold');T(dv,M+37,40);
-  const nTxt=o.num?`Nº${o.num}`:'Nº --/'+ag.slice(0,4);doc.setFontSize(13);T(nTxt,W/2+4,40.3,{align:'center'});
+  const nTxt=o.num?`Nº${o.num}`:'Nº --/CCOM/'+ag.slice(0,4);doc.setFontSize(13);T(nTxt,W/2+4,40.3,{align:'center'});
   if(!o.num){doc.setFont('helvetica','italic').setFontSize(6.5).setTextColor(100,116,139);T('rascunho · o número é atribuído ao imprimir',W/2+4,43.6,{align:'center'})}
   doc.setTextColor(30,41,59).setFont('helvetica','normal').setFontSize(9.5);T('Número de Páginas:',W-M-12,40,{align:'right'});
   doc.setFillColor(254,226,226).setDrawColor(...RED).setLineWidth(.35).roundedRect(M,46,CW,19,1.2,1.2,'FD');
@@ -2011,11 +2012,11 @@ function numLer(ano){let j=null;try{j=JSON.parse(localStorage.getItem('smpc_rel_
   if(!j||j.ano!==ano)j={ano,prox:1,log:(j&&j.log)||[]};return j}
 function numMostrar(){const a=REL.d?+localNaive(REL.d.agora).slice(0,4):new Date().getFullYear(),j=numLer(a),i=$('relNumProx');
   if(i&&document.activeElement!==i)i.value=j.prox;
-  const u=j.log.filter(x=>x.ano===a).slice(-1)[0];$('relNumInfo').textContent=u?`Último impresso: Nº${u.n}/${a} (${u.quando})`:'Ainda sem relatórios impressos este ano.'}
+  const u=j.log.filter(x=>x.ano===a).slice(-1)[0];$('relNumInfo').textContent=u?`Último impresso: Nº${u.n}/CCOM/${a} (${u.quando})`:'Ainda sem relatórios impressos este ano.'}
 function imprimirRelatorio(){
   const d=REL.d;if(!d){$('relMsg').textContent='Os dados ainda estão a carregar.';return}
   const a=+localNaive(d.agora).slice(0,4),j=numLer(a);let n=Math.max(1,Math.floor(+$('relNumProx').value)||j.prox);
-  const num=String(n).padStart(3,'0')+'/'+a;
+  const num=String(n).padStart(3,'0')+'/CCOM/'+a;
   let doc;try{doc=relPdf(d,Object.assign(relOpc(),{num}))}catch(e){$('relMsg').textContent='Não foi possível gerar o PDF: '+e.message;return}
   j.prox=n+1;j.log=(j.log||[]).concat([{ano:a,n:String(n).padStart(3,'0'),quando:localNaive(new Date()).replace('T',' ').slice(0,16)}]).slice(-60);
   try{localStorage.setItem('smpc_rel_num',JSON.stringify(j))}catch(e){}
