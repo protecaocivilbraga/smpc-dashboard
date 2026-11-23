@@ -1542,10 +1542,13 @@ function relCcomRaw(d,o){
   const L=[];
   L.push(o.ccom==='ativo'?'O Centro de Coordenação Operacional Municipal (CCOM) está ativado'+(o.per?': '+o.per:'')+'.':'O CCOM não está ativado. Mantém-se a monitorização e a avaliação da situação.');
   if(o.nota)L.push(o.nota);return L}
+function relOcLin(d){if(!d.oc)return[];
+  if(!d.oc.total)return['Sem ocorrências significativas em curso no momento da emissão.'];
+  const L=[`${d.oc.total} ocorrência(s) em curso no momento da emissão.`];if(d.oc.por.length)L.push(d.oc.por.map(([k,v])=>`${k} (${v})`).join('; ')+'.');return L}
 function relAtualiza(d,o){
   const t=new Date(d.agora.getTime()+o.at*3600e3),f=new Intl.DateTimeFormat('pt-PT',{timeZone:TZ,day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(t).replace(',','');
   return`Previsão de atualização desta informação: dentro de ${o.at} horas (até ${f.replace(' ',', às ')}), ou antes, se a situação o justificar.`}
-const REL_SECS=[['nivel','Caixa do nível recomendado'],['gsem','Gráfico: semáforo por blocos'],['gchuva','Gráfico: chuva por bloco'],['graj','Gráfico: rajada máxima'],['grio','Gráfico: caudal modelado'],['resumo','Mensagem-chave',1],['ccom','Informação CCOM',1],['atual','Previsão de atualização da informação'],['anepc','Estados de prontidão ANEPC / CCOSR'],['contr','Previsão dedicada contratada'],['blocos','Tabela de previsão por blocos'],['critP','Nota dos critérios (por baixo da tabela)'],['avisos','Avisos IPMA'],['freg','Mapa e freguesias a vigiar'],['oc','Ocorrências em curso'],['efeitos','Efeitos expectáveis',1],['medG','Medidas recomendadas',1],['medE','Mobilização de meios e recursos (entidades)',1],['fontes','Rodapé: linha de fontes'],['contacto','Rodapé: morada e contacto']];
+const REL_SECS=[['nivel','Caixa do nível recomendado'],['gsem','Gráfico: semáforo por blocos'],['gchuva','Gráfico: chuva por bloco'],['graj','Gráfico: rajada máxima'],['grio','Gráfico: caudal modelado'],['resumo','Mensagem-chave',1],['ccom','Informação CCOM',1],['atual','Previsão de atualização da informação'],['anepc','Estados de prontidão ANEPC / CCOSR'],['contr','Previsão dedicada contratada'],['blocos','Tabela de previsão por blocos'],['critP','Nota dos critérios (por baixo da tabela)'],['avisos','Avisos IPMA'],['freg','Mapa e freguesias a vigiar'],['oc','Ocorrências em curso',1],['efeitos','Efeitos expectáveis',1],['medG','Medidas recomendadas',1],['medE','Mobilização de meios e recursos (entidades)',1],['fontes','Rodapé: linha de fontes'],['contacto','Rodapé: morada e contacto']];
 const REL_LST={sel:{},ex:new Set(),ed:{}};
 try{const j=JSON.parse(localStorage.getItem('smpc_rel_sel')||'null');if(j){REL_LST.sel=j.sel||{};REL_LST.ex=new Set(j.ex||[])}}catch(e){}
 const sx=(o,k)=>!o.s||o.s[k]!==false;
@@ -1558,7 +1561,7 @@ function relSecsInit(){const el=$('relSecs');if(el.dataset.ok)return;el.dataset.
   $('relRepor').onclick=()=>{REL_LST.ed={};el.querySelectorAll('.ritems').forEach(c=>{c.dataset.h=''});relRefrescar(false)};
   $('relSelTodos').onclick=()=>{REL_SECS.forEach(([k])=>REL_LST.sel[k]=true);el.querySelectorAll('input[data-k]').forEach(i=>i.checked=true);REL_LST.ex.clear();relSelGrava();relRefrescar(false)};
   $('relSelNada').onclick=()=>{REL_SECS.forEach(([k])=>REL_LST.sel[k]=false);el.querySelectorAll('input[data-k]').forEach(i=>i.checked=false);relSelGrava();relRefrescar(false)}}
-function relItens(d,n,o){const m={resumo:relResumo(d),ccom:relCcomRaw(d,o),efeitos:relEfeitos(d,n),medG:relMedGerais(n),medE:relMedEnt(n)};
+function relItens(d,n,o){const m={resumo:relResumo(d),ccom:relCcomRaw(d,o),efeitos:relEfeitos(d,n),medG:relMedGerais(n),medE:relMedEnt(n),oc:relOcLin(d)};
   Object.entries(m).forEach(([k,arr])=>{const c=document.querySelector(`#relSecs .ritems[data-k="${k}"]`);if(!c)return;
     const h=arr.map(t=>`<div class="ri"><input type="checkbox" data-item="${k}" data-t="${esc(t)}" ${REL_LST.ex.has(k+'|'+t)?'':'checked'}><textarea class="rt" data-ed="${k}" data-t="${esc(t)}" rows="${Math.max(2,Math.ceil(t.length/46))}" spellcheck="true">${esc(REL_LST.ed[k+'|'+t]!=null?REL_LST.ed[k+'|'+t]:t)}</textarea></div>`).join('');
     if(c.dataset.h!==h){c.dataset.h=h;c.innerHTML=h}})}
@@ -1623,7 +1626,7 @@ function relPdf(d,o){
   if(sx(o,'freg')){if(y>120){doc.addPage();y=16}sec('Freguesias a vigiar (próximas 48 h)');
     const h=relMapa(doc,d,M,y,CW,150,falta);y+=h+1;
     par('Nível de risco por freguesia: combina a precipitação prevista, a suscetibilidade da freguesia e o histórico de inundações do SMPC (2022-2026). Indicador relativo; não substitui a cartografia oficial de risco.')}
-  if(sx(o,'oc')&&d.oc){sec('Ocorrências em curso (Ifprotec)');par(`${d.oc.total} ocorrência(s) em curso no momento da emissão.`);if(d.oc.por.length)par(d.oc.por.map(([k,v])=>`${k} (${v})`).join('; ')+'.',true)}
+  if(sx(o,'oc')&&d.oc){const l=ft(o,'oc',relOcLin(d));if(l.length){sec('Ocorrências em curso (Ifprotec)');l.forEach((t,i)=>par(t,i>0))}}
   if(sx(o,'efeitos')){const l=ft(o,'efeitos',relEfeitos(d,n));if(l.length){sec('Efeitos expectáveis');l.forEach(m=>par(m,true))}}
   if(sx(o,'medG')){const l=ft(o,'medG',relMedGerais(n));if(l.length){sec('Medidas recomendadas');l.forEach(m=>par(m,true))}}
   if(sx(o,'medE')){const l=ft(o,'medE',relMedEnt(n));if(l.length){sec('Mobilização de meios e recursos (entidades)');l.forEach(m=>par(m,true))}}
