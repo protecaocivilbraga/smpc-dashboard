@@ -4,7 +4,7 @@ Este ficheiro existe, igual, nos dois repositórios. Quem alterar um lado deve l
 
 | | Repositório | O que é |
 |---|---|---|
-| App pública | `braga-resiliente` | PWA de autoproteção para a população (GitHub Pages) |
+| App pública | `protecaocivilbraga.github.io` (antes `braga-resiliente`) | PWA de autoproteção para a população (GitHub Pages) |
 | Painel | `smpc-dashboard` | Painel CCOM/SMPC, acesso com utilizador e palavra-passe; só o administrador publica avisos |
 
 Alojamento atual: conta pessoal do administrador. Está prevista a mudança para a conta institucional da Proteção Civil (ver "Pendente").
@@ -12,7 +12,7 @@ Alojamento atual: conta pessoal do administrador. Está prevista a mudança para
 ## Como os avisos chegam à app
 
 1. No painel, botão **Braga Resiliente**, o administrador escreve ou escolhe um modelo e publica.
-2. O painel grava `avisos.json` no repositório `braga-resiliente` através da API do GitHub (`PUT /contents/avisos.json`, ramo `main`). A chave do GitHub fica só no `localStorage` do navegador do administrador (constante `BR.REPO` e `BR.KEY` no `index.html` do painel).
+2. O painel grava `avisos.json` no repositório `protecaocivilbraga/protecaocivilbraga.github.io` através da API do GitHub (`PUT /contents/avisos.json`, ramo `main`). A chave do GitHub fica só no `localStorage` do navegador do administrador (constante `BR.REPO` e `BR.KEY` no `index.html` do painel).
 3. O GitHub Pages demora cerca de 1 minuto a publicar. A app lê `avisos.json` ao abrir e ao atualizar (com parâmetro anti-cache) e guarda uma cópia para uso offline. Não há notificações no telemóvel.
 
 ## Formato de `avisos.json`

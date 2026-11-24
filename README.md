@@ -19,4 +19,4 @@ O aviso da Planoclima nunca altera o nível sozinho. Se tiver menos de 48 h, ult
 
 ## Botão "Braga Resiliente" (só administrador)
 
-Publica avisos municipais na aplicação pública Braga Resiliente (repositório `braga-resiliente`, ficheiro `avisos.json`). Mostra-se apenas à conta administrador. A publicação usa a API do GitHub com uma chave pessoal (fine-grained, só `braga-resiliente`, Contents: Read and write) que fica **apenas no `localStorage` do navegador do administrador**; nunca é enviada para este repositório. Os avisos ficam **públicos**.
+Publica avisos municipais na aplicação pública Braga Resiliente (repositório `protecaocivilbraga/protecaocivilbraga.github.io`, ficheiro `avisos.json`). Mostra-se apenas à conta administrador. A publicação usa a API do GitHub com uma chave pessoal (fine-grained, criada na conta `protecaocivilbraga`, só para o repositório da app, Contents: Read and write) que fica **apenas no `localStorage` do navegador do administrador**; nunca é enviada para este repositório. Os avisos ficam **públicos**.

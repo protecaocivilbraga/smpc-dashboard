@@ -536,7 +536,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     </fieldset>
     <details id="brCfg"><summary class="rn" style="cursor:pointer">Ligação ao GitHub <span id="brTokSt"></span></summary>
       <div style="display:grid;gap:8px;margin-top:8px">
-        <p class="rn">Para publicar é preciso uma chave do GitHub, guardada <b>só neste navegador</b>. Crie-a em <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>: repositório <b>apenas</b> <code>vmazevedo0303/braga-resiliente</code>, permissão <b>Contents: Read and write</b>, validade até 1 ano. Cole-a abaixo.</p>
+        <p class="rn">Para publicar é preciso uma chave do GitHub, guardada <b>só neste navegador</b>. Crie-a em <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub → Fine-grained token</a>: repositório <b>apenas</b> <code>protecaocivilbraga/protecaocivilbraga.github.io</code>, permissão <b>Contents: Read and write</b>, validade até 1 ano. Cole-a abaixo.</p>
         <label>Chave<input id="brTokIn" type="password" autocomplete="off" placeholder="github_pat_…"></label>
         <div><button id="brTokSave">Guardar chave</button> <button class="sec" id="brTokDel">Apagar chave deste navegador</button></div>
       </div>
@@ -761,8 +761,8 @@ $('psCopia').onclick=async()=>{try{await navigator.clipboard.writeText($('psTxt'
 $('psWa').onclick=()=>{window.open('https://wa.me/?text='+encodeURIComponent($('psTxt').value),'_blank','noopener');$('psMsg').textContent='Escolha no WhatsApp o grupo de destino.'};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('psOv').classList.remove('on')});
 /* ============ Braga Resiliente: avisos municipais da aplicação pública ============
-   Escreve o ficheiro avisos.json do repositório braga-resiliente através da API do GitHub. A chave fica só no navegador do administrador. */
-const BR={REPO:'vmazevedo0303/braga-resiliente',FICH:'avisos.json',KEY:'br_token',avisos:[],sha:null,ocupado:false};
+   Escreve o ficheiro avisos.json do repositório da app (protecaocivilbraga/protecaocivilbraga.github.io) através da API do GitHub. A chave fica só no navegador do administrador. */
+const BR={REPO:'protecaocivilbraga/protecaocivilbraga.github.io',FICH:'avisos.json',KEY:'br_token',avisos:[],sha:null,ocupado:false};
 const BR_NV={info:['Informação','#60a5fa'],amarelo:['Amarelo','#fbbf24'],laranja:['Laranja','#fb923c'],vermelho:['Vermelho','#f87171']};
 const brTok=()=>{try{return localStorage.getItem(BR.KEY)||''}catch(e){return ''}};
 const brHdr=()=>{const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};const t=brTok();if(t)h.Authorization='Bearer '+t;return h};
