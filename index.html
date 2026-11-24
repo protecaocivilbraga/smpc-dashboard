@@ -161,6 +161,35 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #relBox .rsel .ri{display:flex;align-items:flex-start;gap:6px;color:#cbd5e1;font-size:11px;line-height:1.3;padding:2px 0}#relBox .rsel .ri textarea{font-size:11px;line-height:1.3;padding:3px 5px;min-height:0;resize:vertical}#relBox .rsel .rb{margin-top:6px}
 @media(max-width:800px){#relBox{height:96vh}#relBox .rg{grid-template-columns:1fr;overflow:auto}#relBox .rc{overflow:visible;border-right:0}#relBox .rp{min-height:320px}#relPdf{min-height:320px}}
 @media print{#relOv{display:none!important}}
+#rpOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10001;display:none;align-items:center;justify-content:center}
+#rpOv.on{display:flex}
+#rpBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(1180px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#rpBox .rh{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #334155}
+#rpBox h3{margin:0;font-size:15px}
+#rpFecha{background:none;border:0;color:#e2e8f0;font-size:24px;cursor:pointer;line-height:1}
+#rpBox .rg{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:0;flex:1;min-height:0}
+#rpBox .rc{padding:10px 14px;overflow:auto;border-right:1px solid #334155;display:grid;gap:8px;align-content:start}
+#rpBox .rp{display:flex;flex-direction:column;min-height:0}
+#rpPdf{flex:1;border:0;background:#fff;min-height:300px}
+#rpBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#rpBox input:not([type=checkbox]):not([type=radio]),#rpBox textarea,#rpBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:5px 7px;font:inherit;font-size:12px;width:100%;box-sizing:border-box}
+#rpBox .rck{display:flex;flex-wrap:wrap;gap:4px 14px}#rpBox .rck label,#rpBox .ro{display:flex;align-items:center;gap:6px;color:#e2e8f0}
+#rpBox .rb{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#rpBox button{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:7px 12px;font-size:12px;cursor:pointer}
+#rpBox button.lk{background:none;color:#60a5fa;padding:0 0 0 6px;font-size:11px;text-decoration:underline}
+#rpBox a{color:#60a5fa;font-size:11px}
+#rpBox fieldset{border:1px solid #475569;border-radius:8px;padding:8px 10px;display:grid;gap:6px}
+#rpBox legend{font-size:11px;color:#fbbf24;padding:0 4px}
+#rpBox .rn{font-size:11px;color:#94a3b8;margin:0}
+#rpBox .rsel{display:block}#rpBox .rsel .rs{display:flex;align-items:center;gap:6px;color:#e2e8f0;font-size:12px;padding:1px 0}
+#rpBox .rsel details{margin:0 0 3px 22px}#rpBox .rsel summary{font-size:10.5px;color:#60a5fa;cursor:pointer}
+#rpBox .rsel .ri{display:flex;align-items:flex-start;gap:6px;color:#cbd5e1;font-size:11px;line-height:1.3;padding:2px 0}#rpBox .rsel .ri textarea{font-size:11px;line-height:1.3;padding:3px 5px;min-height:0;resize:vertical}#rpBox .rsel .rb{margin-top:6px}
+@media(max-width:800px){#rpBox{height:96vh}#rpBox .rg{grid-template-columns:1fr;overflow:auto}#rpBox .rc{overflow:visible;border-right:0}#rpBox .rp{min-height:320px}#rpPdf{min-height:320px}}
+#rpBox button.sec{background:#334155}
+#rpBox .tabs{display:flex;gap:6px}#rpBox .tabs button{background:#1e293b;border:1px solid #334155}#rpBox .tabs button.on{background:#1d4ed8;border-color:#60a5fa}
+#rpBox .rsec{display:grid;gap:3px}#rpBox .rsec .rs{display:flex;align-items:center;gap:6px;color:#e2e8f0;font-size:12px}#rpBox .rsec textarea{font-size:11.5px;line-height:1.35;resize:vertical}
+#rpBox .dt{display:grid;grid-template-columns:1fr 1fr;gap:6px}#rpAviso{padding:6px 10px;color:#fbbf24!important}#rpAviso:empty{display:none}
+@media print{#rpOv{display:none!important}}
 .btnRel{background:#1d4ed8;color:#fff;border:0;border-radius:7px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer}
 
 #relBox button.sec{background:#334155}
@@ -295,6 +324,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <button class="btnRel" id="btnAn" data-mod="briefing" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;">Briefing ANEPC</button>
     <button class="btnRel" id="btnCt" data-mod="contratada" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
     <button class="btnRel" id="btnRel" data-mod="relatorio" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
+    <button class="btnRel semAcesso" id="btnSem" data-mod="relatorio" title="Relatório semanal do CCOM: histórico da semana anterior e previsão até à segunda-feira seguinte (só CorMPC e SMPC)" style="background:#1e40af">Semanal</button>
+    <button class="btnRel semAcesso" id="btnPer" data-mod="relatorio" title="Relatório de período (6, 12 ou 24 h), uma página: previsão, ocorrências significativas, por freguesia e por tipologia (só CorMPC e SMPC)" style="background:#1e40af">Período</button>
     <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
     <button class="btnRel" id="btnPos" data-mod="ifprotec" title="Ponto de situação: ocorrências por tipologia e freguesia num período à escolha, e previsão das próximas 12 h" style="background:#0f766e">POSIT</button>
     <button class="btnRel semAcesso" id="btnBR" title="Publicar avisos municipais na aplicação Braga Resiliente (só administrador)" style="background:#0b5cab">Braga Resiliente</button>
@@ -570,6 +601,33 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <div class="rp"><div id="relAviso" class="rn"></div><iframe id="relPdf" title="Pré-visualização do PDF"></iframe></div>
   </div>
 </div></div>
+<div id="rpOv" role="dialog" aria-modal="true" aria-labelledby="rpTit"><div id="rpBox">
+  <div class="rh"><h3 id="rpTit">Relatórios do CCOM</h3><button id="rpFecha" title="Fechar (Esc)">×</button></div>
+  <div class="rg">
+    <div class="rc">
+      <div class="tabs" id="rpTabs"><button data-t="sem" class="on">Semanal</button><button data-t="per">Período (1 página)</button></div>
+      <p class="rn">Proposta gerada com os dados do painel e o histórico do Ifprotec. <b>Reveja e edite antes de enviar.</b> Nada é enviado a partir daqui.</p>
+      <div id="rpCtlSem">
+        <div class="dt"><label>Histórico: de<input type="datetime-local" id="rpDe"></label><label>até<input type="datetime-local" id="rpAte"></label></div>
+        <label>Previsão até ao fim do dia<input type="date" id="rpPrevAte"></label>
+      </div>
+      <div id="rpCtlPer" style="display:none">
+        <label>Período<select id="rpH"><option value="6">Últimas 6 horas (e previsão das próximas 6 h)</option><option value="12" selected>Últimas 12 horas (e previsão das próximas 12 h)</option><option value="24">Últimas 24 horas (e previsão das próximas 24 h)</option></select></label>
+      </div>
+      <div class="rb"><button id="rpGera" title="Volta a ler o histórico e a previsão e refaz todos os textos (apaga as edições)">Gerar a partir dos dados</button></div>
+      <div id="rpEstado" class="rn" role="status"></div>
+      <fieldset><legend>Conteúdo (desmarque o que não quer; o texto é editável)</legend><div id="rpSecs" style="display:grid;gap:8px"></div></fieldset>
+      <label>Assunto do email<input id="rpAssunto"></label>
+      <label>Texto do email <button type="button" id="rpRegen" class="lk">refazer a partir do relatório</button><textarea id="rpCorpo" rows="9"></textarea></label>
+      <label>Assinatura (a mesma do relatório de apoio à decisão)<textarea id="rpAssin" rows="4"></textarea></label>
+      <div class="rb"><button id="rpEml" title="Descarrega um ficheiro .eml que o Outlook abre como mensagem por enviar, com o PDF em anexo">Descarregar rascunho (.eml)</button><button id="rpOutlook" title="Abre um email novo e descarrega o PDF para anexar">Abrir no Outlook</button></div>
+      <div class="rb"><button id="rpImprimir" title="Atribui o número seguinte e abre a impressão">Imprimir (atribui n.º)</button><label class="relNumL">Próximo n.º <input id="rpNumProx" type="number" min="1" step="1" style="width:5.5em"></label><span id="rpNumInfo" class="rn"></span></div>
+      <div class="rb"><button id="rpPdfBtn" class="sec">Descarregar PDF</button><button id="rpCopia" class="sec">Copiar texto do email</button><a id="rpAbrir" target="_blank" rel="noopener">Abrir PDF noutro separador</a></div>
+      <div id="rpMsg" class="rn" role="status"></div>
+    </div>
+    <div class="rp"><div id="rpAviso" class="rn"></div><iframe id="rpPdf" title="Pré-visualização do PDF"></iframe></div>
+  </div>
+</div></div>
 <div id="alertaOv" role="alertdialog" aria-modal="true" aria-labelledby="alertaTit"><div id="alertaBox"><h3 id="alertaTit">Atenção</h3><div id="alertaItens"></div><button id="alertaOk">Reconhecer</button></div></div>
 <script>
 /* ============================== CONFIGURAÇÃO ============================== */
@@ -579,6 +637,11 @@ const CFG={
   MODELOS:['ecmwf_ifs025','ecmwf_aifs025','gfs025','icon_seamless_eps','ukmo_global_ensemble_20km','gem_global'],
   NOMES:{ecmwf_ifs025:'ECMWF ENS',ecmwf_aifs025:'ECMWF AIFS',gfs025:'GFS ENS',icon_seamless_eps:'ICON EPS',ukmo_global_ensemble_20km:'UKMO ENS',gem_global:'GEM ENS'},
   HORAS:72,BLOCO:6,CCOM_TEL:'253 264 077', // contacto do CCOM que consta nas medidas do relatório (editável)
+  // Relatórios semanal e de período: série da numeração (CCOM = a mesma do relatório atual; outro texto, p. ex. 'CCOM-S', cria uma série própria)
+  SERIE:{sem:'CCOM',per:'CCOM'},
+  // Ocorrência significativa: mais de SIG.meios meios (veículos) E mais de SIG.entidades entidades a intervir
+  SIG:{meios:2,entidades:1},
+  RP_PERFIS:['CORMPC','SMPC'], // quem vê os botões Semanal e Período (o Apps Script também limita o histórico a estes perfis)
 
   LIM:{vigChuva:10,proChuva:20,vigAcc24:30,proAcc24:50,vigRaj:60,proP30:.15,vigCape:.30},
   ATUALIZAR:{ifp:30,av:300,mod:1800,sat:600,rio:10800},
@@ -618,6 +681,7 @@ function sessaoGuarda(r){AUTH.s={t:r.t,exp:r.exp,id:r.id,nome:r.nome,ver:r.ver||
 function aplicarPerfil(){
   document.querySelectorAll('[data-mod]').forEach(el=>el.classList.toggle('semAcesso',!temAcesso(el.dataset.mod)));
   try{$('btnBR').classList.toggle('semAcesso',!(AUTH.s&&AUTH.s.admin))}catch(e){}
+  try{rpMarcaBotoes()}catch(e){}
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -1560,25 +1624,7 @@ function relPdf(d,o){
     doc.setFontSize(9.5);const wd=(w,bd)=>{doc.setFont('helvetica',bd?'bold':'normal');return doc.getTextWidth(san(w))};
     const ind=bul?wd('- ',0):0,lines=[[]];let x=0;tk.forEach(([w,bd])=>{const ww=wd(w,bd);if(x+ww>CW-(lines.length>1?ind:0)&&lines[lines.length-1].length){lines.push([]);x=0}lines[lines.length-1].push([w,bd,ww]);x+=ww});
     falta(lines.length*4.6+1);lines.forEach((ln,i)=>{let xx=M+(i>0?ind:0);ln.forEach(([w,bd,ww])=>{doc.setFont('helvetica',bd?'bold':'normal');T(w.replace(/ $/,''),xx,y);xx+=ww});y+=4.6});y+=.8};
-  // cabeçalho (modelo do briefing técnico-operacional, adaptado ao SMPC de Braga)
-  const RED=[214,32,39],pg=n=>String(n).padStart(2,'0');
-  try{doc.addImage(LOGOS_B64,'JPEG',M,7,60,60*138/468)}catch(e){}
-  doc.setTextColor(...AZ).setFont('helvetica','bold').setFontSize(12.5);T('Centro de Coordenação Operacional Municipal (CCOM)',W-M,11.5,{align:'right'});
-  doc.setFontSize(16);T('Apoio à Decisão',W-M,18.5,{align:'right'});
-  doc.setFontSize(8.6);T('Serviço Municipal de Proteção Civil · Município de Braga',W-M,23.4,{align:'right'});
-  doc.setFont('helvetica','normal').setFontSize(8);doc.setTextColor(71,85,105);T('Concelho de Braga · Janela: '+d.janela,W-M,27.2,{align:'right'});
-  {const y0=29.5,h=2.8,w=3.4,sk=2.2;doc.setFillColor(...RED);for(let x=M+sk;x<W-M-w;x+=w*2){doc.triangle(x,y0,x+w,y0,x+w-sk,y0+h,'F');doc.triangle(x,y0,x+w-sk,y0+h,x-sk,y0+h,'F')}}
-  const ag=localNaive(d.agora),dv=`${ag.slice(8,10)}-${ag.slice(5,7)}-${ag.slice(0,4)} ${ag.slice(11,16)}`;
-  doc.setTextColor(30,41,59).setFontSize(9.5);doc.setFont('helvetica','normal');T('Informação válida em:',M,40);doc.setFont('helvetica','bold');T(dv,M+37,40);
-  const nTxt=o.num?`Nº${o.num}`:'Nº --/CCOM/'+ag.slice(0,4);doc.setFontSize(13);T(nTxt,W/2+4,40.3,{align:'center'});
-  if(!o.num){doc.setFont('helvetica','italic').setFontSize(6.5).setTextColor(100,116,139);T('rascunho · o número é atribuído ao imprimir',W/2+4,43.6,{align:'center'})}
-  doc.setTextColor(30,41,59).setFont('helvetica','normal').setFontSize(9.5);T('Número de Páginas:',W-M-12,40,{align:'right'});
-  doc.setFillColor(254,226,226).setDrawColor(...RED).setLineWidth(.35).roundedRect(M,46,CW,19,1.2,1.2,'FD');
-  {const tx=['Este é um documento de carácter ','RESERVADO',' que ','não se destina à divulgação pública',', tendo como objetivo a transmissão de informação relevante para apoio à decisão operacional, destinando-se às entidades que integram o Sistema Municipal de Proteção Civil de Braga e a outras a quem o Serviço Municipal de Proteção Civil tenha considerado de relevância incluí-las na lista de distribuição.'];
-   doc.setFontSize(8.6);const tk=[];tx.forEach((t,k)=>t.split(/(?<= )/).forEach(w=>{if(w)tk.push([w,k===1||k===3])}));
-   const wd=(w,bd)=>{doc.setFont('helvetica',bd?'bold':'normal');return doc.getTextWidth(san(w))},lines=[[]];let x=0;
-   tk.forEach(([w,bd])=>{const ww=wd(w,bd);if(x+ww>CW-6&&lines[lines.length-1].length){lines.push([]);x=0}lines[lines.length-1].push([w,bd,ww]);x+=ww});
-   let yy=51.4;lines.forEach(ln=>{let xx=M+3;ln.forEach(([w,bd,ww])=>{doc.setFont('helvetica',bd?'bold':'normal');T(w.replace(/ $/,''),xx,yy);xx+=ww});yy+=4.2})}
+  pdfCabecalho(doc,{agora:d.agora,linha:'Concelho de Braga · Janela: '+d.janela,num:o.num});
   y=72;if(sx(o,'nivel')){doc.setTextColor(100,116,139).setFontSize(8);T('Nível recomendado, a validar pelo CorMPC · não substitui os avisos do IPMA nem da ANEPC',M,y);y+=5;
   doc.setFillColor(...COR[n]).roundedRect(M,y,CW,9,1.5,1.5,'F');doc.setTextColor(255,255,255).setFont('helvetica','bold').setFontSize(11);T('NÍVEL RECOMENDADO: '+NOMEN[n].toUpperCase()+(o.n!=null?' (definido pelo CorMPC)':''),M+4,y+6.1);y+=14}doc.setTextColor(30,41,59);
   {const hg=relGraficos(doc,d,M,y,CW,{sem:sx(o,'gsem'),chuva:sx(o,'gchuva'),raj:sx(o,'graj'),rio:sx(o,'grio')});if(hg)y+=hg+3}
@@ -1607,15 +1653,42 @@ function relPdf(d,o){
   if(sx(o,'efeitos')){const l=ft(o,'efeitos',relEfeitos(d,n));if(l.length){sec('Efeitos expectáveis');l.forEach(m=>par(m,true))}}
   if(sx(o,'medG')){const l=ft(o,'medG',relMedGerais(n));if(l.length){sec('Medidas recomendadas');l.forEach(m=>par(m,true))}}
   if(sx(o,'medE')){const l=ft(o,'medE',relMedEnt(n));if(l.length){sec('Mobilização de meios e recursos (entidades)');l.forEach(m=>par(m,true))}}
-  // rodapé em todas as páginas
-  const np=doc.getNumberOfPages();doc.setPage(1);doc.setTextColor(30,41,59).setFont('helvetica','bold').setFontSize(9.5);T(pg(np),W-M,40,{align:'right'});
-  for(let p=1;p<=np;p++){doc.setPage(p);doc.setDrawColor(203,213,225).setLineWidth(.2).line(M,284,W-M,284);doc.setFont('helvetica','normal').setFontSize(7).setTextColor(100,116,139);
-    doc.setFontSize(6.4);
-    if(sx(o,'fontes'))T('Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec. Grelha de cerca de 25 km; sem observações nem caudais.',M,287);
-    if(sx(o,'contacto'))T('Município de Braga / SMPC · Rua do Ferraz, 4700-380 Braga · Tel. +351 253 20 28 61 · protecao.civil@cm-braga.pt',M,290.2);
-    T(`${o.num?'Nº'+o.num+' · ':''}A PREVENÇÃO COMEÇA EM CADA UM DE NÓS · ${p}/${np}`,W-M,293.4,{align:'right'})}
+  pdfRodape(doc,{num:o.num,fontes:sx(o,'fontes')?'Fontes: Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos); Ifprotec. Grelha de cerca de 25 km; sem observações nem caudais.':'',contacto:sx(o,'contacto')});
   return doc}
 
+
+/* Cabeçalho comum aos relatórios do CCOM (atual, semanal e de período): logótipos, título, n.º e aviso RESERVADO */
+function pdfCabecalho(doc,c){
+  const W=210,M=14,CW=W-2*M,AZ=[18,53,91],T=(t,x,yy,opt)=>doc.text(san(t),x,yy,opt);
+  // (modelo do briefing técnico-operacional, adaptado ao SMPC de Braga)
+  const RED=[214,32,39];
+  try{doc.addImage(LOGOS_B64,'JPEG',M,7,60,60*138/468)}catch(e){}
+  doc.setTextColor(...AZ).setFont('helvetica','bold').setFontSize(12.5);T('Centro de Coordenação Operacional Municipal (CCOM)',W-M,11.5,{align:'right'});
+  doc.setFontSize(16);T('Apoio à Decisão',W-M,18.5,{align:'right'});
+  doc.setFontSize(8.6);T('Serviço Municipal de Proteção Civil · Município de Braga',W-M,23.4,{align:'right'});
+  doc.setFont('helvetica','normal').setFontSize(8);doc.setTextColor(71,85,105);T(c.linha||'',W-M,27.2,{align:'right'});
+  {const y0=29.5,h=2.8,w=3.4,sk=2.2;doc.setFillColor(...RED);for(let x=M+sk;x<W-M-w;x+=w*2){doc.triangle(x,y0,x+w,y0,x+w-sk,y0+h,'F');doc.triangle(x,y0,x+w-sk,y0+h,x-sk,y0+h,'F')}}
+  const ag=localNaive(c.agora),dv=`${ag.slice(8,10)}-${ag.slice(5,7)}-${ag.slice(0,4)} ${ag.slice(11,16)}`;
+  doc.setTextColor(30,41,59).setFontSize(9.5);doc.setFont('helvetica','normal');T('Informação válida em:',M,40);doc.setFont('helvetica','bold');T(dv,M+37,40);
+  const nTxt=c.num?`Nº${c.num}`:`Nº --/${c.serie||'CCOM'}/`+ag.slice(0,4);doc.setFontSize(13);T(nTxt,W/2+4,40.3,{align:'center'});
+  if(!c.num){doc.setFont('helvetica','italic').setFontSize(6.5).setTextColor(100,116,139);T('rascunho · o número é atribuído ao imprimir',W/2+4,43.6,{align:'center'})}
+  doc.setTextColor(30,41,59).setFont('helvetica','normal').setFontSize(9.5);T('Número de Páginas:',W-M-12,40,{align:'right'});
+  doc.setFillColor(254,226,226).setDrawColor(...RED).setLineWidth(.35).roundedRect(M,46,CW,19,1.2,1.2,'FD');
+  {const tx=['Este é um documento de carácter ','RESERVADO',' que ','não se destina à divulgação pública',', tendo como objetivo a transmissão de informação relevante para apoio à decisão operacional, destinando-se às entidades que integram o Sistema Municipal de Proteção Civil de Braga e a outras a quem o Serviço Municipal de Proteção Civil tenha considerado de relevância incluí-las na lista de distribuição.'];
+   doc.setFontSize(8.6);const tk=[];tx.forEach((t,k)=>t.split(/(?<= )/).forEach(w=>{if(w)tk.push([w,k===1||k===3])}));
+   const wd=(w,bd)=>{doc.setFont('helvetica',bd?'bold':'normal');return doc.getTextWidth(san(w))},lines=[[]];let x=0;
+   tk.forEach(([w,bd])=>{const ww=wd(w,bd);if(x+ww>CW-6&&lines[lines.length-1].length){lines.push([]);x=0}lines[lines.length-1].push([w,bd,ww]);x+=ww});
+   let yy=51.4;lines.forEach(ln=>{let xx=M+3;ln.forEach(([w,bd,ww])=>{doc.setFont('helvetica',bd?'bold':'normal');T(w.replace(/ $/,''),xx,yy);xx+=ww});yy+=4.2})}
+  return 72}
+/* Rodapé comum: n.º de páginas no cabeçalho, fontes, contacto e paginação */
+function pdfRodape(doc,c){
+  const W=210,M=14,T=(t,x,yy,opt)=>doc.text(san(t),x,yy,opt),pg=n=>String(n).padStart(2,'0');
+  const np=doc.getNumberOfPages();doc.setPage(1);doc.setTextColor(30,41,59).setFont('helvetica','bold').setFontSize(9.5);T(pg(np),W-M,40,{align:'right'});
+  for(let p=1;p<=np;p++){doc.setPage(p);doc.setDrawColor(203,213,225).setLineWidth(.2).line(M,284,W-M,284);doc.setFont('helvetica','normal').setFontSize(6.4).setTextColor(100,116,139);
+    if(c.fontes)T(c.fontes,M,287);
+    if(c.contacto)T('Município de Braga / SMPC · Rua do Ferraz, 4700-380 Braga · Tel. +351 253 20 28 61 · protecao.civil@cm-braga.pt',M,290.2);
+    T(`${c.num?'Nº'+c.num+' · ':''}A PREVENÇÃO COMEÇA EM CADA UM DE NÓS · ${p}/${np}`,W-M,293.4,{align:'right'})}
+  return np}
 
 /* Mini-gráficos do início do relatório (vetor): semáforo, chuva, rajada, caudal */
 function relGraficos(doc,d,x0,y0,CW,on){on=on||{sem:1,chuva:1,raj:1,rio:1};
@@ -1968,8 +2041,10 @@ $('relNota').oninput=()=>relRefrescar(true);
 $('relCorpo').oninput=()=>{REL.editado=true};$('relRegen').onclick=()=>{REL.editado=false;relRefrescar(false)};
 $('relAssin').oninput=()=>{try{localStorage.setItem('smpc_assin',$('relAssin').value)}catch(e){}relRefrescar(false)};
 /* ---- numeração sequencial: só quando se imprime (guardada neste navegador) ---- */
-function numLer(ano){let j=null;try{j=JSON.parse(localStorage.getItem('smpc_rel_num')||'null')}catch(e){}
+const numChave=serie=>!serie||serie==='CCOM'?'smpc_rel_num':'smpc_rel_num_'+serie.replace(/[^A-Za-z0-9]/g,'');
+function numLer(ano,serie){let j=null;try{j=JSON.parse(localStorage.getItem(numChave(serie))||'null')}catch(e){}
   if(!j||j.ano!==ano)j={ano,prox:1,log:(j&&j.log)||[]};return j}
+function numGrava(j,serie){try{localStorage.setItem(numChave(serie),JSON.stringify(j))}catch(e){}}
 function numMostrar(){const a=REL.d?+localNaive(REL.d.agora).slice(0,4):new Date().getFullYear(),j=numLer(a),i=$('relNumProx');
   if(i&&document.activeElement!==i)i.value=j.prox;
   const u=j.log.filter(x=>x.ano===a).slice(-1)[0];$('relNumInfo').textContent=u?`Último impresso: Nº${u.n}/CCOM/${a} (${u.quando})`:'Ainda sem relatórios impressos este ano.'}
@@ -2013,6 +2088,272 @@ $('relOutlook').onclick=async()=>{
   location.href=url};
 $('relCcom').onchange=()=>{$('relPerL').style.display=$('relCcom').value==='ativo'?'grid':'none';relRefrescar(false)};
 $('relCcomPer').oninput=()=>relRefrescar(true);$('relAtual').onchange=()=>relRefrescar(false);
+/* ============ Relatórios do CCOM: semanal e de período ============
+   Gerados só por botão (CorMPC e SMPC); o texto de cada secção é editável antes de enviar.
+   Histórico: Apps Script (Historico.gs, ação "hist"), juntando as ocorrências que o painel já tem das últimas 24 h.
+   Estados de prontidão: o briefing CCOS Cávado guardado NESTE navegador (smpc_anepc); noutro navegador preenche-se à mão. */
+const RP={tipo:'sem',H:null,L:[],prevD:null,ger:{},txt:{},on:{},pdf:null,url:null,t:null,emailEd:false,avisos:[],num:null};
+const RP_SECS={
+  sem:[['sintese','Síntese',3],['hist','Histórico da semana: total e tipologias ("Tipologia: n")',7],['sig','Ocorrências significativas (uma por linha)',5],['freg','Freguesias afetadas ("Freguesia: n")',6],['pront','Estados de prontidão em vigor (briefing CCOS Cávado)',2],['prevTab','Previsão: quadro diário (gerado pelo painel)',0],['prev','Previsão: comentário',5],['avisos','Avisos IPMA',3],['nota','Informação adicional',2]],
+  per:[['prev','Previsão meteorológica',5],['sig','Ocorrências significativas no período',4],['freg','Ocorrências por freguesia ("Freguesia: n")',6],['tip','Ocorrências por tipologia ("Tipologia: n")',6],['nota','Informação adicional',2]]};
+const RP_PAR=/^(.+?):\s*(\d+)\s*$/;
+const rpNum=x=>typeof x==='number'&&isFinite(x)?x:Array.isArray(x)?x.length:(x!=null&&x!==''&&!isNaN(+x)?+x:null);
+const rpAddD=(dia,n)=>{const d=new Date(dia+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)};
+const rpDow=dia=>new Date(dia+'T00:00:00Z').getUTCDay();
+const rpDM=t=>String(t).slice(8,10)+'/'+String(t).slice(5,7);
+const rpDH=t=>`${rpDM(t)} ${String(t).slice(11,13)}h${String(t).slice(14,16)!=='00'?String(t).slice(14,16):''}`;
+function rpPode(){const s=AUTH.s;return !!(s&&(s.admin||CFG.RP_PERFIS.includes(String(s.id||'').toUpperCase())))}
+function rpMarcaBotoes(){['btnSem','btnPer'].forEach(i=>{const b=$(i);if(b)b.classList.toggle('semAcesso',!(rpPode()&&temAcesso('relatorio')))})}
+function rpPadrao(){ // semana anterior (segunda 00h a segunda 00h) e previsão até à segunda-feira seguinte
+  const hoje=localNaive(new Date()).slice(0,10),w=rpDow(hoje),seg=rpAddD(hoje,-((w+6)%7));
+  $('rpAte').value=seg+'T00:00';$('rpDe').value=rpAddD(seg,-7)+'T00:00';$('rpPrevAte').value=rpAddD(hoje,(8-w)%7||7)}
+
+/* ---- histórico (Apps Script) ---- */
+async function rpHistGet(de,ate){
+  if(!CFG.IFPROTEC||!AUTH.s)return{erro:'Sem ligação ao servidor.'};
+  try{const j=await getJSON(`${CFG.IFPROTEC}?t=${encodeURIComponent(AUTH.s.t)}&acao=hist&de=${encodeURIComponent(de)}&ate=${encodeURIComponent(ate)}&_=${Date.now()}`,45000);
+    if(j.erro==='sessao'){sessaoExpirada();return{erro:'A sessão terminou.'}}
+    if(j.erro)return{erro:j.erro==='sem_acesso'?'Este perfil não tem acesso ao histórico.':j.erro==='periodo'?'Período inválido (máximo 31 dias).':'O servidor respondeu: '+j.erro};
+    if(!j.hist)return{erro:'O histórico ainda não está instalado no Apps Script (ficheiro Historico.gs).'};
+    if(!j.instalado)return{erro:'O Historico.gs está no Apps Script mas ainda não foi ativado (executar instalarHistorico).'};
+    return j}catch(e){return{erro:'Sem resposta do servidor ('+e.message+').'}}}
+function rpJuntar(H,de,ate){ // histórico + o que o painel já tem (últimas 24 h), sem duplicados
+  const m=new Map(),dentro=o=>{const t=String(o.data||'').slice(0,16);return t>=de&&t<=ate};
+  ((H&&H.detalhe)||[]).forEach(o=>m.set(String(o.id),Object.assign({},o,{meios:rpNum(o.meios),entidades:rpNum(o.entidades)})));
+  let extra=0;psOcorr().filter(dentro).forEach(o=>{const k=String(o.id??o.data+o.natureza);
+    if(!m.has(k)){extra++;m.set(k,Object.assign({},o,{meios:rpNum(o.meios??o.veiculos),entidades:rpNum(o.entidades)}))}});
+  return{L:[...m.values()].sort((a,b)=>String(a.data).localeCompare(String(b.data))),extra}}
+const rpFreg=o=>psNomeF(psFreguesia(o)||freguesiaDe(o))||'Sem freguesia indicada';
+const rpConta=(L,f)=>{const c={};L.forEach(o=>{const k=f(o);c[k]=(c[k]||0)+1});return Object.entries(c).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],'pt'))};
+function rpSignif(L){
+  const temEnt=L.some(o=>o.entidades!=null),temMeios=L.some(o=>o.meios!=null);
+  const s=L.filter(o=>o.meios!=null&&o.meios>CFG.SIG.meios&&(!temEnt||(o.entidades!=null&&o.entidades>CFG.SIG.entidades)));
+  return{s,temEnt,temMeios}}
+const rpLinhaSig=o=>`${rpDM(o.data)} ${String(o.data).slice(11,16)} · ${o.natureza||'Sem natureza'} · ${rpFreg(o)} · ${o.meios} meios${o.entidades!=null?', '+o.entidades+' entidades':''}${o.listaEntidades?' ('+o.listaEntidades+')':o.entidadeNome?' ('+o.entidadeNome+')':''}`;
+
+/* ---- previsão diária até à segunda-feira seguinte (ensembles Open-Meteo, mesmo método do painel) ---- */
+const RP_MAXD={icon_seamless_eps:7,ukmo_global_ensemble_20km:7};
+async function rpPrevDiaria(ateDia){
+  const ag=localNaive(new Date()),hoje=ag.slice(0,10),h0=ag.slice(0,13)+':00';
+  const nd=Math.max(1,Math.round((new Date(ateDia+'T00:00:00Z')-new Date(hoje+'T00:00:00Z'))/864e5)+1);
+  const dias=[];for(let i=0;i<nd;i++){const d=rpAddD(hoje,i);dias.push({dia:d,ini:i?d+'T00:00':h0,fim:rpAddD(d,1)+'T00:00'})}
+  const [la,lo]=CFG.PONTOS['Braga (centro)'],res={};
+  await Promise.all(CFG.MODELOS.map(async m=>{try{
+    const fd=Math.min(nd+1,RP_MAXD[m]||15);
+    const d=await getJSON(`https://ensemble-api.open-meteo.com/v1/ensemble?latitude=${la}&longitude=${lo}&hourly=precipitation,wind_gusts_10m,temperature_2m&forecast_days=${fd}&timezone=${TZ}&models=${m}`,45000);
+    const h=d.hourly,t=h.time,pr=membros(h,'precipitation'),ga=membros(h,'wind_gusts_10m'),te=membros(h,'temperature_2m');
+    res[m]=dias.map(D=>{const idx=[];t.forEach((x,i)=>{if(x>=D.ini&&x<D.fim)idx.push(i)});
+      const esp=Math.round((new Date(D.fim+':00Z')-new Date(D.ini+':00Z'))/36e5);if(idx.length<esp)return null;
+      const V=s=>idx.map(i=>s[i]).filter(x=>x!=null),ok=s=>V(s).length>=Math.ceil(esp/3); // aceita séries de 3 em 3 h
+      const pd=pr.filter(ok).map(s=>sum(V(s))),gd=ga.filter(ok).map(s=>Math.max(...V(s))),tx=te.filter(ok).map(s=>Math.max(...V(s))),tn=te.filter(ok).map(s=>Math.min(...V(s)));
+      if(!pd.length)return null;return{mm:med(pd),raj:gd.length?q(gd,.9):null,tmax:tx.length?med(tx):null,tmin:tn.length?med(tn):null}})
+  }catch(e){}}));
+  // nível (Normal / Vigilância / Prontidão) só onde há blocos de 6 h do painel (72 h)
+  const C=S.calc&&S.calc['Braga (centro)'],cen0=S.cen;S.cen='cons';const nivDia={};
+  try{if(C)S.blocos.forEach((b,k)=>{const dd=b.ini.slice(0,10);nivDia[dd]=Math.max(nivDia[dd]??0,nivelGeral(C.blocos,k))})}finally{S.cen=cen0}
+  const mx=v=>v.length?Math.max(...v):null,md=v=>v.length?med(v):null;
+  return dias.map((D,i)=>{const v=Object.values(res).map(r=>r[i]).filter(Boolean);
+    const mm=v.map(x=>x.mm),out=Object.assign({},D,{n:v.length,niv:nivDia[D.dia]});
+    if(v.length<2)return out;
+    return Object.assign(out,{mm:med(mm),min:Math.min(...mm),max:Math.max(...mm),raj:md(v.map(x=>x.raj).filter(x=>x!=null)),tmax:md(v.map(x=>x.tmax).filter(x=>x!=null)),tmin:md(v.map(x=>x.tmin).filter(x=>x!=null))})})}
+const rpDiaNome=(D,curto)=>{const n=DIAS_EXT[rpDow(D.dia)];const t=(curto?n.replace('-feira','').slice(0,3):n);return t[0].toUpperCase()+t.slice(1)+' '+rpDM(D.dia)};
+
+/* ---- textos propostos ---- */
+function rpAvisos(ini,fim){const N={yellow:'Amarelo',orange:'Laranja',red:'Vermelho'};
+  return avisosOrd().filter(w=>sobrepoe(w,{ini,fim})).map(w=>`${N[w.nivel]||w.nivel} · ${w.tipo} · ${avVigor(w)?'em vigor':'previsto'} · ${rpDM(w.inicio)} ${w.inicio.slice(11,16)} a ${rpDM(w.fim)} ${w.fim.slice(11,16)}`)}
+function rpPront(){const a=S.anepc;if(!a||(!a.est&&!a.disp))return'';
+  const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16);
+  return(anTexto(a)||a.est)+(a.orig?' · '+a.orig:'')+(exp?' (briefing expirado: confirmar)':'')}
+function rpTextos(de,ate,extra){
+  const L=RP.L,H=RP.H,T={},sg=rpSignif(L),av=[];
+  const fregs=rpConta(L,rpFreg),tips=rpConta(L,o=>(o.natureza||'Outras').trim()||'Outras');
+  const total=H?H.total+extra:L.length,outras=H?H.outras.total:0;
+  if(!H)av.push('Histórico indisponível: '+RP.erroH+(RP.tipo==='sem'?' O total e as listas abaixo só têm o que o painel recebeu nas últimas 24 h.':' Entram só as ocorrências que o painel recebeu nas últimas 24 h.'));
+  else if(H.desde&&H.desde>de)av.push(`O histórico só começou a ser registado em ${rpDH(H.desde)}: antes disso as contagens estão incompletas.`);
+  if(L.length&&!sg.temMeios)av.push('Sem informação de meios por ocorrência: não foi possível identificar as ocorrências significativas.');
+  else if(L.length&&!sg.temEnt)av.push(`Sem informação das entidades por ocorrência: as significativas são só as com mais de ${CFG.SIG.meios} meios (confirmar à mão).`);
+  const sigL=sg.s.map(rpLinhaSig);
+  const sigVazio=`Sem ocorrências com mais de ${CFG.SIG.meios} meios e mais de ${CFG.SIG.entidades} entidade${CFG.SIG.entidades>1?'s':''} a intervir.`;
+  if(RP.tipo==='sem'){
+    T.hist=[H?`Total de ocorrências registadas: ${total} (de ${rpDH(de)} a ${rpDH(ate)}).`:`Total de ocorrências registadas: [histórico indisponível; preencher à mão] (de ${rpDH(de)} a ${rpDH(ate)}).`,...tips.map(([k,v])=>`${k}: ${v}`),...(outras?[`Outras naturezas (saúde e outras não detalhadas): ${outras}`]:[])].join('\n');
+    T.sig=sigL.length?sigL.join('\n'):sigVazio;
+    T.freg=fregs.length?fregs.map(([k,v])=>`${k}: ${v}`).join('\n'):'Sem ocorrências com freguesia identificada.';
+    T.pront=rpPront();if(!T.pront)av.push('Sem briefing CCOS Cávado guardado neste navegador: preencha os estados de prontidão à mão.');
+    const P=RP.prevD||[],ok=P.filter(D=>D.mm!=null),ateD=$('rpPrevAte').value;
+    const pv=[];
+    if(ok.length){const tot=ok.reduce((a,D)=>a+D.mm,0),ch=ok.filter(D=>D.mm>=10),rj=ok.filter(D=>D.raj!=null).sort((a,b)=>b.raj-a.raj)[0];
+      pv.push(`Precipitação acumulada prevista até ${rpDiaNome({dia:ateD}).toLowerCase()}: cerca de ${Math.round(tot)} mm (consenso dos modelos).`);
+      pv.push(ch.length?`Dias com mais chuva: ${ch.map(D=>`${rpDiaNome(D,1)} (${Math.round(D.mm)} mm)`).join(', ')}.`:'Sem dias com chuva significativa prevista (10 mm ou mais num dia).');
+      if(rj)pv.push(`Rajada máxima prevista (P90): até ${Math.round(rj.raj)} km/h, ${rpDiaNome(rj,1)}.`);
+      const nv=P.filter(D=>D.niv!=null).map(D=>D.niv);if(nv.length)pv.push(`Nível recomendado pelo painel nas próximas 72 h: ${NOMEN[Math.max(...nv)]} (a validar pelo CorMPC).`);
+      pv.push('Para além das 72 h a previsão é uma tendência, com maior incerteza.')}
+    else pv.push('Previsão diária indisponível neste momento.');
+    T.prev=pv.join('\n');
+    const A=rpAvisos(localNaive(new Date()),rpAddD(ateD,1)+'T00:00');T.avisos=A.length?A.join('\n'):'Sem avisos do IPMA em vigor nem previstos para Braga.';
+    T.sintese=[!H?'':`Na semana anterior registaram-se ${total} ocorrências${sg.s.length?`, ${sg.s.length} das quais significativas`:''}${fregs.length?`, com mais incidência em ${fregs.slice(0,3).map(([k])=>k).join(', ')}`:''}.`,pv[0]&&ok.length?pv[0]:''].filter(Boolean).join(' ');
+    T.nota='';
+  }else{
+    const h=+$('rpH').value,k=Math.ceil(h/CFG.BLOCO),C=S.calc&&S.calc['Braga (centro)'],pv=[];
+    if(C&&S.blocos.length>=k){const cen0=S.cen;S.cen='cons';let nmax=0;
+      try{for(let i=0;i<k;i++){const b=S.blocos[i],x=C.blocos[i],n=nivelGeral(C.blocos,i);nmax=Math.max(nmax,n);
+        pv.push(`${dow(b.ini)} ${rpDM(b.ini)}, ${b.ini.slice(11,13)}-${b.fim.slice(11,13)}h: chuva ${Math.round(x.chuva)} mm (${Math.round(x.min)} a ${Math.round(x.max)}), rajada P90 até ${Math.round(x.raj90)} km/h · ${NOMEN[n]}`)}}finally{S.cen=cen0}
+      pv.unshift(`Nível recomendado para as próximas ${k*CFG.BLOCO} h: ${NOMEN[nmax]} (a validar pelo CorMPC).`);
+      const A=rpAvisos(S.blocos[0].ini,S.blocos[k-1].fim);pv.push(A.length?'Avisos IPMA: '+A.join('; ')+'.':'Avisos IPMA: nenhum neste período.')}
+    else pv.push('Previsão indisponível neste momento.');
+    T.prev=pv.join('\n');
+    T.sig=sigL.length?sigL.join('\n'):sigVazio;
+    T.freg=fregs.length?fregs.map(([k,v])=>`${k}: ${v}`).join('\n'):'Sem ocorrências no período.';
+    T.tip=tips.length?[...tips.map(([k,v])=>`${k}: ${v}`),...(outras?[`Outras naturezas (não detalhadas): ${outras}`]:[])].join('\n'):'Sem ocorrências no período.';
+    T.nota='';
+    if(L.length!==total)T.tip+=`\nTotal registado no período: ${total}`;
+  }
+  RP.avisos=av;return T}
+
+/* ---- interface ---- */
+function rpSecsDesenha(){
+  const el=$('rpSecs');el.innerHTML=RP_SECS[RP.tipo].map(([k,t,r])=>`<div class="rsec"><label class="rs"><input type="checkbox" data-k="${k}" ${RP.on[k]===false?'':'checked'}> ${esc(t)}</label>${r?`<textarea data-k="${k}" rows="${r}" spellcheck="true">${esc(RP.txt[k]||'')}</textarea>`:''}</div>`).join('');
+  el.onchange=e=>{const k=e.target.dataset.k;if(k&&e.target.type==='checkbox'){RP.on[k]=e.target.checked;rpRefrescar()}};
+  el.oninput=e=>{const k=e.target.dataset.k;if(k&&e.target.tagName==='TEXTAREA'){RP.txt[k]=e.target.value;rpRefrescar(true)}}}
+function rpJanela(){
+  if(RP.tipo==='per'){const h=+$('rpH').value,f=new Date();return{de:localNaive(new Date(f.getTime()-h*3600e3)),ate:localNaive(f),h}}
+  return{de:$('rpDe').value,ate:$('rpAte').value}}
+async function rpGerar(){
+  const J=rpJanela(),st=$('rpEstado');
+  if(!J.de||!J.ate||J.de>=J.ate){st.textContent='Indique um período válido (início anterior ao fim).';return}
+  if(RP.tipo==='sem'&&!$('rpPrevAte').value){st.textContent='Indique até que dia vai a previsão.';return}
+  st.textContent='A ler o histórico e a previsão…';$('rpGera').disabled=true;
+  try{
+    const [H,P]=await Promise.all([rpHistGet(J.de,J.ate),RP.tipo==='sem'?rpPrevDiaria($('rpPrevAte').value):Promise.resolve(null)]);
+    RP.num=null;RP.H=H.erro?null:H;RP.erroH=H.erro||'';RP.prevD=P;
+    const r=rpJuntar(RP.H,J.de,J.ate);RP.L=r.L;RP.J=J;RP.agora=new Date();
+    RP.txt=rpTextos(J.de,J.ate,r.extra);RP.ger=Object.assign({},RP.txt);
+    st.textContent=`Dados lidos às ${fmtHM(RP.agora)}: ${RP.L.length} ocorrências com detalhe${RP.H?'':' (só as últimas 24 h do painel)'}.`;
+    rpSecsDesenha();RP.emailEd=false;rpRefrescar()
+  }catch(e){st.textContent='Não foi possível gerar: '+e.message}
+  finally{$('rpGera').disabled=false}}
+function rpOpc(num){return{tipo:RP.tipo,agora:RP.agora||new Date(),J:RP.J,num,serie:CFG.SERIE[RP.tipo]||'CCOM',on:RP.on,txt:RP.txt,ger:RP.ger,prevD:RP.prevD,h:RP.J&&RP.J.h}}
+function rpRefrescar(manterEmail){
+  clearTimeout(RP.t);RP.t=setTimeout(()=>{
+    if(!RP.J)return;const o=rpOpc(RP.num),av=$('rpAviso');
+    $('rpAssunto').value=rpAssunto(o);if(!RP.emailEd||!manterEmail)$('rpCorpo').value=rpEmail(o);
+    rpNumMostrar();
+    try{const doc=rpPdf(o),np=doc.getNumberOfPages();RP.pdf=doc.output('blob');if(RP.url)URL.revokeObjectURL(RP.url);RP.url=URL.createObjectURL(RP.pdf);$('rpPdf').src=RP.url;$('rpAbrir').href=RP.url;
+      av.textContent=[...RP.avisos,RP.tipo==='per'&&np>1?`O relatório tem ${np} páginas: encurte o texto ou desmarque secções para caber numa página.`:''].filter(Boolean).join(' ')}
+    catch(e){RP.pdf=null;av.textContent='Não foi possível gerar o PDF: '+e.message}},400)}
+function rpAbrir(tipo){
+  if(!rpPode()){alertaSemPerfil();return}
+  RP.tipo=tipo;RP.J=null;RP.num=null;RP.txt={};RP.on={};$('rpTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===tipo));
+  $('rpTit').textContent=tipo==='sem'?'Relatório semanal do CCOM':'Relatório de período do CCOM';
+  $('rpCtlSem').style.display=tipo==='sem'?'':'none';$('rpCtlPer').style.display=tipo==='per'?'':'none';
+  if(tipo==='sem')rpPadrao();
+  try{$('rpAssin').value=localStorage.getItem('smpc_assin')||'Com os melhores cumprimentos,\n\nServiço Municipal de Proteção Civil\nCâmara Municipal de Braga\nT: 253 20 28 61 | protecao.civil@cm-braga.pt'}catch(e){}
+  $('rpSecs').innerHTML='';$('rpMsg').textContent='';$('rpAviso').textContent='';$('rpPdf').removeAttribute('src');
+  $('rpOv').classList.add('on');rpGerar()}
+function alertaSemPerfil(){mostrarAlerta('Sem acesso','Os relatórios semanal e de período só podem ser gerados pelo CorMPC ou pelo SMPC.')}
+
+/* ---- email ---- */
+function rpPeriodoTxt(o){return o.tipo==='sem'?`de ${rpDH(o.J.de)} a ${rpDH(o.J.ate)}`:`das últimas ${o.h} h (${rpDH(o.J.de)} a ${rpDH(o.J.ate)})`}
+function rpAssunto(o){return o.tipo==='sem'?`Proteção Civil | CCOM Braga | Relatório semanal: ocorrências de ${rpDM(o.J.de)} a ${rpDM(o.J.ate)} e previsão até ${rpDM($('rpPrevAte').value)}`
+  :`Proteção Civil | CCOM Braga | Relatório de período: últimas ${o.h} h (${rpDH(o.J.ate)})`}
+function rpEmail(o){
+  const hh=+fmtHM(o.agora).slice(0,2),L=[hh<13?'Bom dia,':hh<20?'Boa tarde,':'Boa noite,',''];
+  const on=k=>o.on[k]!==false&&(o.txt[k]||'').trim();
+  L.push(o.tipo==='sem'?`Segue em anexo o relatório semanal do Centro de Coordenação Operacional Municipal (CCOM) - Apoio à Decisão, com o histórico de ocorrências ${rpPeriodoTxt(o)} e a previsão meteorológica até ${rpDiaNome({dia:$('rpPrevAte').value}).toLowerCase()}.`
+    :`Segue em anexo o relatório de período do Centro de Coordenação Operacional Municipal (CCOM) - Apoio à Decisão, com as ocorrências ${rpPeriodoTxt(o)} e a previsão para as próximas ${o.h} h.`,'');
+  if(o.tipo==='sem'&&on('sintese'))L.push(o.txt.sintese.trim(),'');
+  if(o.tipo==='per'&&on('prev'))L.push(o.txt.prev.trim().split('\n')[0],'');
+  if(on('sig')){const s=o.txt.sig.trim().split('\n').filter(Boolean);L.push('Ocorrências significativas:',...s.slice(0,6).map(x=>'• '+x),...(s.length>6?[`• (mais ${s.length-6} no relatório)`]:[]),'')}
+  if(o.tipo==='sem'&&on('pront'))L.push('Estados de prontidão em vigor: '+o.txt.pront.trim(),'');
+  if(on('nota'))L.push(o.txt.nota.trim(),'');
+  L.push($('rpAssin').value.trim());return L.join('\n')}
+
+/* ---- PDF ---- */
+function rpPdf(o){
+  const Jp=window.jspdf;if(!Jp||!Jp.jsPDF)throw new Error('biblioteca PDF indisponível (sem rede?)');
+  const doc=new Jp.jsPDF({unit:'mm',format:'a4'}),W=210,M=14,CW=W-2*M,AZ=[18,53,91],INK=[30,41,59],curto=o.tipo==='per';
+  const FS=curto?8.8:9.5,LH=curto?4.1:4.6,LIM=278;let y;
+  const T=(t,x,yy,op)=>doc.text(san(t),x,yy,op);
+  const falta=h=>{if(y+h>LIM){doc.addPage();y=16}};
+  const sec=t=>{falta(12);y+=curto?1:2;doc.setFont('helvetica','bold').setFontSize(curto?10:11).setTextColor(...AZ);T(t,M,y);doc.setDrawColor(...AZ).setLineWidth(.3).line(M,y+1.5,W-M,y+1.5);y+=curto?5:6;doc.setTextColor(...INK)};
+  const par=(t,bul,bold)=>{doc.setFont('helvetica',bold?'bold':'normal').setFontSize(FS);const ls=doc.splitTextToSize(san((bul?'- ':'')+t),CW);falta(ls.length*LH+1);ls.forEach((l,i)=>{T((bul&&i>0?'  ':'')+l,M,y);y+=LH});y+=.6};
+  const on=k=>o.on[k]!==false,tx=k=>(o.txt[k]||'').trim(),lin=k=>tx(k).split('\n').map(x=>x.trim()).filter(Boolean);
+  const tab=(head,body,x,w,opt)=>{doc.autoTable(Object.assign({startY:y,margin:{left:x,right:W-x-w},tableWidth:w,theme:'grid',styles:{font:'helvetica',fontSize:curto?7.8:8.2,cellPadding:curto?1:1.3,textColor:INK,lineColor:[203,213,225],lineWidth:.2},headStyles:{fillColor:AZ,textColor:255},head:[head.map(san)],body:body.map(r=>r.map(c=>san(c)))},opt||{}));return doc.lastAutoTable.finalY+(curto?3.5:4.5)};
+  // linhas "Texto: n" em quadro; as outras linhas em parágrafo
+  const pares=k=>{const P=[],R=[];lin(k).forEach(l=>{const m=l.match(RP_PAR);if(m)P.push([m[1],m[2]]);else R.push(l)});return{P,R}};
+  const quadroPares=(k,cab,x,w)=>{const{P,R}=pares(k),col=w<CW;if(!col)R.forEach(l=>par(l,false,/^Total/.test(l)));const B=col?P.concat(R.map(l=>[l,''])):P;
+    if(B.length){falta(10);return tab([cab,'N.º'],B,x,w,{columnStyles:{1:{halign:'right',cellWidth:14}},didParseCell:h=>{if(h.section==='body'&&h.row.index>=P.length)h.cell.styles.fontStyle='italic'}})}return y};
+  y=pdfCabecalho(doc,{agora:o.agora,num:o.num,serie:o.serie,linha:o.tipo==='sem'?`Relatório semanal · Histórico ${rpDM(o.J.de)} a ${rpDM(o.J.ate)} · Previsão até ${rpDM($('rpPrevAte').value)}`:`Relatório de período · Últimas ${o.h} h e previsão das próximas ${o.h} h`});
+  if(curto)y-=3;
+  if(o.tipo==='sem'){
+    if(on('sintese')&&tx('sintese')){sec('Síntese');lin('sintese').forEach(l=>par(l))}
+    if(on('hist')&&tx('hist')){sec(`Histórico da semana anterior (${rpDH(o.J.de)} a ${rpDH(o.J.ate)})`);y=quadroPares('hist','Tipologia',M,CW)}
+    if(on('sig')&&tx('sig')){sec(`Ocorrências significativas (mais de ${CFG.SIG.meios} meios e mais de ${CFG.SIG.entidades} entidade${CFG.SIG.entidades>1?'s':''})`);lin('sig').forEach(l=>par(l,lin('sig').length>1||/ · /.test(l)))}
+    if(on('freg')&&tx('freg')){sec('Freguesias afetadas');const{P,R}=pares('freg');R.forEach(l=>par(l));
+      if(P.length){falta(12);const h=Math.ceil(P.length/2),y0=y,a=tab(['Freguesia','N.º'],P.slice(0,h),M,CW/2-2,{columnStyles:{1:{halign:'right',cellWidth:12}}});y=y0;const b=P.length>h?tab(['Freguesia','N.º'],P.slice(h),M+CW/2+2,CW/2-2,{columnStyles:{1:{halign:'right',cellWidth:12}}}):a;y=Math.max(a,b)}}
+    if(on('pront')&&tx('pront')){sec('Estados de prontidão em vigor (briefing CCOS Cávado)');const a=S.anepc,ds=(a&&a.disp&&tx('pront')===(o.ger.pront||'').trim())?AN_DISP.filter(([k])=>a.disp[k]):[];
+      if(ds.length){falta(16);y=tab(ds.map(([k])=>k),[ds.map(([k])=>AN_CURTO[a.disp[k]])],M,CW,{styles:{font:'helvetica',fontSize:8.5,cellPadding:1.6,halign:'center',textColor:INK,lineColor:[203,213,225],lineWidth:.2},
+        didParseCell:h=>{if(h.section==='body'){const v=a.disp[ds[h.column.index][0]];h.cell.styles.fillColor={N:[255,255,255],I:[192,192,192],II:[128,128,128],III:[64,64,64],IV:[0,0,0],X:[235,235,235]}[v];h.cell.styles.textColor=['II','III','IV'].includes(v)?[255,255,255]:INK;h.cell.styles.fontStyle='bold'}}});if(a.orig)par(a.orig)}
+      else lin('pront').forEach(l=>par(l))}
+    const P=(o.prevD||[]);
+    if((on('prevTab')&&P.length)||(on('prev')&&tx('prev'))||(on('avisos')&&tx('avisos'))){if(y>200){doc.addPage();y=16}sec(`Previsão meteorológica até ${rpDiaNome({dia:$('rpPrevAte').value}).toLowerCase()} (concelho de Braga)`)}
+    if(on('prevTab')&&P.length){falta(30);
+      y=tab(['Dia','Chuva (mm)','Intervalo (mm)','Rajada P90 (km/h)','T. mín./máx. (°C)','Nível (72 h)'],P.map((D,i)=>[rpDiaNome(D,1)+(i===0?` (desde as ${D.ini.slice(11,13)}h)`:''),D.mm==null?'s/ dados':Math.round(D.mm),D.mm==null?'':`${Math.round(D.min)} a ${Math.round(D.max)}`,D.raj==null?'':Math.round(D.raj),D.tmin==null?'':`${Math.round(D.tmin)} / ${Math.round(D.tmax)}`,D.niv==null?'tendência':NOMEN[D.niv]]),M,CW,
+        {columnStyles:{1:{halign:'right'},2:{halign:'center'},3:{halign:'right'},4:{halign:'center'}},didParseCell:h=>{if(h.section==='body'&&h.column.index===5){const v=P[h.row.index].niv;if(v!=null){h.cell.styles.fillColor=v===2?[254,202,202]:v===1?[254,240,199]:[209,250,229];h.cell.styles.fontStyle='bold'}else h.cell.styles.textColor=[100,116,139]}}})-2.5;
+      doc.setFont('helvetica','normal').setFontSize(7).setTextColor(100,116,139);T(`Consenso (mediana) de ${CFG.MODELOS.length} modelos de ensemble; intervalo entre modelos; dia civil (00h-24h). O nível só existe onde há blocos de 6 h do painel (72 h).`,M,y+.5);y+=6.5;doc.setTextColor(...INK)}
+    if(on('prev')&&tx('prev'))lin('prev').forEach(l=>par(l,true));
+    if(on('avisos')&&tx('avisos')){y+=1;doc.setFont('helvetica','bold').setFontSize(FS);falta(6);T('Avisos IPMA',M,y);y+=LH;lin('avisos').forEach(l=>par(l,true))}
+    if(on('nota')&&tx('nota')){sec('Informação adicional');lin('nota').forEach(l=>par(l))}
+  }else{
+    if(on('prev')&&tx('prev')){sec(`Previsão meteorológica: próximas ${o.h} h`);lin('prev').forEach((l,i)=>par(l,i>0,i===0))}
+    if(on('sig')&&tx('sig')){sec(`Ocorrências significativas: ${rpDH(o.J.de)} a ${rpDH(o.J.ate)}`);lin('sig').forEach(l=>par(l,/ · /.test(l)))}
+    const F=on('freg')&&tx('freg'),Tp=on('tip')&&tx('tip');
+    if(F||Tp){sec('Ocorrências no período: por freguesia e por tipologia');const y0=y,w=(F&&Tp)?CW/2-2:CW;let a=y,b=y;
+      if(F){a=quadroPares('freg','Freguesia',M,w)}
+      if(Tp){y=y0;b=quadroPares('tip','Tipologia',F?M+CW/2+2:M,w)}
+      y=Math.max(a,b,y)}
+    if(on('nota')&&tx('nota')){sec('Informação adicional');lin('nota').forEach(l=>par(l))}
+  }
+  pdfRodape(doc,{num:o.num,fontes:'Fontes: Ifprotec (registo de ocorrências do SMPC e bombeiros); Open-Meteo (ensembles ECMWF, GFS, ICON-EPS, UKMO, GEM; CC BY 4.0); IPMA (avisos)'+(o.tipo==='sem'?'; briefing CCOS Cávado.':'.'),contacto:true});
+  return doc}
+
+/* ---- numeração, impressão e envio (como o relatório de apoio à decisão) ---- */
+function rpSerie(){return CFG.SERIE[RP.tipo]||'CCOM'}
+function rpNumMostrar(){const a=+localNaive(RP.agora||new Date()).slice(0,4),sr=rpSerie(),j=numLer(a,sr),i=$('rpNumProx');
+  if(i&&document.activeElement!==i)i.value=j.prox;
+  const u=j.log.filter(x=>x.ano===a).slice(-1)[0];$('rpNumInfo').textContent=(u?`Último impresso: Nº${u.n}/${sr}/${a} (${u.quando})`:'Ainda sem relatórios impressos este ano.')+(sr==='CCOM'?' Série partilhada com o relatório de apoio à decisão.':'')}
+function rpImprimir(){
+  if(!RP.J){$('rpMsg').textContent='Gere primeiro o relatório.';return}
+  const a=+localNaive(RP.agora).slice(0,4),sr=rpSerie(),j=numLer(a,sr),n=Math.max(1,Math.floor(+$('rpNumProx').value)||j.prox);
+  const num=String(n).padStart(3,'0')+'/'+sr+'/'+a;let doc;
+  try{doc=rpPdf(rpOpc(num))}catch(e){$('rpMsg').textContent='Não foi possível gerar o PDF: '+e.message;return}
+  j.prox=n+1;j.log=(j.log||[]).concat([{ano:a,n:String(n).padStart(3,'0'),quando:localNaive(new Date()).replace('T',' ').slice(0,16),tipo:RP.tipo}]).slice(-60);numGrava(j,sr);
+  RP.num=num;RP.pdf=doc.output('blob');if(RP.url)URL.revokeObjectURL(RP.url);RP.url=URL.createObjectURL(RP.pdf);$('rpPdf').src=RP.url;$('rpAbrir').href=RP.url;
+  const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';f.src=RP.url;
+  f.onload=()=>{setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){window.open(RP.url,'_blank')}},400)};
+  document.body.appendChild(f);setTimeout(()=>f.remove(),120000);
+  $('rpMsg').textContent=`Relatório Nº${num} enviado para impressão. O PDF numerado fica também para descarregar e enviar. Se cancelar, o número já ficou atribuído: ajuste "Próximo n.º".`;rpNumMostrar()}
+function rpNomePdf(){const p=localNaive(RP.agora||new Date()).replace(/[-:T]/g,'');return`CCOM_Braga_${RP.tipo==='sem'?'Relatorio_Semanal':'Relatorio_Periodo_'+(RP.J&&RP.J.h||'')+'h'}_${p.slice(0,8)}_${p.slice(8,12)}.pdf`}
+$('btnSem').onclick=()=>rpAbrir('sem');$('btnPer').onclick=()=>rpAbrir('per');
+$('rpFecha').onclick=()=>$('rpOv').classList.remove('on');
+$('rpTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.t!==RP.tipo)rpAbrir(b.dataset.t)});
+$('rpGera').onclick=rpGerar;$('rpH').onchange=rpGerar;
+['rpDe','rpAte','rpPrevAte'].forEach(i=>$(i).onchange=()=>{$('rpEstado').textContent='Período alterado: carregue em "Gerar a partir dos dados".'});
+$('rpCorpo').oninput=()=>{RP.emailEd=true};$('rpRegen').onclick=()=>{RP.emailEd=false;rpRefrescar()};
+$('rpAssin').oninput=()=>{try{localStorage.setItem('smpc_assin',$('rpAssin').value)}catch(e){}rpRefrescar(true)};
+$('rpImprimir').onclick=rpImprimir;
+$('rpNumProx').onchange=e=>{const a=+localNaive(RP.agora||new Date()).slice(0,4),sr=rpSerie(),j=numLer(a,sr);j.prox=Math.max(1,Math.floor(+e.target.value)||1);numGrava(j,sr);rpNumMostrar()};
+$('rpPdfBtn').onclick=()=>{if(RP.pdf)descarrega(RP.url,rpNomePdf())};
+$('rpCopia').onclick=async()=>{const t=$('rpAssunto').value+'\n\n'+$('rpCorpo').value;try{await navigator.clipboard.writeText(t)}catch(e){$('rpCorpo').select();document.execCommand('copy')}$('rpMsg').textContent='Texto copiado (assunto e corpo).'};
+$('rpEml').onclick=async()=>{if(!RP.pdf){$('rpMsg').textContent='Gere primeiro o PDF.';return}
+  const eml=relEmlTexto($('rpAssunto').value,$('rpCorpo').value,await blobB64(RP.pdf),rpNomePdf());
+  descarrega(URL.createObjectURL(new Blob([eml],{type:'message/rfc822'})),rpNomePdf().replace(/\.pdf$/,'.eml').replace('CCOM_Braga','Rascunho_Email_CCOM'));
+  $('rpMsg').textContent='Rascunho descarregado. Abra o .eml: o Outlook mostra a mensagem com o PDF em anexo; junte os destinatários e envie.'};
+$('rpOutlook').onclick=async()=>{if(!RP.pdf){$('rpMsg').textContent='Gere primeiro o PDF.';return}
+  const ass=$('rpAssunto').value,corpo=$('rpCorpo').value;descarrega(RP.url,rpNomePdf());
+  let url='mailto:?subject='+encodeURIComponent(ass)+'&body='+encodeURIComponent(corpo),completo=true;
+  if(url.length>1900){completo=false;try{await navigator.clipboard.writeText(corpo)}catch(e){}url='mailto:?subject='+encodeURIComponent(ass)+'&body='+encodeURIComponent('Cole aqui o texto do email (Ctrl+V).')}
+  $('rpMsg').textContent=completo?'Email aberto. Junte o PDF descarregado como anexo.':'Email aberto. O texto está copiado: cole-o no corpo (Ctrl+V). Junte o PDF descarregado como anexo.';location.href=url};
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('rpOv').classList.remove('on')});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('anOv').classList.remove('on');$('ctOv').classList.remove('on');$('relOv').classList.remove('on');$('msgOv').classList.remove('on')}});
 
 </script>
