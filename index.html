@@ -639,7 +639,8 @@ const CFG={
   HORAS:72,BLOCO:6,CCOM_TEL:'253 264 077', // contacto do CCOM que consta nas medidas do relatório (editável)
   // Relatórios semanal e de período: série da numeração (CCOM = a mesma do relatório atual; outro texto, p. ex. 'CCOM-S', cria uma série própria)
   SERIE:{sem:'CCOM',per:'CCOM'},
-  // Ocorrência significativa: mais de SIG.meios meios (veículos) E mais de SIG.entidades entidades a intervir
+  // Ocorrência significativa: mais de SIG.meios meios (veículos). O critério das entidades (SIG.entidades) só se aplica se o histórico
+  // trouxer o n.º de entidades; a API do Ifprotec não o dá (só a entidade que regista), por isso hoje vale só o critério dos meios.
   SIG:{meios:2,entidades:1},
   RP_PERFIS:['CORMPC','SMPC'], // quem vê os botões Semanal e Período (o Apps Script também limita o histórico a estes perfis)
 
@@ -2092,7 +2093,7 @@ $('relCcomPer').oninput=()=>relRefrescar(true);$('relAtual').onchange=()=>relRef
    Gerados só por botão (CorMPC e SMPC); o texto de cada secção é editável antes de enviar.
    Histórico: Apps Script (Historico.gs, ação "hist"), juntando as ocorrências que o painel já tem das últimas 24 h.
    Estados de prontidão: o briefing CCOS Cávado guardado NESTE navegador (smpc_anepc); noutro navegador preenche-se à mão. */
-const RP={tipo:'sem',H:null,L:[],prevD:null,ger:{},txt:{},on:{},pdf:null,url:null,t:null,emailEd:false,avisos:[],num:null};
+const RP={crit:'',tipo:'sem',H:null,L:[],prevD:null,ger:{},txt:{},on:{},pdf:null,url:null,t:null,emailEd:false,avisos:[],num:null};
 const RP_SECS={
   sem:[['sintese','Síntese',3],['hist','Histórico da semana: total e tipologias ("Tipologia: n")',7],['sig','Ocorrências significativas (uma por linha)',5],['freg','Freguesias afetadas ("Freguesia: n")',6],['pront','Estados de prontidão em vigor (briefing CCOS Cávado)',2],['prevTab','Previsão: quadro diário (gerado pelo painel)',0],['prev','Previsão: comentário',5],['avisos','Avisos IPMA',3],['nota','Informação adicional',2]],
   per:[['prev','Previsão meteorológica',5],['sig','Ocorrências significativas no período',4],['freg','Ocorrências por freguesia ("Freguesia: n")',6],['tip','Ocorrências por tipologia ("Tipologia: n")',6],['nota','Informação adicional',2]]};
@@ -2171,9 +2172,9 @@ function rpTextos(de,ate,extra){
   if(!H)av.push('Histórico indisponível: '+RP.erroH+(RP.tipo==='sem'?' O total e as listas abaixo só têm o que o painel recebeu nas últimas 24 h.':' Entram só as ocorrências que o painel recebeu nas últimas 24 h.'));
   else if(H.desde&&H.desde>de)av.push(`O histórico só começou a ser registado em ${rpDH(H.desde)}: antes disso as contagens estão incompletas.`);
   if(L.length&&!sg.temMeios)av.push('Sem informação de meios por ocorrência: não foi possível identificar as ocorrências significativas.');
-  else if(L.length&&!sg.temEnt)av.push(`Sem informação das entidades por ocorrência: as significativas são só as com mais de ${CFG.SIG.meios} meios (confirmar à mão).`);
+  RP.crit=sg.temEnt?`mais de ${CFG.SIG.meios} meios e mais de ${CFG.SIG.entidades} entidade${CFG.SIG.entidades>1?'s':''}`:`mais de ${CFG.SIG.meios} meios`;
   const sigL=sg.s.map(rpLinhaSig);
-  const sigVazio=`Sem ocorrências com mais de ${CFG.SIG.meios} meios e mais de ${CFG.SIG.entidades} entidade${CFG.SIG.entidades>1?'s':''} a intervir.`;
+  const sigVazio=`Sem ocorrências com ${RP.crit}.`;
   if(RP.tipo==='sem'){
     T.hist=[H?`Total de ocorrências registadas: ${total} (de ${rpDH(de)} a ${rpDH(ate)}).`:`Total de ocorrências registadas: [histórico indisponível; preencher à mão] (de ${rpDH(de)} a ${rpDH(ate)}).`,...tips.map(([k,v])=>`${k}: ${v}`),...(outras?[`Outras naturezas (saúde e outras não detalhadas): ${outras}`]:[])].join('\n');
     T.sig=sigL.length?sigL.join('\n'):sigVazio;
@@ -2287,7 +2288,7 @@ function rpPdf(o){
   if(o.tipo==='sem'){
     if(on('sintese')&&tx('sintese')){sec('Síntese');lin('sintese').forEach(l=>par(l))}
     if(on('hist')&&tx('hist')){sec(`Histórico da semana anterior (${rpDH(o.J.de)} a ${rpDH(o.J.ate)})`);y=quadroPares('hist','Tipologia',M,CW)}
-    if(on('sig')&&tx('sig')){sec(`Ocorrências significativas (mais de ${CFG.SIG.meios} meios e mais de ${CFG.SIG.entidades} entidade${CFG.SIG.entidades>1?'s':''})`);lin('sig').forEach(l=>par(l,lin('sig').length>1||/ · /.test(l)))}
+    if(on('sig')&&tx('sig')){sec(`Ocorrências significativas (${RP.crit||'mais de '+CFG.SIG.meios+' meios'})`);lin('sig').forEach(l=>par(l,lin('sig').length>1||/ · /.test(l)))}
     if(on('freg')&&tx('freg')){sec('Freguesias afetadas');const{P,R}=pares('freg');R.forEach(l=>par(l));
       if(P.length){falta(12);const h=Math.ceil(P.length/2),y0=y,a=tab(['Freguesia','N.º'],P.slice(0,h),M,CW/2-2,{columnStyles:{1:{halign:'right',cellWidth:12}}});y=y0;const b=P.length>h?tab(['Freguesia','N.º'],P.slice(h),M+CW/2+2,CW/2-2,{columnStyles:{1:{halign:'right',cellWidth:12}}}):a;y=Math.max(a,b)}}
     if(on('pront')&&tx('pront')){sec('Estados de prontidão em vigor (briefing CCOS Cávado)');const a=S.anepc,ds=(a&&a.disp&&tx('pront')===(o.ger.pront||'').trim())?AN_DISP.filter(([k])=>a.disp[k]):[];
