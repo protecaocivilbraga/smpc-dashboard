@@ -1,13 +1,68 @@
 {
   "fonte": "Plano Municipal de Emergência de Proteção Civil de Braga (PMEPC), parte não reservada",
   "camadas": [
-    {"id": "zcap_pavilhoes", "nome": "ZCAP · Pavilhões desportivos", "letra": "Z", "cor": "#a855f7", "ficheiro": "zcap_pavilhoes.geojson"},
-    {"id": "zcap_hoteis", "nome": "ZCAP · Unidades hoteleiras", "letra": "H", "cor": "#c084fc", "ficheiro": "zcap_hoteis.geojson"},
-    {"id": "zcl", "nome": "ZCL · Zonas de concentração local", "letra": "L", "cor": "#14b8a6", "ficheiro": "zcl.geojson"},
-    {"id": "zri", "nome": "ZRI · Zonas de reunião e irradiação", "letra": "R", "cor": "#0ea5e9", "ficheiro": "zri.geojson"},
-    {"id": "zcr", "nome": "Zonas de concentração e reserva", "letra": "C", "cor": "#eab308", "ficheiro": "zcr.geojson"},
-    {"id": "agentes_pc", "nome": "Instalações dos agentes de proteção civil", "letra": "A", "cor": "#ef4444", "ficheiro": "agentes_pc.geojson"},
-    {"id": "postos_triagem", "nome": "Postos de triagem", "letra": "T", "cor": "#f43f5e", "ficheiro": "postos_triagem.geojson"},
-    {"id": "vitimas_mortais", "nome": "Reunião de vítimas mortais e necrotérios", "letra": "†", "cor": "#6b7280", "ficheiro": "vitimas_mortais.geojson"}
+    {
+      "id": "zcap_juntas",
+      "nome": "ZCAP · Juntas de freguesia e Fórum Braga",
+      "letra": "J",
+      "cor": "#9333ea",
+      "ficheiro": "zcap_juntas.geojson"
+    },
+    {
+      "id": "zcap_pavilhoes",
+      "nome": "ZCAP · Pavilhões desportivos",
+      "letra": "Z",
+      "cor": "#a855f7",
+      "ficheiro": "zcap_pavilhoes.geojson"
+    },
+    {
+      "id": "zcap_hoteis",
+      "nome": "ZCAP · Unidades hoteleiras",
+      "letra": "H",
+      "cor": "#c084fc",
+      "ficheiro": "zcap_hoteis.geojson"
+    },
+    {
+      "id": "zcl",
+      "nome": "ZCL · Zonas de concentração local",
+      "letra": "L",
+      "cor": "#14b8a6",
+      "ficheiro": "zcl.geojson"
+    },
+    {
+      "id": "zri",
+      "nome": "ZRI · Zonas de reunião e irradiação",
+      "letra": "R",
+      "cor": "#0ea5e9",
+      "ficheiro": "zri.geojson"
+    },
+    {
+      "id": "zcr",
+      "nome": "Zonas de concentração e reserva",
+      "letra": "C",
+      "cor": "#eab308",
+      "ficheiro": "zcr.geojson"
+    },
+    {
+      "id": "agentes_pc",
+      "nome": "Instalações dos agentes de proteção civil",
+      "letra": "A",
+      "cor": "#ef4444",
+      "ficheiro": "agentes_pc.geojson"
+    },
+    {
+      "id": "postos_triagem",
+      "nome": "Postos de triagem",
+      "letra": "T",
+      "cor": "#f43f5e",
+      "ficheiro": "postos_triagem.geojson"
+    },
+    {
+      "id": "vitimas_mortais",
+      "nome": "Reunião de vítimas mortais e necrotérios",
+      "letra": "†",
+      "cor": "#6b7280",
+      "ficheiro": "vitimas_mortais.geojson"
+    }
   ]
 }
