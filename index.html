@@ -66,6 +66,8 @@ main{padding:8px 12px 14px;display:grid;gap:8px}
 #camPainel .camT{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:4px}#camPainel .camT button{background:none;border:0;color:var(--suave);font-size:18px;cursor:pointer;line-height:1}
 #camPainel .camG{border-top:1px solid var(--linha);padding:6px 0 2px}#camPainel h4{margin:0 0 4px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--suave)}
 #camPainel .ctl{flex-direction:column;align-items:flex-start;gap:4px;margin:0}#camPainel .camL{display:flex;gap:6px;align-items:center}#camPainel .vazio{font-size:11px}
+.pmMk{background:none;border:0}.pmMk span{position:absolute;transform:translate(-50%,-50%);min-width:16px;height:16px;padding:0 2px;border-radius:4px;border:1.5px solid #0b1220;box-shadow:0 0 0 1px #fff8;color:#fff;font:700 10px/16px system-ui,sans-serif;text-align:center}
+.pmLeg{display:inline-block;min-width:14px;height:14px;border-radius:3px;color:#fff;font:700 9px/14px system-ui,sans-serif;text-align:center}
 .mapaInfo{min-height:14px}
 .card.mapaFull{position:fixed;inset:0;z-index:9500;border-radius:0;overflow:auto;max-width:none}
 .card.mapaFull #mapa{height:calc(100vh - 96px)}
@@ -440,7 +442,8 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
             <option value="off" selected>Desligado</option>
           </select></label><label>Opacidade <input type="range" id="opSat" min="0" max="100" value="45" style="width:80px"></label><label title="Radar de precipitação (composição de radares, RainViewer). Resolução ~1 km, últimas 2 h"><input type="checkbox" id="chkRadar"> Radar de chuva</label><label><input type="checkbox" id="chkLi"> Descargas elétricas (LI)</label><label title="Chuva acumulada prevista nas próximas 6 h (ou no bloco selecionado), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label><span class="camL"><button id="btnPlay" title="Animar as últimas 3 h">▶ Animar</button><input type="range" id="selTempo" min="0" max="18" value="0" style="width:120px" title="Recuar no tempo (10 min por passo)"></span></div></div>
       <div class="camG"><h4>Hidrografia e cheias</h4><div class="ctl"><label><input type="checkbox" id="chkAgua"> Linhas de água</label><label><input type="checkbox" id="chkApri"> Troços ARPSI (APA)</label><label><input type="checkbox" id="chkCheias"> Cheias históricas (APA)</label></div></div>
-      <div class="camG"><h4>Plano Municipal de Emergência (PMEPC)</h4><div class="ctl"><span class="vazio" id="camPmepcVazio">Ainda sem camadas. As camadas do PMEPC vão aparecer aqui.</span></div></div>
+      <div class="camG"><h4>Plano Municipal de Emergência (PMEPC)</h4><div class="ctl"><span class="vazio" id="camPmepcVazio">A carregar…</span><span id="camPmepc" style="display:contents"></span></div></div>
+      <div class="camG" id="camResG" hidden><h4>PMEPC · parte reservada 🔒</h4><div class="ctl"><span id="camRes" style="display:contents"></span><span class="vazio" id="camResMsg"></span></div></div>
       <div class="camG"><h4>Base</h4><div class="ctl"><label>Mapa base:
           <select id="selBase"><option value="escuro">Escuro</option><option value="satelite">Satélite</option><option value="terreno">Terreno</option><option value="ruas">Ruas</option></select></label><label><input type="checkbox" id="chkLimite" checked> Limite do concelho</label><label id="lblOficial" style="display:none"><input type="checkbox" id="chkOficial"> Camada oficial carregada</label></div></div>
       </div>
@@ -741,6 +744,7 @@ function aplicarPerfil(){
   try{$('btnBR').classList.toggle('semAcesso',!(AUTH.s&&AUTH.s.admin))}catch(e){}
   try{rpMarcaBotoes()}catch(e){}
   try{eqAplicar()}catch(e){}
+  setTimeout(()=>{try{pmReservado()}catch(e){}},0);
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -974,6 +978,50 @@ function mapaFull(v){const c=$('mapa').closest('.card');c.classList.toggle('mapa
   document.body.style.overflow=v?'hidden':'';setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},60)}
 $('btnFull').onclick=()=>mapaFull(!$('mapa').closest('.card').classList.contains('mapaFull'));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('mapa').closest('.card').classList.contains('mapaFull'))mapaFull(false)});
+
+/* ---- Camadas do PMEPC (parte não reservada: ficheiros em camadas/, ver camadas/indice.json) ----
+   Cada camada só é descarregada quando se liga. Clique num elemento: janela com os atributos, freguesia e coordenadas. */
+const PM={ind:null,lay:{},dados:{}};
+const pmIcone=(c,l)=>L.divIcon({className:'pmMk',html:`<span style="background:${c}">${esc(l)}</span>`,iconSize:[0,0],iconAnchor:[0,0]});
+function pmPopup(c,f){const p=f.properties||{},g=f.geometry,ll=g&&g.type==='Point'?[g.coordinates[1],g.coordinates[0]]:null;
+  const ctr=ll||(()=>{try{const b=L.geoJSON(f).getBounds().getCenter();return[b.lat,b.lng]}catch(e){return null}})();
+  const fr=ctr?freguesiaDe({lat:ctr[0],lon:ctr[1]}):'';
+  const tit=p.Nome||p.Tipo||c.nome,linhas=Object.entries(p).filter(([k,v])=>v!=null&&v!==''&&String(v)!==tit).map(([k,v])=>`<tr><td style="color:#94a3b8;padding-right:8px">${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+  return `<b>${esc(tit)}</b><div style="color:#94a3b8;font-size:11px">${esc(c.nome)}</div><table style="margin-top:4px;font-size:12px">${linhas}${fr?`<tr><td style="color:#94a3b8;padding-right:8px">Freguesia</td><td>${esc(fr)}</td></tr>`:''}</table>`+
+    (ctr?`<div style="margin-top:4px;font-size:11px"><span class="mono">${ctr[0].toFixed(5)}, ${ctr[1].toFixed(5)}</span> · <a href="https://www.google.com/maps?q=${ctr[0]},${ctr[1]}" target="_blank" rel="noopener">Google Maps</a></div>`:'')+
+    `<div style="color:#64748b;font-size:10px;margin-top:3px">Fonte: PMEPC Braga${c.res?' · RESERVADO':''}</div>`}
+async function pmLiga(c,on){
+  try{
+    if(!on){if(PM.lay[c.id])mapa.removeLayer(PM.lay[c.id]);return}
+    if(!PM.lay[c.id]){const d=c.res?await pmGetRes(c.id):await (async()=>{const r=await fetch('camadas/'+c.ficheiro,{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})();
+      PM.lay[c.id]=L.geoJSON(d,{pointToLayer:(f,ll)=>L.marker(ll,{icon:pmIcone(c.cor,c.letra),keyboard:false}),
+        style:()=>({color:c.cor,weight:1.5,fillColor:c.cor,fillOpacity:.25}),
+        onEachFeature:(f,l)=>{l.bindPopup(()=>pmPopup(c,f),{maxWidth:320});const p=f.properties||{};l.bindTooltip(esc(p.Nome||p.Tipo||c.nome))}})}
+    if($('pm_'+c.id).checked)PM.lay[c.id].addTo(mapa);
+  }catch(e){$('pm_'+c.id).checked=false;const m=c.res?$('camResMsg'):$('camPmepcVazio');m.style.display='';m.textContent='Não foi possível abrir a camada "'+c.nome+'" ('+e.message+').'}
+}
+async function pmIndice(){
+  try{const r=await fetch('camadas/indice.json',{cache:'no-cache'});if(!r.ok)throw new Error('HTTP '+r.status);PM.ind=await r.json();
+    $('camPmepc').innerHTML=PM.ind.camadas.map(c=>`<label><input type="checkbox" id="pm_${c.id}"> <span class="pmLeg" style="background:${c.cor}">${esc(c.letra)}</span> ${esc(c.nome)}</label>`).join('');
+    PM.ind.camadas.forEach(c=>$('pm_'+c.id).onchange=e=>pmLiga(c,e.target.checked));
+    $('camPmepcVazio').style.display='none';
+  }catch(e){$('camPmepcVazio').textContent='Camadas do PMEPC indisponíveis ('+e.message+').'}
+}
+if(!EQ_TERRENO0)pmIndice();
+/* Parte reservada: catálogo e dados vêm do Apps Script (Camadas.gs), só com sessão e só as camadas do perfil. */
+async function pmGetRes(id){const j=await authPost({acao:'cam_get',t:AUTH.s.t,id});
+  if(j.erro==='sessao'){sessaoExpirada();throw new Error('sessão terminada')}if(!j.ok)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro||'erro');return j.geojson}
+async function pmReservado(){
+  if(EQ_TERRENO0||!AUTH.s)return;const quem=AUTH.s.id+'|'+AUTH.s.t;if(PM.resQuem===quem)return;PM.resQuem=quem;
+  Object.keys(PM.lay).filter(k=>PM.res&&PM.res.some(c=>c.id===k)).forEach(k=>{try{mapa.removeLayer(PM.lay[k])}catch(e){}delete PM.lay[k]});
+  try{const j=await authPost({acao:'cam_lista',t:AUTH.s.t});
+    if(!j.ok){$('camResG').hidden=true;return} // Camadas.gs ainda não instalado, ou perfil sem camadas reservadas
+    PM.res=(j.camadas||[]).map(c=>Object.assign(c,{res:true}));$('camResG').hidden=!PM.res.length;
+    $('camRes').innerHTML=PM.res.map(c=>`<label><input type="checkbox" id="pm_${c.id}"> <span class="pmLeg" style="background:${c.cor}">${esc(c.letra)}</span> ${esc(c.nome)}</label>`).join('');
+    PM.res.forEach(c=>$('pm_'+c.id).onchange=e=>pmLiga(c,e.target.checked));$('camResMsg').textContent='';
+  }catch(e){PM.resQuem=null}
+}
+
 /* ---- camada no mapa do painel (CorMPC, SMPC) ---- */
 let gEq=null;
 function eqDesenharMapa(){
