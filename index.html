@@ -790,6 +790,7 @@ function aplicarPerfil(){
   try{eqAplicar()}catch(e){}
   setTimeout(()=>{try{temaMarca()}catch(e){}},0);
   setTimeout(()=>{try{pmReservado()}catch(e){}},0);
+  setTimeout(()=>{try{anCarrega()}catch(e){}},0);
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -2246,7 +2247,7 @@ function blobB64(b){return new Promise((ok,ko)=>{const r=new FileReader();r.onlo
 
 
 /* ============ Briefing CCOSR / ANEPC: estados de prontidão por dispositivo (só neste navegador) ============ */
-const AN={pdfUrl:null,pdfNome:''};
+const AN={pdfUrl:null,pdfNome:''}; // os estados (não o texto) são partilhados pelo Apps Script, ver anCarrega
 try{S.anepc=JSON.parse(localStorage.getItem('smpc_anepc')||'null')}catch(e){S.anepc=null}
 const AN_DISP=[['DIOPS','Dispositivo Integrado de Operações de Proteção e Socorro'],['DECIR','Dispositivo Especial de Combate a Incêndios Rurais'],['DIONRBQ','Dispositivo Integrado de Operações Nucleares, Radiológicas, Biológicas e Químicas'],['DIRACAERO','Dispositivo Integrado de Resposta a Acidentes com Aeronaves'],['DCDFCI-PNPG','Dispositivo Conjunto de Defesa da Floresta Contra Incêndios no Parque Nacional da Peneda-Gerês']];
 const AN_CURTO={N:'Normal',I:'Nível I',II:'Nível II',III:'Nível III',IV:'Nível IV',X:'não ativado'};
@@ -2313,8 +2314,31 @@ $('anGuarda').onclick=()=>{
   const disp=anLerSel(),tem=Object.keys(disp).length>0;
   S.anepc=tem?{disp,est:anTexto({disp},true),orig:$('anOrig').value.trim(),ate:$('anAte').value,texto:$('anTxt').value,pdf:AN.pdfNome,guardado:new Date().toISOString()}:null;
   try{if(S.anepc)localStorage.setItem('smpc_anepc',JSON.stringify(S.anepc));else localStorage.removeItem('smpc_anepc')}catch(e){}
+  anPartilha(S.anepc);
   anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent=tem?'Estados guardados e mostrados no painel. Passam também para o relatório e para as mensagens.':'Sem estados: a faixa foi retirada.'};
-$('anRemove').onclick=()=>{S.anepc=null;try{localStorage.removeItem('smpc_anepc')}catch(e){}['anOrig','anAte','anTxt'].forEach(i=>$(i).value='');anPoeSel(null);$('anOrig').dataset.on='';anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent='Removido.'};
+$('anRemove').onclick=()=>{S.anepc=null;anPartilha(null);try{localStorage.removeItem('smpc_anepc')}catch(e){}['anOrig','anAte','anTxt'].forEach(i=>$(i).value='');anPoeSel(null);$('anOrig').dataset.on='';anMarca();$('anMsg').style.color='#6ee7b7';$('anMsg').textContent='Removido.'};
+
+
+/* Estados partilhados com todos os perfis através do Apps Script (Estados.gs): só os níveis, origem e validade;
+   o texto e o PDF do briefing ficam neste navegador. */
+async function anPartilha(a){
+  if(!AUTH.s||!podeEditar('briefing'))return;
+  try{const j=await authPost(a?{acao:'an_set',t:AUTH.s.t,estados:{disp:a.disp,est:a.est,orig:a.orig,ate:a.ate}}:{acao:'an_del',t:AUTH.s.t});
+    $('anMsg').textContent+=j.ok?' Partilhados com todos os perfis do painel.':' Não foi possível partilhar: '+(j.erro||'erro')+'.';
+    if(j.ok&&j.estados){S.anepc.guardado=j.estados.guardado;try{localStorage.setItem('smpc_anepc',JSON.stringify(S.anepc))}catch(e){}}
+  }catch(e){$('anMsg').textContent+=' Sem ligação ao servidor: os estados ficaram só neste navegador.'}
+}
+async function anCarrega(){
+  if(!AUTH.s||!temAcesso('prontidao')||EQ_TERRENO0)return;
+  try{const j=await authPost({acao:'an_get',t:AUTH.s.t});if(!j||!j.ok)return;
+    const g=j.estados,l=S.anepc;
+    if(!g){if(l&&l.guardado&&!podeEditar('briefing')){S.anepc=null}}
+    else if(!l||String(g.guardado)>String(l.guardado||'')||l.guardado===g.guardado)
+      S.anepc=Object.assign({},g,l&&l.guardado===g.guardado?{texto:l.texto,pdf:l.pdf}:{});
+    anMarca();try{desenharTudo()}catch(e){}
+  }catch(e){}
+}
+setInterval(anCarrega,300000);
 
 /* ============ Previsão meteorológica contratada (texto/PDF, só neste navegador) ============ */
 const CT={draft:{},notas:[]};
