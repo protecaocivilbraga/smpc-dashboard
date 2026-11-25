@@ -789,7 +789,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')$('usrOv').classList
    Quem tem "equipas" em editar e não vê o mapa do painel (conta EQUIPAS) entra só neste ecrã ("modo terreno").
    Quem só vê "equipas" (CorMPC, SMPC) tem o botão "Equipas" e a camada no mapa. */
 const EQ={reg:[],equipas:[],viaturas:[],dias:7,ok:false,vistos:null,pos:null,map:null,mk:null,circ:null,watch:null,abrir:null,FILA:'smpc_eq_fila',T:null};
-const EQ_TIPOS={EPC:{nome:'Equipa de Proteção Civil',cor:'#ea580c'},EMIF:{nome:'Equipa Florestal',cor:'#16a34a'},ERAS:{nome:'Equipa de Reconhecimento e Avaliação de Situação',cor:'#2563eb'}};
+const EQ_TIPOS={EPC:{nome:'Equipa de Proteção Civil',cor:'#ea580c'},EMIF:{nome:'Equipa Municipal de Intervenção Florestal',cor:'#16a34a'},ERAS:{nome:'Equipa de Reconhecimento e Avaliação de Situação',cor:'#2563eb'}};
 const EQ_EQUIPAS=['EPC','EMIF','ERAS1','ERAS2','ERAS3','ERAS4']; // as únicas que se podem escolher no telemóvel
 function eqCod(r){const e=String((r&&r.equipa)||'').trim(),m=e.match(/^ERAS\s*([1-9])/i);
   return m?'ERAS'+m[1]:/^ERAS|reconhec/i.test(e)?'ERAS':/^EMIF|florest/i.test(e)?'EMIF':/^EPC|prote/i.test(e)?'EPC':e.toUpperCase().slice(0,6)}
