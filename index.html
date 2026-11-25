@@ -88,6 +88,8 @@ td.r,th.r{text-align:right}
 .oc:hover{background:#0d1a30}
 .oc .hr{color:var(--suave)}.oc .nt{font-weight:700}.oc .es{color:var(--suave);font-size:10px}
 .oc.rel .nt{color:var(--azul)}
+.parOc{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;align-items:start}
+#ifpLista,#eqQuadro{max-height:420px;overflow:auto}
 .vazio{color:var(--cinza);font-size:11px;padding:4px 0}
 .legenda{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:10px;color:var(--suave);margin-top:4px}
 .legenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-2px}
@@ -372,7 +374,6 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
     <button class="btnRel" id="btnAn" data-mod="briefing" title="Anexar o briefing do CCOSR/ANEPC (PDF ou texto) e mostrar o estado de prontidão determinado" style="background:#b45309;">Briefing ANEPC</button>
     <button class="btnRel" id="btnCt" data-mod="contratada" title="Anexar previsão meteorológica dedicada contratada pelo Município (texto/PDF) e incluí-la nos cálculos" style="background:#7c3aed">Previsão contratada</button>
     <button class="btnRel" id="btnRel" data-mod="relatorio" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
-    <button class="btnRel semAcesso" id="btnSem" data-mod="relatorio" title="Relatório semanal do CCOM: histórico da semana anterior e previsão até à segunda-feira seguinte (só CorMPC e SMPC)" style="background:#1e40af">Semanal</button>
     <button class="btnRel semAcesso" id="btnPer" data-mod="relatorio" title="Relatório de período (6, 12 ou 24 h), uma página: previsão, ocorrências significativas, por freguesia e por tipologia (só CorMPC e SMPC)" style="background:#1e40af">Período</button>
     <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
     <button class="btnRel" id="btnPos" data-mod="ifprotec" title="Ponto de situação: ocorrências por tipologia e freguesia num período à escolha, e previsão das próximas 12 h" style="background:#0f766e">POSIT</button>
@@ -472,11 +473,18 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
         <div id="prevJan" style="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0"></div>
         <div id="prevLista" class="aviso-geral"><div class="vazio">Carregue o ficheiro prevencao_inundacoes.json (fica só neste navegador).</div></div>
       </div>
+    <div class="parOc">
     <div class="card" id="cardIfp" data-mod="ifprotec">
-        <h2>Ocorrências SMPC e bombeiros <span class="nota">Ifprotec · SMPC: últimas 24 h · Bombeiros: enquanto ativas · SMPC: todas · Bombeiros: todas exceto doença súbita e trauma</span></h2>
+        <h2>Ocorrências SMPC e bombeiros <span class="nota">Ifprotec · SMPC 24 h · bombeiros ativas, exceto doença súbita e trauma</span></h2>
         <div id="ifpResumo" class="aviso-geral" style="margin-bottom:6px"></div>
         <div id="ifpLista"><div class="vazio">A carregar…</div></div>
       </div>
+    <div class="card" id="cardEq" data-mod="equipas">
+        <h2>Ocorrências SMPC <span class="nota">equipas no terreno · em curso e concluídas nas últimas 24 h</span></h2>
+        <div id="eqResumo" class="aviso-geral" style="margin-bottom:6px"></div>
+        <div id="eqQuadro"><div class="vazio">A carregar…</div></div>
+      </div>
+    </div>
       <div class="card" data-mod="freguesias">
         <h2>Freguesias a vigiar <span class="nota" id="notaRank"></span></h2>
         <div class="rank" id="rank"><div class="vazio">A carregar…</div></div>
@@ -652,10 +660,10 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
   </div>
 </div></div>
 <div id="rpOv" role="dialog" aria-modal="true" aria-labelledby="rpTit"><div id="rpBox">
-  <div class="rh"><h3 id="rpTit">Relatórios do CCOM</h3><button id="rpFecha" title="Fechar (Esc)">×</button></div>
+  <div class="rh"><h3 id="rpTit">Relatório de período do CCOM</h3><button id="rpFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
     <div class="rc">
-      <div class="tabs" id="rpTabs"><button data-t="sem" class="on">Semanal</button><button data-t="per">Período (1 página)</button></div>
+      <div class="tabs" id="rpTabs" style="display:none"><button data-t="per" class="on">Período (1 página)</button></div>
       <p class="rn">Proposta gerada com os dados do painel e o histórico do Ifprotec. <b>Reveja e edite antes de enviar.</b> Nada é enviado a partir daqui.</p>
       <div id="rpCtlSem">
         <div class="dt"><label>Histórico: de<input type="datetime-local" id="rpDe"></label><label>até<input type="datetime-local" id="rpAte"></label></div>
@@ -821,7 +829,7 @@ async function eqCarregar(){
     if(!j.ok)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro||'erro');
     const novos=(j.registos||[]).filter(r=>r.estado==='Em curso'&&EQ.vistos&&!EQ.vistos.has(r.id));
     EQ.vistos=new Set((j.registos||[]).map(r=>r.id));
-    if(novos.length&&!EQ_TERRENO0)beep();
+    if(!EQ_TERRENO0)novos.forEach(r=>mostrarAlerta('Nova ocorrência SMPC',`<b>Nova ocorrência SMPC: ${esc(r.equipa||'')}</b><br>${esc(r.descricao||'')} · início ${eqHM(r.inicio)}${eqFreg(r)?' · '+esc(eqFreg(r)):''}`));
     EQ.reg=j.registos||[];EQ.equipas=j.equipas||[];EQ.viaturas=j.viaturas||[];EQ.ok=true;
     $('eqAtual').textContent='Atualizado às '+fmtHM(new Date());
   }catch(e){if(e.message!=='sessao')$('eqAtual').textContent='Sem ligação ao servidor ('+fmtHM(new Date())+'). A lista pode estar desatualizada.'}
@@ -835,6 +843,7 @@ function eqLista(){ // registos do servidor + o que está na fila deste telemóv
 }
 function eqFreg(r){try{return S.freg&&r.lat!=null?freguesiaDe({lat:+r.lat,lon:+r.lon}):''}catch(e){return ''}}
 function eqDesenhar(){
+  eqQuadro();
   const l=eqLista(),cur=l.filter(r=>r.estado==='Em curso'),fim=l.filter(r=>r.estado!=='Em curso');
   const card=r=>{const fr=eqFreg(r),ec=r.estado==='Em curso';
     return `<div class="eqc ${ec?'cur':''}" data-id="${esc(r.id)}"><div class="eqt"><b>${esc(r.equipa||'')}</b>${r.viatura?' · '+esc(r.viatura):''}${r.pend?' <span class="eqpend">por enviar</span>':''}<span class="eqh mono">${eqHM(r.inicio)}${!ec&&r.conclusao?' → '+eqHM(r.conclusao).slice(-5):''}</span></div>
@@ -848,6 +857,18 @@ function eqDesenhar(){
   document.querySelectorAll('#eqOv .eqConc').forEach(b=>b.onclick=()=>eqFechoForm(b.closest('.eqc')));
   document.querySelectorAll('#eqOv .eqVer').forEach(b=>b.onclick=()=>{const r=l.find(x=>x.id===b.closest('.eqc').dataset.id);if(!r)return;
     $('eqOv').classList.remove('on');$('chkEq').checked=true;try{if(!gEq)eqDesenharMapa();gEq.addTo(mapa);mapa.flyTo([+r.lat,+r.lon],16)}catch(e){}});
+}
+function eqQuadro(){ // quadro "Ocorrências SMPC" no painel: equipa, hora de início, freguesia
+  const q=$('eqQuadro');if(!q||EQ_TERRENO0)return;
+  if(!EQ.ok&&!EQ.reg.length){q.innerHTML='<div class="vazio">A carregar…</div>';return}
+  const lim=localNaive(new Date(Date.now()-864e5));
+  const l=eqLista().filter(r=>r.estado==='Em curso'||String(r.conclusao||r.inicio||'')>=lim);
+  const nc=l.filter(r=>r.estado==='Em curso').length;
+  $('eqResumo').innerHTML=`<b>${nc}</b> em curso · <b>${l.length-nc}</b> concluídas nas últimas 24 h`;
+  if(!l.length){q.innerHTML='<div class="vazio">Sem ocorrências das equipas nas últimas 24 h.</div>';return}
+  q.innerHTML=l.map((r,i)=>{const ec=r.estado==='Em curso',fr=eqFreg(r);
+    return `<div class="oc" data-i="${i}" title="${esc(r.descricao||'')}" style="${ec?'':'opacity:.6'}"><div class="hr mono">${String(r.inicio||'').slice(11,16)||'--:--'}${diaOc({data:r.inicio})?`<span style="display:block;font-size:9px;color:#64748b">${diaOc({data:r.inicio})}</span>`:''}</div><div><span class="nt" style="color:${ec?'#fb923c':'inherit'}">${esc(r.equipa||'')}</span><div class="es">${fr?esc(fr):'freguesia a calcular'} · ${ec?'em curso':'concluída '+String(r.conclusao||'').slice(11,16)}</div></div></div>`}).join('');
+  q.querySelectorAll('.oc').forEach(e=>e.onclick=()=>{const r=l[+e.dataset.i];if(r.lat==null)return;try{$('chkEq').checked=true;if(!gEq)eqDesenharMapa();gEq.addTo(mapa);mapa.flyTo([+r.lat,+r.lon],16)}catch(x){}});
 }
 function eqFechoForm(c){
   const f=c.querySelector('.eqfecho');if(!f.hidden){f.hidden=true;return}
@@ -1464,7 +1485,7 @@ function desenharIfp(){
   if(!CFG.IFPROTEC){r.textContent='';l.innerHTML='<div class="vazio">Ligação ao Ifprotec por configurar.</div>';return}
   const R=S.ifpRes;
   if(R){const pf=Object.entries(R.porFreg||{}).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([n,c])=>`${esc(n.replace(/^Uni[aã]o das freguesias de\s+/i,'UF '))} (${c})`).join(' · ');
-    r.innerHTML=(R.api===0?'<span style="color:#fca5a5">⚠ O Ifprotec devolveu 0 registos ao intermediário (confirme o acesso/palavra-passe da conta de leitura). </span>':(R.api>0&&!R.total?`<span style="color:#fca5a5">⚠ O Ifprotec devolveu ${R.api} registos mas nenhum passou os filtros (possível alteração de campos). </span>`:''))+`<b>${R.total}</b> ocorrências (SMPC nas últimas ${R.horas||24} h, bombeiros enquanto ativas); <b>${S.ifp.length}</b> com detalhe aqui`+(R.enc?` (mais ${R.enc} encerradas ou noutro estado)`:'')+'.'+(R.outras?` As outras ${R.outras} (doença súbita, trauma e outras entidades) só contam no total${pf?': '+pf:''}.`:'')}
+    r.innerHTML=(R.api===0?'<span style="color:#fca5a5">⚠ O Ifprotec devolveu 0 registos ao intermediário (confirme o acesso/palavra-passe da conta de leitura). </span>':(R.api>0&&!R.total?`<span style="color:#fca5a5">⚠ O Ifprotec devolveu ${R.api} registos mas nenhum passou os filtros (possível alteração de campos). </span>`:''))+`<b>${R.total}</b> ocorrências · <b>${S.ifp.length}</b> com detalhe`+(R.enc?` (+${R.enc} encerradas)`:'')+'.'+(R.outras?` Outras ${R.outras} só no total${pf?': '+pf:''}.`:'')}
   const lista=[...S.ifp].sort((a,b)=>String(b.data).localeCompare(String(a.data)));
   if(!lista.length){l.innerHTML='<div class="vazio">Sem ocorrências ativas nem do SMPC nas últimas 24 h.</div>';return}
   l.innerHTML=lista.map((o,i)=>{const enc=/encerrad/i.test(o.estado||'');const fr=freguesiaDe(o);
@@ -2334,7 +2355,7 @@ const rpDow=dia=>new Date(dia+'T00:00:00Z').getUTCDay();
 const rpDM=t=>String(t).slice(8,10)+'/'+String(t).slice(5,7);
 const rpDH=t=>`${rpDM(t)} ${String(t).slice(11,13)}h${String(t).slice(14,16)!=='00'?String(t).slice(14,16):''}`;
 function rpPode(){const s=AUTH.s;return !!(s&&(s.admin||CFG.RP_PERFIS.includes(String(s.id||'').toUpperCase())))}
-function rpMarcaBotoes(){['btnSem','btnPer'].forEach(i=>{const b=$(i);if(b)b.classList.toggle('semAcesso',!(rpPode()&&temAcesso('relatorio')))})}
+function rpMarcaBotoes(){['btnPer'].forEach(i=>{const b=$(i);if(b)b.classList.toggle('semAcesso',!(rpPode()&&temAcesso('relatorio')))})}
 function rpPadrao(){ // semana anterior (segunda 00h a segunda 00h) e previsão até à segunda-feira seguinte
   const hoje=localNaive(new Date()).slice(0,10),w=rpDow(hoje),seg=rpAddD(hoje,-((w+6)%7));
   $('rpAte').value=seg+'T00:00';$('rpDe').value=rpAddD(seg,-7)+'T00:00';$('rpPrevAte').value=rpAddD(hoje,(8-w)%7||7)}
@@ -2564,7 +2585,7 @@ function rpImprimir(){
   document.body.appendChild(f);setTimeout(()=>f.remove(),120000);
   $('rpMsg').textContent=`Relatório Nº${num} enviado para impressão. O PDF numerado fica também para descarregar e enviar. Se cancelar, o número já ficou atribuído: ajuste "Próximo n.º".`;rpNumMostrar()}
 function rpNomePdf(){const p=localNaive(RP.agora||new Date()).replace(/[-:T]/g,'');return`CCOM_Braga_${RP.tipo==='sem'?'Relatorio_Semanal':'Relatorio_Periodo_'+(RP.J&&RP.J.h||'')+'h'}_${p.slice(0,8)}_${p.slice(8,12)}.pdf`}
-$('btnSem').onclick=()=>rpAbrir('sem');$('btnPer').onclick=()=>rpAbrir('per');
+$('btnPer').onclick=()=>rpAbrir('per');
 $('rpFecha').onclick=()=>$('rpOv').classList.remove('on');
 $('rpTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{if(b.dataset.t!==RP.tipo)rpAbrir(b.dataset.t)});
 $('rpGera').onclick=rpGerar;$('rpH').onchange=rpGerar;
