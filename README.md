@@ -20,3 +20,15 @@ O aviso da Planoclima nunca altera o nível sozinho. Se tiver menos de 48 h, ult
 ## Botão "Braga Resiliente" (só administrador)
 
 Publica avisos municipais na aplicação pública Braga Resiliente (repositório `protecaocivilbraga/protecaocivilbraga.github.io`, ficheiro `avisos.json`). Mostra-se apenas à conta administrador. A publicação usa a API do GitHub com uma chave pessoal (fine-grained, criada na conta `protecaocivilbraga`, só para o repositório da app, Contents: Read and write) que fica **apenas no `localStorage` do navegador do administrador**; nunca é enviada para este repositório. Os avisos ficam **públicos**.
+
+## Relatórios semanal e de período (CorMPC e SMPC)
+
+Botões **Semanal** e **Período** no cabeçalho, visíveis só aos perfis CorMPC e SMPC (`CFG.RP_PERFIS`). Nada é enviado automaticamente: o relatório é gerado ao carregar no botão, cada secção é editável antes de enviar e o envio faz-se como no relatório de apoio à decisão (PDF, rascunho .eml, Outlook, impressão com número). O cabeçalho é o mesmo (funções `pdfCabecalho` e `pdfRodape`, partilhadas pelos três relatórios).
+
+- **Semanal:** histórico da semana anterior (por defeito de segunda a segunda, 00h), total de ocorrências e tipologias, ocorrências significativas, freguesias afetadas, estados de prontidão do briefing CCOS Cávado guardado neste navegador e previsão diária até à segunda-feira seguinte (ensembles Open-Meteo, mesmo método do painel; o nível só existe nas primeiras 72 h).
+- **Período (1 página):** últimas 6, 12 ou 24 h e previsão para as horas seguintes, ocorrências significativas, por freguesia e por tipologia.
+- **Ocorrência significativa:** mais de 2 meios (veículos, campo `Materials` do Ifprotec; `CFG.SIG`). A API não indica as entidades que intervieram (só a que regista a ocorrência), por isso o critério "mais de 1 entidade" não é aplicado: quem gera o relatório retira à mão as que não se justifiquem.
+- **Numeração:** atribuída só ao imprimir. Por defeito usa a mesma série do relatório de apoio à decisão (`CFG.SERIE`); para uma série própria basta mudar o texto (p. ex. `'CCOM-S'`).
+- **Histórico:** vem do Apps Script (ficheiro `Historico.gs`, ação `hist`), que grava as ocorrências numa folha de cálculo Google da conta da Proteção Civil a cada 5 minutos. Só há histórico completo a partir do dia em que for ligado; antes disso o painel avisa e usa as últimas 24 h que já recebe. A folha não guarda moradas, nomes, contactos, vítimas nem texto livre; as naturezas de saúde ficam sem localização e só contam nos totais.
+- **Briefing CCOS Cávado:** continua só no `localStorage` do navegador onde foi carregado; noutro navegador o campo dos estados de prontidão preenche-se à mão.
+
