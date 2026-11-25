@@ -1,0 +1,27 @@
+{
+"type": "FeatureCollection",
+"name": "postos_triagem",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-06,
+"features": [
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Maximinos", "Tipo": "Centro de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.427763, 41.547491 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde São Vicente / Infias", "Tipo": "Centro de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.424154, 41.559991 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde do Carandá", "Tipo": "Centro de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.414705, 41.546104 ] } },
+{ "type": "Feature", "properties": { "Nome": "Esporões (CS Braga - Unid. de Saúde Carandá)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.42026, 41.511938 ] } },
+{ "type": "Feature", "properties": { "Nome": "Cabreiros (CS Braga - Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.490538, 41.531656 ] } },
+{ "type": "Feature", "properties": { "Nome": "Celeiros (CS Braga - Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.455536, 41.514436 ] } },
+{ "type": "Feature", "properties": { "Nome": "Sequeira (CS Braga - Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.473312, 41.532491 ] } },
+{ "type": "Feature", "properties": { "Nome": "Tadim (CS Braga - Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.488036, 41.508047 ] } },
+{ "type": "Feature", "properties": { "Nome": "Tebosa (CS Braga - Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.483872, 41.48221 ] } },
+{ "type": "Feature", "properties": { "Nome": "Veiga Penso (CS - Braga Unid. de Saúde Maximinos)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.433591, 41.493877 ] } },
+{ "type": "Feature", "properties": { "Nome": "Ruães (CS - Braga Unid. Saúde S. Vicente / Infias)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.474987, 41.581934 ] } },
+{ "type": "Feature", "properties": { "Nome": "Adaúfe (Unid. de Saúde São Vicente /Infias)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.400815, 41.586651 ] } },
+{ "type": "Feature", "properties": { "Nome": "Pedralva (CS Braga - Unid. de Saúde Carandá)", "Tipo": "Extensão de Saúde" }, "geometry": { "type": "Point", "coordinates": [ -8.324716, 41.557212 ] } },
+{ "type": "Feature", "properties": { "Nome": "Hospital de Braga", "Tipo": "Hospital (S. Marcos)" }, "geometry": { "type": "Point", "coordinates": [ -8.406456, 41.564936 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Familiar Carandá", "Tipo": "Unidade de Saúde Familiar" }, "geometry": { "type": "Point", "coordinates": [ -8.412212, 41.552491 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Familiar Gualtar", "Tipo": "Unidade de Saúde Familiar" }, "geometry": { "type": "Point", "coordinates": [ -8.386927, 41.568325 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Familiar Bracara Augusta", "Tipo": "Unidade de Saúde Familiar" }, "geometry": { "type": "Point", "coordinates": [ -8.410543, 41.542213 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Familiar Manuel Rocha Peixoto", "Tipo": "Unidade de Saúde Familiar" }, "geometry": { "type": "Point", "coordinates": [ -8.428317, 41.547769 ] } },
+{ "type": "Feature", "properties": { "Nome": "Unidade de Saúde Familiar S. João de Braga", "Tipo": "Unidade de Saúde Familiar" }, "geometry": { "type": "Point", "coordinates": [ -8.414705, 41.546105 ] } }
+]
+}

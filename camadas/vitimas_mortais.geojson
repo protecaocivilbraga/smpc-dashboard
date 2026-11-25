@@ -1,0 +1,28 @@
+{
+"type": "FeatureCollection",
+"name": "vitimas_mortais",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"xy_coordinate_resolution": 1e-06,
+"features": [
+{ "type": "Feature", "properties": { "Tipo": "Local de reunião de vítimas mortais", "Nome": "Hospital de Braga" }, "geometry": { "type": "Point", "coordinates": [ -8.406456, 41.564936 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.397964, 41.587347 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.361769, 41.548282 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.336314, 41.55336 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.358174, 41.572238 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.372784, 41.592043 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.455968, 41.579959 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.463952, 41.57315 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.458788, 41.538502 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.463833, 41.562214 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.485847, 41.565247 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.412845, 41.525258 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.422185, 41.522163 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.469062, 41.520635 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.471684, 41.526901 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.499073, 41.527714 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.489139, 41.507951 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.477428, 41.509054 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.461316, 41.506712 ] } },
+{ "type": "Feature", "properties": { "Tipo": "Necrotério provisório", "Nome": "Capela Mortuária" }, "geometry": { "type": "Point", "coordinates": [ -8.407421, 41.494444 ] } }
+]
+}
