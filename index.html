@@ -1738,7 +1738,7 @@ function desenharKpis(){
   } else h+=cel('Nível agora','…','a carregar');
   const nI=S.ifpRes?(S.ifpRes.emCurso!=null?S.ifpRes.emCurso:S.ifp.length):null;
   const nE=(typeof eqVe==='function'&&eqVe()&&EQ.ok)?eqLista().filter(r=>r.estado==='Em curso').length:null;
-  if(temAcesso('ifprotec')||nE!=null)h+=cel('Ocorrências em curso',`${temAcesso('ifprotec')?(nI==null?'…':nI):''}${nE!=null?`<span style="font-size:14px;color:#fb923c"> ${temAcesso('ifprotec')?'· ':''}${nE} SMPC</span>`:''}`,
+  if(temAcesso('ifprotec')||nE!=null)h+=cel('Ocorrências em curso',`${temAcesso('ifprotec')?`${nI==null?'…':nI}<span style="font-size:13px"> GERAL</span>`:''}${nE!=null?`<span style="color:#fb923c">${temAcesso('ifprotec')?' · ':''}${nE}<span style="font-size:13px"> SMPC</span></span>`:''}`,
      `${temAcesso('ifprotec')?'Ifprotec (alerta, despacho, em resolução, em curso)':''}${nE!=null?(temAcesso('ifprotec')?' · ':'')+'equipas no terreno':''}`,'','ocorrencias');
   const av=avisosRel(),avT=av.filter(a=>/precipita|vento|trovoada/i.test(a.tipo||''));
   if(C){const X=C.blocos,a24=sum(X.slice(0,4).map(valChuva)),rmax=Math.max(...X.slice(0,8).map(x=>x.raj90));
@@ -2290,7 +2290,7 @@ function munMarca(){
   e.innerHTML=`<span>Estados de prontidão do Município:</span> ${nm.map((t,i)=>`<span style="${i===n?`background:${cor[i]};color:${txt[i]};border:1px solid ${cor[i]}`:'background:#0b1220;color:#64748b;border:1px solid #334155'};border-radius:5px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap">${t}</span>`).join(' ')} <span class="ex" style="font-size:12px;opacity:.7">recomendado pelo painel (pior nível nas próximas 48 h) · a validar pelo CorMPC</span>`}
 function anMarca(){
   const e=$('faixaAnepc');if(!e)return;const a=S.anepc;
-  if(!a||(!a.est&&!a.disp)){e.className='';e.innerHTML='';return}
+  if(!a||(!a.est&&!a.disp)){e.style.setProperty('--anc','#64748b');e.className='on';e.innerHTML=`<span>Estados de prontidão ANEPC/CCOSR:</span> <span class="anE" style="color:#94a3b8">sem briefing carregado neste navegador</span>${podeEditar('briefing')?' <span class="ex" style="font-size:12px">(botão Briefing ANEPC)</span>':''}`;return}
   const exp=a.ate&&localNaive(new Date())>a.ate.slice(0,16),d=a.disp||{},en=AN_DISP.filter(([k])=>d[k]);
   e.style.setProperty('--anc',AN_COR_BORDA(a));e.className='on';
   e.innerHTML=`<span>Estados de prontidão ANEPC/CCOSR:</span> ${en.length?en.map(([k])=>anChip(k,d[k])).join(' '):`<span class="anE">${esc(a.est)}</span>`}${exp?' <span class="ex">(expirado)</span>':''}${a.orig?` <span class="ex" style="font-size:12px">${esc(a.orig)}</span>`:''}`}
