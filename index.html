@@ -298,6 +298,30 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #psFecha{background:none!important;border:0;color:#e2e8f0;font-size:24px;line-height:1;padding:0 4px!important}
 #brFecha{background:none!important;border:0;color:#e2e8f0;font-size:24px;line-height:1;padding:0 4px!important}
 #lgMsg,#usrMsg{min-height:18px;margin-top:10px;font-size:12px;color:#fca5a5}#usrMsg.ok{color:#6ee7b7}#usrBox hr{border:0;border-top:1px solid #1e2b47;margin:16px 0 4px}
+#eqOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:9990;display:none;align-items:center;justify-content:center}#eqOv.on{display:flex}
+#eqBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(760px,97vw);max-height:92vh;overflow:auto}
+#eqBox .rh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #334155;position:sticky;top:0;background:#0f172a;z-index:1001}
+#eqBox h3{margin:0;font-size:15px}#eqBox .bc{padding:12px 14px;display:grid;gap:10px}
+#eqBox fieldset{border:1px solid #1e2b47;border-radius:8px;display:grid;gap:8px;padding:8px 10px;min-width:0}#eqBox legend{font-size:12px;color:#cbd5e1;padding:0 4px}
+#eqBox label{display:grid;gap:3px;font-size:11px;color:#94a3b8}
+#eqBox input,#eqBox textarea,#eqBox select{background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:8px;font:inherit;font-size:14px;width:100%;box-sizing:border-box}
+#eqBox button{background:#c2410c;color:#fff;border:0;border-radius:7px;padding:9px 12px;font-size:13px;cursor:pointer}#eqBox button.sec{background:#334155}#eqBox button:disabled{opacity:.5;cursor:not-allowed}
+#eqBox .eqGrande{font-size:16px;padding:14px;width:100%;font-weight:600}#eqBox .rh button{padding:6px 10px}
+#eqBox .rn{font-size:11px;color:#94a3b8}#eqMsg{font-size:13px;color:#e2e8f0}#eqMsg.ok{color:#6ee7b7}#eqMsg.err,#eqFilaInfo{color:#fca5a5;font-size:12px}
+.eq2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.eq2 select+input{margin-top:4px}
+#eqMapa{height:min(300px,42vh);border-radius:8px;border:1px solid #334155}
+.eqLst{display:grid;gap:6px}.eqc{border:1px solid #1e2b47;border-radius:8px;padding:8px;background:#0b1220;display:grid;gap:4px}.eqc.cur{border-color:#c2410c}
+.eqt{font-size:13px;display:flex;gap:4px;flex-wrap:wrap;align-items:baseline}.eqh{margin-left:auto;color:#94a3b8;font-size:12px}.eqd{font-size:13px;color:#e2e8f0}.eqs{font-size:11px;color:#94a3b8}
+.eqb{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.eqlk{font-size:12px;color:#7dd3fc}.eqpend{font-size:10px;background:#7f1d1d;color:#fecaca;border-radius:4px;padding:1px 5px}
+.eqfecho{display:grid;gap:6px;border-top:1px dashed #334155;padding-top:6px}
+.eqMk{border-radius:50%;background:#64748b;border:2px solid #0b1220;color:#fff;font:700 10px/14px system-ui,sans-serif;text-align:center;box-shadow:0 0 0 1px #94a3b8}
+.eqMk.cur{background:#ea580c;line-height:22px;font-size:10px;box-shadow:0 0 0 2px #fff,0 0 10px 3px rgba(234,88,12,.8);animation:eqPulso 1.6s infinite}
+#eqBox [hidden]{display:none!important}
+.eqPin i{position:absolute;left:2px;top:0;width:24px;height:24px;border-radius:50% 50% 50% 0;background:#ea580c;border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.5)}
+@keyframes eqPulso{50%{box-shadow:0 0 0 2px #fff,0 0 2px 1px rgba(234,88,12,.3)}}
+body.terreno>*:not(#eqOv):not(#loginOv):not(#usrOv):not(script){display:none!important}
+body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0}
+@media(max-width:560px){.eq2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -310,10 +334,34 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
   <h3 id="usrTit">Sessão</h3><div id="usrInfo" style="font-size:12px;color:#94a3b8;margin-top:4px"></div>
   <button class="sec" id="usrSai" type="button">Terminar sessão</button>
   <div id="usrAdm" style="display:none"><hr><h3 style="font-size:13px">Alterar palavra-passe de uma entidade</h3>
-   <label for="usrEnt">Entidade</label><select id="usrEnt"><option>CORMPC</option><option>SMPC</option><option>CCOM</option><option>CMPC</option><option>ULPC</option></select>
+   <label for="usrEnt">Entidade</label><select id="usrEnt"><option>CORMPC</option><option>SMPC</option><option>CCOM</option><option>CMPC</option><option>ULPC</option><option>EQUIPAS</option></select>
    <label for="usrNova">Nova palavra-passe (mín. 10 caracteres)</label><input id="usrNova" type="password" autocomplete="new-password">
    <button id="usrPw" type="button">Alterar palavra-passe</button></div>
   <div id="usrMsg" role="status"></div><button class="sec" id="usrFecha" type="button" style="margin-top:8px">Fechar</button></div></div>
+<div id="eqOv" role="dialog" aria-modal="true" aria-labelledby="eqTit"><div id="eqBox">
+  <div class="rh"><h3 id="eqTit">Equipas SMPC no terreno</h3><span><button class="sec" id="eqSess" type="button">&#128100; <span id="eqSessNome"></span></button><button id="eqFecha" title="Fechar (Esc)" type="button">×</button></span></div>
+  <div class="bc">
+    <div id="eqMsg" role="status"></div>
+    <div id="eqFilaInfo" class="err" style="display:none"></div>
+    <button id="eqNovaBtn" class="eqGrande" type="button">+ Nova ocorrência</button>
+    <fieldset id="eqNova" hidden><legend>Nova ocorrência</legend>
+      <div class="eq2"><label>Equipa<select id="eqEquipa"></select><input id="eqEquipaTxt" maxlength="60" placeholder="Nome da equipa"></label>
+      <label>Viatura<select id="eqViat"></select><input id="eqViatTxt" maxlength="30" placeholder="Matrícula ou indicativo"></label></div>
+      <div><button class="sec" id="eqGps" type="button">📍 Usar a minha localização (GPS)</button></div>
+      <div id="eqMapa"></div>
+      <div id="eqPosTxt" class="rn">Sem localização.</div>
+      <p class="rn" style="margin:0">Se o ponto não estiver certo, toque no mapa no sítio exato ou arraste o marcador.</p>
+      <label>Descrição da ocorrência<textarea id="eqDesc" rows="3" maxlength="300" placeholder="ex.: Árvore caída a obstruir a via, junto ao n.º 120"></textarea></label>
+      <label>Hora de início<input id="eqIni" type="datetime-local"></label>
+      <div><button id="eqReg" class="eqGrande" type="button" disabled>Registar ocorrência</button> <button class="sec" id="eqCanc" type="button">Cancelar</button></div>
+    </fieldset>
+    <fieldset><legend>Em curso</legend><div id="eqCur" class="eqLst"></div></fieldset>
+    <fieldset><legend id="eqFimTit">Concluídas</legend>
+      <div id="eqPer" class="rn">Período: <select id="eqDias" style="width:auto"><option value="1">24 horas</option><option value="7" selected>7 dias</option><option value="31">31 dias</option></select></div>
+      <div id="eqFim" class="eqLst"></div></fieldset>
+    <div class="rn"><span id="eqAtual"></span> <button class="sec" id="eqAtualiza" type="button">Atualizar</button></div>
+    <p class="rn" style="margin:0">Em emergência, ligue 112. Este registo não substitui o Ifprotec nem a comunicação à sala de operações.</p>
+  </div></div></div>
 <header>
   <div class="hleft">
     <div>
@@ -328,6 +376,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
     <button class="btnRel semAcesso" id="btnPer" data-mod="relatorio" title="Relatório de período (6, 12 ou 24 h), uma página: previsão, ocorrências significativas, por freguesia e por tipologia (só CorMPC e SMPC)" style="background:#1e40af">Período</button>
     <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
     <button class="btnRel" id="btnPos" data-mod="ifprotec" title="Ponto de situação: ocorrências por tipologia e freguesia num período à escolha, e previsão das próximas 12 h" style="background:#0f766e">POSIT</button>
+    <button class="btnRel semAcesso" id="btnEq" title="Equipas do SMPC no terreno: ocorrências registadas no telemóvel, com localização, hora e km de fecho" style="background:#c2410c">Equipas</button>
     <button class="btnRel semAcesso" id="btnBR" title="Publicar avisos municipais na aplicação Braga Resiliente (só administrador)" style="background:#0b5cab">Braga Resiliente</button>
     </div>
   </div>
@@ -384,6 +433,7 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
         <label title="Chuva acumulada prevista nas próximas 6 h (ou no bloco selecionado), em grelha de cerca de 6 km. Modelo determinístico, indicativo."><input type="checkbox" id="chkChuva"> Chuva prevista (mm)</label>
         <label><input type="checkbox" id="chkAgua"> Linhas de água</label>
         <label data-mod="ifprotec"><input type="checkbox" id="chkOc"> Ocorrências (Ifprotec)</label>
+        <label data-mod="equipas"><input type="checkbox" id="chkEq" checked> Equipas SMPC no terreno</label>
         <label><input type="checkbox" id="chkApri"> Troços ARPSI (APA)</label>
         <label><input type="checkbox" id="chkCheias"> Cheias históricas (APA)</label>
         <label data-mod="prevencao"><input type="checkbox" id="chkPrevMapa"> Prevenção de inundações</label>
@@ -683,6 +733,7 @@ function aplicarPerfil(){
   document.querySelectorAll('[data-mod]').forEach(el=>el.classList.toggle('semAcesso',!temAcesso(el.dataset.mod)));
   try{$('btnBR').classList.toggle('semAcesso',!(AUTH.s&&AUTH.s.admin))}catch(e){}
   try{rpMarcaBotoes()}catch(e){}
+  try{eqAplicar()}catch(e){}
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -721,6 +772,183 @@ $('usrPw').onclick=async()=>{
   }catch(e){m.textContent='Sem ligação ao servidor.'}
 };
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('usrOv').classList.remove('on')});
+
+/* ============ Equipas do SMPC no terreno (conta EQUIPAS) ============
+   Registo de ocorrências a partir do telemóvel: localização (GPS ou toque no mapa), descrição, hora de início;
+   ao concluir, hora de conclusão, km de fecho da viatura e observações. Guardado no Apps Script (Equipas.gs), numa folha
+   RESERVADA. Sem rede, o pedido fica no telemóvel e é enviado quando houver ligação (o id evita registos duplicados).
+   Quem tem "equipas" em editar e não vê o mapa do painel (conta EQUIPAS) entra só neste ecrã ("modo terreno").
+   Quem só vê "equipas" (CorMPC, SMPC) tem o botão "Equipas" e a camada no mapa. */
+const EQ={reg:[],equipas:[],viaturas:[],dias:7,ok:false,vistos:null,pos:null,map:null,mk:null,circ:null,watch:null,abrir:null,FILA:'smpc_eq_fila',T:null};
+const eqTerreno=()=>{const s=AUTH.s;return !!(s&&(s.editar||[]).includes('equipas')&&!(s.ver||[]).includes('mapa'))};
+const EQ_TERRENO0=eqTerreno(); // modo com que a página arrancou: no modo terreno não se carregam modelos, satélite, etc.
+const eqVe=()=>temAcesso('equipas'),eqEdita=()=>podeEditar('equipas');
+function eqFila(){try{return JSON.parse(localStorage.getItem(EQ.FILA)||'[]')}catch(e){return[]}}
+function eqFilaGrava(f){try{localStorage.setItem(EQ.FILA,JSON.stringify(f))}catch(e){}}
+function eqId(){const a='abcdefghijkmnopqrstuvwxyz23456789';let s='';const b=new Uint8Array(6);(crypto.getRandomValues?crypto.getRandomValues(b):b.forEach((_,i)=>b[i]=Math.random()*255));b.forEach(x=>s+=a[x%a.length]);return 'EQ-'+Date.now().toString(36)+'-'+s}
+const eqHM=t=>t?String(t).slice(8,10)+'/'+String(t).slice(5,7)+' '+String(t).slice(11,16):'';
+function eqMsg(t,c){const m=$('eqMsg');m.textContent=t||'';m.className=c||''}
+function eqAplicar(){
+  if(eqTerreno()!==EQ_TERRENO0){location.reload();return}
+  document.body.classList.toggle('terreno',EQ_TERRENO0);
+  $('btnEq').classList.toggle('semAcesso',!(eqVe()&&!EQ_TERRENO0));
+  $('eqFecha').style.display=EQ_TERRENO0?'none':'';$('eqSess').style.display=EQ_TERRENO0?'':'none';
+  $('eqNovaBtn').style.display=eqEdita()?'':'none';$('eqPer').style.display=EQ_TERRENO0?'none':'';
+  $('eqSessNome').textContent=AUTH.s?AUTH.s.nome:'';
+  if(EQ_TERRENO0)$('eqOv').classList.add('on');
+  if(eqVe()&&!EQ.T){EQ.T=setInterval(()=>{eqEnviarFila().then(eqCarregar)},60000);setTimeout(()=>{eqEnviarFila().then(eqCarregar)},0)}
+}
+async function eqPedido(acao,r){ // devolve a resposta do servidor; lança erro só se não houver ligação
+  const j=await authPost({acao,t:AUTH.s.t,r});
+  if(j&&j.erro==='sessao'){sessaoExpirada();throw new Error('sessao')}
+  return j;
+}
+async function eqEnviarFila(){
+  if(!AUTH.s)return;let f=eqFila();if(!f.length){eqFilaMostra();return}
+  const resto=[];let erros=[];
+  for(const p of f){
+    try{const j=await eqPedido(p.acao,p.r);if(!j.ok)erros.push((p.acao==='eq_abrir'?'Registo':'Conclusão')+' não aceite: '+(j.erro||'erro'))}
+    catch(e){resto.push(p)}
+  }
+  eqFilaGrava(resto);eqFilaMostra();
+  if(erros.length)eqMsg(erros.join(' · '),'err');else if(f.length&&!resto.length)eqMsg('Registos guardados sem rede já foram enviados.','ok');
+}
+function eqFilaMostra(){const n=eqFila().length;const e=$('eqFilaInfo');e.style.display=n?'':'none';e.textContent=n?`${n} registo(s) guardado(s) neste telemóvel, por enviar (sem rede). Serão enviados automaticamente.`:''}
+async function eqCarregar(){
+  if(!AUTH.s||!eqVe())return;
+  try{const j=await authPost({acao:'eq_lista',t:AUTH.s.t,dias:EQ.dias});
+    if(j.erro==='sessao'){sessaoExpirada();return}
+    if(!j.ok)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro||'erro');
+    const novos=(j.registos||[]).filter(r=>r.estado==='Em curso'&&EQ.vistos&&!EQ.vistos.has(r.id));
+    EQ.vistos=new Set((j.registos||[]).map(r=>r.id));
+    if(novos.length&&!EQ_TERRENO0)beep();
+    EQ.reg=j.registos||[];EQ.equipas=j.equipas||[];EQ.viaturas=j.viaturas||[];EQ.ok=true;
+    $('eqAtual').textContent='Atualizado às '+fmtHM(new Date());
+  }catch(e){if(e.message!=='sessao')$('eqAtual').textContent='Sem ligação ao servidor ('+fmtHM(new Date())+'). A lista pode estar desatualizada.'}
+  eqDesenhar();eqDesenharMapa();
+}
+function eqLista(){ // registos do servidor + o que está na fila deste telemóvel
+  const m=new Map(EQ.reg.map(r=>[r.id,Object.assign({},r)]));
+  eqFila().forEach(p=>{if(p.acao==='eq_abrir'&&!m.has(p.r.id))m.set(p.r.id,Object.assign({estado:'Em curso',pend:true},p.r));
+    if(p.acao==='eq_fechar'&&m.has(p.r.id))Object.assign(m.get(p.r.id),{estado:'Concluída',conclusao:p.r.conclusao,km_fecho:p.r.km_fecho,observacoes:p.r.observacoes,pend:true})});
+  return [...m.values()].sort((a,b)=>(a.estado==='Em curso'?0:1)-(b.estado==='Em curso'?0:1)||String(b.inicio).localeCompare(String(a.inicio)));
+}
+function eqFreg(r){try{return S.freg&&r.lat!=null?freguesiaDe({lat:+r.lat,lon:+r.lon}):''}catch(e){return ''}}
+function eqDesenhar(){
+  const l=eqLista(),cur=l.filter(r=>r.estado==='Em curso'),fim=l.filter(r=>r.estado!=='Em curso');
+  const card=r=>{const fr=eqFreg(r),ec=r.estado==='Em curso';
+    return `<div class="eqc ${ec?'cur':''}" data-id="${esc(r.id)}"><div class="eqt"><b>${esc(r.equipa||'')}</b>${r.viatura?' · '+esc(r.viatura):''}${r.pend?' <span class="eqpend">por enviar</span>':''}<span class="eqh mono">${eqHM(r.inicio)}${!ec&&r.conclusao?' → '+eqHM(r.conclusao).slice(-5):''}</span></div>
+      <div class="eqd">${esc(r.descricao||'')}</div>
+      <div class="eqs">${fr?esc(fr)+' · ':''}${r.lat!=null?(+r.lat).toFixed(5)+', '+(+r.lon).toFixed(5):''}${r.precisao_m?' (±'+Math.round(r.precisao_m)+' m)':''}${!ec&&r.km_fecho!=null&&r.km_fecho!==''?' · <b>'+esc(r.km_fecho)+' km</b>':''}${!ec&&r.observacoes?' · '+esc(r.observacoes):''}</div>
+      <div class="eqb">${r.lat!=null?`<a class="eqlk" href="https://www.google.com/maps?q=${+r.lat},${+r.lon}" target="_blank" rel="noopener">Abrir no mapa</a>`:''}${!EQ_TERRENO0&&r.lat!=null?' <button class="sec eqVer" type="button">Ver no painel</button>':''}${ec&&eqEdita()?' <button class="eqConc" type="button">Concluir</button>':''}</div>
+      <div class="eqfecho" hidden></div></div>`};
+  $('eqCur').innerHTML=cur.length?cur.map(card).join(''):'<div class="vazio">Sem ocorrências em curso.</div>';
+  $('eqFim').innerHTML=fim.length?fim.map(card).join(''):'<div class="vazio">Nada concluído no período.</div>';
+  $('eqFimTit').textContent=EQ_TERRENO0?'Concluídas nas últimas 24 h':`Concluídas (últimos ${EQ.dias} dias)`;
+  document.querySelectorAll('#eqOv .eqConc').forEach(b=>b.onclick=()=>eqFechoForm(b.closest('.eqc')));
+  document.querySelectorAll('#eqOv .eqVer').forEach(b=>b.onclick=()=>{const r=l.find(x=>x.id===b.closest('.eqc').dataset.id);if(!r)return;
+    $('eqOv').classList.remove('on');$('chkEq').checked=true;try{if(!gEq)eqDesenharMapa();gEq.addTo(mapa);mapa.flyTo([+r.lat,+r.lon],16)}catch(e){}});
+}
+function eqFechoForm(c){
+  const f=c.querySelector('.eqfecho');if(!f.hidden){f.hidden=true;return}
+  f.innerHTML=`<label>Hora de conclusão<input type="datetime-local" class="eqFimH" value="${localNaive(new Date())}"></label>
+    <label>Km de fecho da viatura<input class="eqKm" inputmode="numeric" pattern="[0-9]*" placeholder="ex.: 123456"></label>
+    <label>Observações<textarea class="eqObs" rows="2" maxlength="500"></textarea></label>
+    <div><button class="eqOkF" type="button">Confirmar conclusão</button> <button class="sec eqCanF" type="button">Cancelar</button></div>`;
+  f.hidden=false;
+  f.querySelector('.eqCanF').onclick=()=>{f.hidden=true};
+  f.querySelector('.eqOkF').onclick=async ev=>{
+    const km=f.querySelector('.eqKm').value.replace(/\s/g,'');
+    if(km&&!/^\d{1,7}$/.test(km)){eqMsg('Os quilómetros devem ser só algarismos.','err');return}
+    const r={id:c.dataset.id,conclusao:f.querySelector('.eqFimH').value||localNaive(new Date()),km_fecho:km,observacoes:f.querySelector('.eqObs').value.trim()};
+    await eqEnviar('eq_fechar',r,ev.target,'Ocorrência concluída.');
+  };
+}
+async function eqEnviar(acao,r,btn,okTxt){ // envia; sem rede, guarda na fila
+  btn.disabled=true;eqMsg('A enviar…');
+  try{const j=await eqPedido(acao,r);
+    if(!j.ok){eqMsg(j.erro||'Não foi aceite.','err');return false}
+    eqMsg(okTxt,'ok');
+  }catch(e){if(e.message==='sessao')return false;
+    const f=eqFila();f.push({acao,r});eqFilaGrava(f);eqMsg('Sem rede: ficou guardado neste telemóvel e será enviado logo que haja ligação.','err')}
+  finally{btn.disabled=false}
+  eqFilaMostra();if(acao==='eq_abrir')eqNovaFecha();await eqCarregar();return true;
+}
+/* ---- nova ocorrência: localização ---- */
+function eqNovaAbre(){
+  const sel=(id,lista,chave)=>{const v=LS(chave,'');const el=$(id);
+    if(lista.length){el.innerHTML=lista.map(x=>`<option${x===v?' selected':''}>${esc(x)}</option>`).join('')+'<option value="">Outra (escrever)</option>';
+      $(id+'Txt').style.display=el.value?'none':'';el.style.display=''}else{el.style.display='none';$(id+'Txt').style.display=''}
+    if(lista.length&&v&&!lista.includes(v)){el.value='';$(id+'Txt').style.display=''}
+    $(id+'Txt').value=lista.includes(v)?'':v};
+  sel('eqEquipa',EQ.equipas.length?EQ.equipas:[],'smpc_eq_equipa');sel('eqViat',EQ.viaturas,'smpc_eq_viat');
+  $('eqDesc').value='';$('eqIni').value=localNaive(new Date());EQ.pos=null;$('eqPosTxt').textContent='Sem localização.';$('eqReg').disabled=true;
+  $('eqNova').hidden=false;$('eqNovaBtn').style.display='none';
+  setTimeout(()=>{eqMapaCria();eqGps()},30);
+}
+function eqNovaFecha(){$('eqNova').hidden=true;$('eqNovaBtn').style.display=eqEdita()?'':'none';eqGpsPara()}
+function eqMapaCria(){
+  if(!EQ.map){
+    EQ.map=L.map('eqMapa',{zoomControl:true,attributionControl:true}).setView([41.5503,-8.42],12);
+    const ruas=L.tileLayer(ESRI+'World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:18,attribution:'© Esri, OpenStreetMap'}).addTo(EQ.map);
+    const sat=L.tileLayer(ESRI+'World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,maxNativeZoom:18,attribution:'© Esri, Maxar'});
+    L.control.layers({'Ruas':ruas,'Satélite':sat},null,{position:'topright'}).addTo(EQ.map);
+    EQ.map.on('click',e=>eqPosDef(e.latlng.lat,e.latlng.lng,null,'manual'));
+  }
+  EQ.map.invalidateSize();
+}
+function eqPosDef(lat,lon,prec,origem){
+  if(origem==='manual')eqGpsPara();
+  EQ.pos={lat,lon,prec:prec==null?null:Math.round(prec)};
+  if(!EQ.mk){EQ.mk=L.marker([lat,lon],{draggable:true,icon:L.divIcon({className:'eqPin',html:'<i></i>',iconSize:[28,40],iconAnchor:[14,38]})}).addTo(EQ.map);EQ.mk.on('dragend',()=>{const p=EQ.mk.getLatLng();eqPosDef(p.lat,p.lng,null,'manual')})}
+  else EQ.mk.setLatLng([lat,lon]);
+  if(EQ.circ){EQ.map.removeLayer(EQ.circ);EQ.circ=null}
+  if(prec)EQ.circ=L.circle([lat,lon],{radius:prec,color:'#38bdf8',weight:1,fillOpacity:.12,interactive:false}).addTo(EQ.map);
+  $('eqPosTxt').innerHTML=`${lat.toFixed(5)}, ${lon.toFixed(5)} · ${origem==='manual'?'posição acertada à mão':'GPS ±'+Math.round(prec)+' m'+(prec>50?' <b style="color:#fca5a5">(pouco rigor: acerte tocando no mapa)</b>':'')}`;
+  $('eqReg').disabled=false;
+}
+function eqGpsPara(){if(EQ.watch!=null){navigator.geolocation.clearWatch(EQ.watch);EQ.watch=null}$('eqGps').textContent='📍 Usar a minha localização (GPS)'}
+function eqGps(){
+  if(!navigator.geolocation){$('eqPosTxt').textContent='Este aparelho não dá a localização. Toque no mapa no sítio da ocorrência.';return}
+  eqGpsPara();let melhor=null,t0=Date.now();$('eqGps').textContent='📍 A obter localização…';
+  EQ.watch=navigator.geolocation.watchPosition(p=>{
+    const c=p.coords;if(melhor&&c.accuracy>=melhor)return;melhor=c.accuracy;
+    eqPosDef(c.latitude,c.longitude,c.accuracy,'gps');EQ.map.setView([c.latitude,c.longitude],Math.max(EQ.map.getZoom(),17));
+    if(c.accuracy<=15||Date.now()-t0>30000)eqGpsPara();
+  },e=>{eqGpsPara();$('eqPosTxt').textContent=(e.code===1?'Sem autorização para usar a localização. Autorize nas definições do navegador ou ':'Não foi possível obter a localização. ')+'toque no mapa no sítio da ocorrência.'},
+  {enableHighAccuracy:true,timeout:30000,maximumAge:0});
+  setTimeout(()=>{if(EQ.watch!=null&&Date.now()-t0>=30000)eqGpsPara()},31000);
+}
+$('eqGps').onclick=()=>{if(EQ.watch!=null)eqGpsPara();else eqGps()};
+$('eqNovaBtn').onclick=eqNovaAbre;$('eqCanc').onclick=eqNovaFecha;
+['eqEquipa','eqViat'].forEach(id=>$(id).onchange=()=>{$(id+'Txt').style.display=$(id).value?'none':''});
+$('eqReg').onclick=async ev=>{
+  const val=id=>$(id).style.display!=='none'&&$(id).value?$(id).value:$(id+'Txt').value.trim();
+  const equipa=val('eqEquipa'),viatura=val('eqViat'),desc=$('eqDesc').value.trim();
+  if(!EQ.pos){eqMsg('Falta a localização: use o GPS ou toque no mapa.','err');return}
+  if(!equipa){eqMsg('Indique a equipa.','err');return}
+  if(desc.length<3){eqMsg('Escreva uma descrição curta da ocorrência.','err');return}
+  try{localStorage.setItem('smpc_eq_equipa',equipa);localStorage.setItem('smpc_eq_viat',viatura)}catch(e){}
+  await eqEnviar('eq_abrir',{id:eqId(),equipa,viatura,lat:+EQ.pos.lat.toFixed(6),lon:+EQ.pos.lon.toFixed(6),precisao_m:EQ.pos.prec,descricao:desc,inicio:$('eqIni').value||localNaive(new Date())},ev.target,'Ocorrência registada.');
+};
+$('btnEq').onclick=()=>{$('eqOv').classList.add('on');eqEnviarFila().then(eqCarregar)};
+$('eqFecha').onclick=()=>{$('eqOv').classList.remove('on');eqNovaFecha()};
+$('eqSess').onclick=usrAbre;$('eqAtualiza').onclick=()=>eqEnviarFila().then(eqCarregar);
+$('eqDias').onchange=e=>{EQ.dias=+e.target.value||7;eqCarregar()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!EQ_TERRENO0&&$('eqOv').classList.contains('on')){$('eqOv').classList.remove('on');eqNovaFecha()}});
+window.addEventListener('online',()=>{if(eqVe())eqEnviarFila().then(eqCarregar)});
+/* ---- camada no mapa do painel (CorMPC, SMPC) ---- */
+let gEq=null;
+function eqDesenharMapa(){
+  if(EQ_TERRENO0)return;
+  try{if(!gEq){gEq=L.layerGroup();if($('chkEq').checked)gEq.addTo(mapa)}}catch(e){return}
+  gEq.clearLayers();
+  eqLista().forEach(r=>{if(r.lat==null)return;const ec=r.estado==='Em curso',fr=eqFreg(r);
+    L.marker([+r.lat,+r.lon],{icon:L.divIcon({className:'eqMk'+(ec?' cur':''),html:ec?'EQ':'✓',iconSize:ec?[26,26]:[18,18],iconAnchor:ec?[13,13]:[9,9]}),zIndexOffset:ec?500:0,keyboard:false})
+      .bindPopup(`<b>${esc(r.descricao||'')}</b><br>${esc(r.equipa||'')}${r.viatura?' · '+esc(r.viatura):''}<br>${ec?'Em curso desde '+eqHM(r.inicio):'Concluída: '+eqHM(r.inicio)+' → '+eqHM(r.conclusao)}${fr?'<br>'+esc(fr):''}${!ec&&r.km_fecho!=null&&r.km_fecho!==''?'<br>Km de fecho: '+esc(r.km_fecho):''}${r.observacoes?'<br>Obs.: '+esc(r.observacoes):''}${r.precisao_m?'<br><span style="color:#94a3b8">Localização ±'+Math.round(r.precisao_m)+' m</span>':''}`)
+      .bindTooltip(`${ec?'🟠':'✓'} ${esc(r.equipa||'')}: ${esc(String(r.descricao||'').slice(0,60))}`).addTo(gEq)});
+}
+$('chkEq').onchange=()=>{try{if(!gEq)eqDesenharMapa();$('chkEq').checked?gEq.addTo(mapa):mapa.removeLayer(gEq)}catch(e){}};
 
 /* ============ POSIT: ponto de situação (ocorrências por tipologia e freguesia + previsão 12 h) ============ */
 const PS={};
@@ -1494,14 +1722,16 @@ $('chkPrev').addEventListener('change',()=>{$('chkPrevMapa').checked=$('chkPrev'
 $('chkPrevMapa').onchange=()=>{$('chkPrev').checked=$('chkPrevMapa').checked;$('chkPrev').dispatchEvent(new Event('change'))};
 carregarPrev();
 desenharPrev();
+if(!EQ_TERRENO0){ // no modo terreno (conta das equipas, no telemóvel) não se carrega nada disto
 criarSat();
-carregarFreguesias().then(carregarAgua);
+carregarFreguesias().then(()=>{carregarAgua();try{eqDesenhar();eqDesenharMapa()}catch(e){}});
 carregarIfp();carregarAvisos();carregarModelos();carregarRio();
 setInterval(carregarIfp,CFG.ATUALIZAR.ifp*1000);
 setInterval(carregarAvisos,CFG.ATUALIZAR.av*1000);
 setInterval(carregarModelos,CFG.ATUALIZAR.mod*1000);
 setInterval(()=>{if(!playTimer&&satOffset===0)criarSat()},CFG.ATUALIZAR.sat*1000);
 setInterval(carregarRio,CFG.ATUALIZAR.rio*1000);
+}
 /* ===== Relatório de apoio à decisão (PDF + texto de email + envio opcional) =====
    O PDF é gerado neste navegador (jsPDF). O envio por email só existe se o Apps Script tiver o ficheiro Envio.gs
    (destinatários e PIN ficam nas Propriedades do script, nunca neste ficheiro). */

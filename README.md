@@ -32,3 +32,12 @@ Botões **Semanal** e **Período** no cabeçalho, visíveis só aos perfis CorMP
 - **Histórico:** vem do Apps Script (ficheiro `Historico.gs`, ação `hist`), que grava as ocorrências numa folha de cálculo Google da conta da Proteção Civil a cada 5 minutos. Só há histórico completo a partir do dia em que for ligado; antes disso o painel avisa e usa as últimas 24 h que já recebe. A folha não guarda moradas, nomes, contactos, vítimas nem texto livre; as naturezas de saúde ficam sem localização e só contam nos totais.
 - **Briefing CCOS Cávado:** continua só no `localStorage` do navegador onde foi carregado; noutro navegador o campo dos estados de prontidão preenche-se à mão.
 
+
+## Equipas SMPC no terreno (conta EQUIPAS)
+
+As equipas do SMPC entram no painel com a conta **EQUIPAS**, normalmente no telemóvel (pode instalar-se como aplicação). Essa conta vê só o ecrã das equipas: **Nova ocorrência** com localização (GPS, com acerto por toque no mapa), equipa, viatura, descrição curta e hora de início; e **Concluir**, com hora de conclusão, km de fecho da viatura e observações. Sem rede, o registo fica no telemóvel e é enviado quando houver ligação, sem duplicar.
+
+- Os registos ficam numa folha **RESERVADA** na conta da Proteção Civil (ficheiro `Equipas.gs` do Apps Script, que não está neste repositório). Nada fica no GitHub.
+- CorMPC e SMPC veem os registos no mapa (camada "Equipas SMPC no terreno": laranja em curso, cinzento concluída) e no botão **Equipas**. O CorMPC também pode registar e concluir; o SMPC só vê. As outras entidades não recebem estes dados (o servidor recusa).
+- A conta das equipas só vê o que está em curso e o que foi concluído nas últimas 24 h. Correções faz-se diretamente na folha.
+- Permissões: módulo `equipas` no `AUTH_PERFIS` do `Auth.gs` (editar = regista e conclui; ver = só consulta). Quem edita `equipas` e não vê `mapa` entra no modo terreno, que não carrega modelos, satélite nem avisos.
