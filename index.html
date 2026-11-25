@@ -68,6 +68,11 @@ main{padding:8px 12px 14px;display:grid;gap:8px}
 #camPainel .ctl{flex-direction:column;align-items:flex-start;gap:4px;margin:0}#camPainel label{flex-wrap:wrap}#camPainel .camL{display:flex;gap:6px;align-items:center}#camPainel .vazio{font-size:11px}
 .pmMk{background:none;border:0}.pmMk span{position:absolute;transform:translate(-50%,-50%);min-width:16px;height:16px;padding:0 2px;border-radius:4px;border:1.5px solid #0b1220;box-shadow:0 0 0 1px #fff8;color:#fff;font:700 10px/16px system-ui,sans-serif;text-align:center}
 .pmLeg{display:inline-block;min-width:14px;height:14px;border-radius:3px;color:#fff;font:700 9px/14px system-ui,sans-serif;text-align:center}
+.irAgora{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:6px;margin-bottom:8px}
+.irAgora .ik{background:#0b1220;border:1px solid var(--linha);border-radius:8px;padding:6px 8px}.irAgora .ik small{display:block;font-size:10px;color:var(--suave);text-transform:uppercase;letter-spacing:.6px}.irAgora .ik b{font-size:18px}.irAgora .ik span{font-size:11px;color:var(--suave)}
+.irRcm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:12px}.irRcm .rc{border-radius:7px;padding:5px 10px;font-weight:700;color:#0b1220}.irRcm .rl{color:var(--suave)}
+.irTab{border-collapse:collapse;width:100%;font-size:11.5px}.irTab th,.irTab td{padding:3px 5px;border-bottom:1px solid var(--linha);text-align:center;white-space:nowrap}.irTab th{color:var(--suave);font-weight:500}
+.irTab td.ira,.irA{color:#f87171;font-weight:700}.irTab tr.ir3 td{background:#7f1d1d55}.irSeta{display:inline-block;font-size:13px;line-height:1}
 .mapaInfo{min-height:14px}
 .card.mapaFull{position:fixed;inset:0;z-index:9500;border-radius:0;overflow:auto;max-width:none}
 .card.mapaFull #mapa{height:calc(100vh - 96px)}
@@ -514,13 +519,21 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
         <div style="overflow:auto"><table id="tabela"></table></div>
         <p class="aviso-geral" id="notaTab"></p>
       </div>
+      <div class="card" data-mod="previsao" id="cardIR">
+        <h2>Meteorologia para incêndios rurais <span class="nota">vento, humidade relativa, temperatura e pressão · modelo de alta resolução (Open-Meteo)</span>
+          <select id="irPonto" style="margin-left:auto;background:#0d1526;color:#f8fafc;border:1px solid #1e2b47;border-radius:6px;padding:3px 6px"></select></h2>
+        <div id="irRcm" class="irRcm"></div>
+        <div id="irAgora" class="irAgora"><div class="vazio">A carregar…</div></div>
+        <div style="overflow:auto"><table id="irTab" class="irTab"></table></div>
+        <p class="aviso-geral" id="irNota">Regra dos 30: <span class="irA">temperatura acima de 30 °C</span>, <span class="irA">humidade relativa abaixo de 30 %</span> e <span class="irA">vento acima de 30 km/h</span> assinalados a vermelho; quando coincidem os três, o bloco fica destacado. A seta indica para onde sopra o vento; o rumo (N, NE…) é de onde vem. Pressão ao nível do mar: no topo, com a variação nas últimas 3 horas; na tabela, no fim de cada bloco e a variação ao longo do bloco. Uma descida rápida (mais de 3 hPa em 3 h) costuma anunciar mudança de tempo, com vento mais forte ou a mudar de direção.</p>
+      </div>
     </div>
   </section>
 
   <section class="card" data-mod="fontes">
     <h2>Fontes e limitações</h2>
     <p class="aviso-geral">
-      <b>Previsão:</b> ensembles Open-Meteo (ECMWF IFS ENS e AIFS, GFS, ICON-EPS, UKMO, GEM). O consenso é a mediana das medianas dos 6 modelos; o intervalo é o mínimo e o máximo entre modelos; o cenário elevado é a mediana dos P90.
+      <b>Incêndios rurais (vento, humidade, temperatura, pressão):</b> Open-Meteo, previsão determinística de melhor resolução disponível para o ponto (best match), atualizada a cada 30 min; o quadro mostra também o risco de incêndio rural (RCM) do IPMA para o concelho de Braga, hoje e amanhã (api.ipma.pt), que é o indicador oficial. <b>Previsão:</b> ensembles Open-Meteo (ECMWF IFS ENS e AIFS, GFS, ICON-EPS, UKMO, GEM). O consenso é a mediana das medianas dos 6 modelos; o intervalo é o mínimo e o máximo entre modelos; o cenário elevado é a mediana dos P90.
       <b>Avisos:</b> IPMA (api.ipma.pt), área BRG.
       <b>Radar:</b> composição de radares (RainViewer), estimativa da precipitação, não substitui o radar do IPMA nem mede a chuva no local; fora do limite de zoom 7 a imagem é ampliada.<br>
       <b>Satélite:</b> EUMETSAT View (Meteosat Terceira Geração, FCI e LI), imagem real, não é previsão.
@@ -971,6 +984,56 @@ $('eqDias').onchange=e=>{EQ.dias=+e.target.value||7;eqCarregar()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!EQ_TERRENO0&&$('eqOv').classList.contains('on')){$('eqOv').classList.remove('on');eqNovaFecha()}});
 window.addEventListener('online',()=>{if(eqVe())eqEnviarFila().then(eqCarregar)});
 
+
+/* ---- Meteorologia para incêndios rurais: vento (direção e velocidade), humidade relativa, temperatura e pressão ----
+   Open-Meteo forecast (best match, alta resolução), por blocos de 6 h alinhados com o semáforo. */
+const IR={d:null,ponto:'Braga (centro)'};
+const irRumo=g=>g==null?'':['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSO','SO','OSO','O','ONO','NO','NNO'][Math.round(((g%360)+360)%360/22.5)%16];
+const irSeta=g=>g==null?'':`<span class="irSeta" style="transform:rotate(${(g+180)%360}deg)" title="Vento de ${irRumo(g)} (${Math.round(g)}°)">↑</span>`;
+function irDirMedia(vs,ds){let x=0,y=0;vs.forEach((v,i)=>{if(v==null||ds[i]==null)return;const r=ds[i]*Math.PI/180;x+=v*Math.sin(r);y+=v*Math.cos(r)});return (x||y)?(Math.atan2(x,y)*180/Math.PI+360)%360:null}
+async function carregarIR(){
+  const [la,lo]=CFG.PONTOS[IR.ponto]||CFG.PONTOS['Braga (centro)'];
+  try{
+    IR.d=await getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl&past_hours=3&forecast_days=4&wind_speed_unit=kmh&timezone=${TZ}`,30000);
+    desenharIR();
+  }catch(e){$('irAgora').innerHTML=`<div class="vazio">Sem dados (${esc(e.message)}). Nova tentativa na próxima atualização.</div>`}
+}
+function desenharIR(){
+  const d=IR.d;if(!d)return;const c=d.current||{},h=d.hourly,t=h.time;
+  const agora=localNaive(new Date()).slice(0,13)+':00',ia=t.indexOf(agora);
+  const tend=ia>=3&&h.pressure_msl[ia]!=null&&h.pressure_msl[ia-3]!=null?h.pressure_msl[ia]-h.pressure_msl[ia-3]:null;
+  const f=(v,n=0)=>v==null?'–':Number(v).toFixed(n),a30=(v,lim,menor)=>v!=null&&(menor?v<lim:v>lim);
+  const tendTxt=tend==null?'':(Math.abs(tend)<0.5?'estável':(tend>0?'a subir ':'a descer ')+(tend>0?'+':'')+tend.toFixed(1)+' hPa/3 h');
+  $('irAgora').innerHTML=
+   `<div class="ik"><small>Vento agora</small><b>${irSeta(c.wind_direction_10m)} ${f(c.wind_speed_10m)}</b> km/h<span><br>de ${irRumo(c.wind_direction_10m)} · rajada ${f(c.wind_gusts_10m)} km/h</span></div>`+
+   `<div class="ik"><small>Humidade relativa</small><b class="${a30(c.relative_humidity_2m,30,1)?'irA':''}">${f(c.relative_humidity_2m)}</b> %</div>`+
+   `<div class="ik"><small>Temperatura</small><b class="${a30(c.temperature_2m,30)?'irA':''}">${f(c.temperature_2m,1)}</b> °C</div>`+
+   `<div class="ik"><small>Pressão (nível do mar)</small><b>${f(c.pressure_msl)}</b> hPa<span><br>${tendTxt}</span></div>`;
+  const i0=t.indexOf(agora);const L=[];
+  for(let k=0;k<CFG.HORAS/CFG.BLOCO;k++){
+    const idx=[...Array(CFG.BLOCO)].map((_,j)=>i0+CFG.BLOCO*k+j).filter(i=>i>=0&&i<t.length);if(!idx.length)break;
+    const g=(n)=>idx.map(i=>h[n][i]);const nn=a=>a.filter(x=>x!=null);
+    const tx=Math.max(...nn(g('temperature_2m'))),hr=Math.min(...nn(g('relative_humidity_2m'))),vs=g('wind_speed_10m'),vm=Math.max(...nn(vs)),rj=Math.max(...nn(g('wind_gusts_10m')));
+    const dir=irDirMedia(vs,g('wind_direction_10m')),p1=h.pressure_msl[idx[idx.length-1]],p0=h.pressure_msl[idx[0]];
+    const b30=[a30(tx,30),a30(hr,30,1),a30(vm,30)];
+    const ini=t[idx[0]],dia=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][new Date(ini).getDay()];
+    L.push(`<tr class="${b30.every(Boolean)?'ir3':''}"><td style="text-align:left">${dia} ${ini.slice(11,13)}–${String((+ini.slice(11,13)+CFG.BLOCO)%24).padStart(2,'0')}h</td><td class="${b30[0]?'ira':''}">${f(tx)}</td><td class="${b30[1]?'ira':''}">${f(hr)}</td><td>${irSeta(dir)} ${irRumo(dir)}</td><td class="${b30[2]?'ira':''}">${f(vm)}</td><td>${f(rj)}</td><td>${f(p1)} <span style="color:var(--suave)">${p1!=null&&p0!=null?((p1-p0)>=0?'+':'')+(p1-p0).toFixed(1):''}</span></td></tr>`);
+  }
+  $('irTab').innerHTML='<tr><th style="text-align:left">Bloco</th><th>T máx (°C)</th><th>HR mín (%)</th><th>Vento de</th><th>Vento médio máx (km/h)</th><th>Rajada máx (km/h)</th><th>Pressão (hPa) e variação</th></tr>'+L.join('');
+}
+
+/* Risco de incêndio rural do IPMA (RCM) para o concelho de Braga (DICO 0303), hoje e amanhã. */
+const RCM_NIV={1:['Reduzido','#4ade80'],2:['Moderado','#facc15'],3:['Elevado','#fb923c'],4:['Muito elevado','#ef4444'],5:['Máximo','#a21caf']};
+async function carregarRCM(){
+  try{
+    const r=await Promise.all([0,1].map(d=>getJSON(`https://api.ipma.pt/open-data/forecast/meteorology/rcm/rcm-d${d}.json`,20000)));
+    const cel=(j,rot)=>{const v=j.local&&j.local['0303']&&j.local['0303'].data.rcm,n=RCM_NIV[v];
+      return n?`<span class="rl">${rot} (${j.dataPrev.slice(8,10)}/${j.dataPrev.slice(5,7)})</span><span class="rc" style="background:${n[1]}${v===5?';color:#fff':''}">${n[0]}</span>`:`<span class="rl">${rot}: sem dados</span>`};
+    $('irRcm').innerHTML=`<b>Risco de incêndio rural (IPMA) · concelho de Braga:</b> ${cel(r[0],'hoje')} ${cel(r[1],'amanhã')} <span class="rl">· emitido ${esc(String(r[0].fileDate||'').slice(8,10)+'/'+String(r[0].fileDate||'').slice(5,7)+' '+String(r[0].fileDate||'').slice(11,16))}</span>`;
+  }catch(e){$('irRcm').innerHTML=`<span class="rl">Risco de incêndio rural (IPMA): sem dados (${esc(e.message)}).</span>`}
+}
+$('irPonto').innerHTML=Object.keys(CFG.PONTOS).map(n=>`<option>${esc(n)}</option>`).join('');
+$('irPonto').onchange=e=>{IR.ponto=e.target.value;carregarIR()};
 /* ---- Mapa: caixa de camadas e ecrã inteiro ---- */
 function camAbre(v){const p=$('camPainel');p.hidden=!v;$('btnCam').setAttribute('aria-expanded',String(!!v))}
 $('btnCam').onclick=()=>camAbre($('camPainel').hidden);$('camFecha').onclick=()=>camAbre(false);
@@ -1812,7 +1875,7 @@ desenharPrev();
 if(!EQ_TERRENO0){ // no modo terreno (conta das equipas, no telemóvel) não se carrega nada disto
 criarSat();
 carregarFreguesias().then(()=>{carregarAgua();try{eqDesenhar();eqDesenharMapa()}catch(e){}});
-carregarIfp();carregarAvisos();carregarModelos();carregarRio();
+carregarIfp();carregarAvisos();carregarModelos();carregarRio();carregarIR();setInterval(carregarIR,1800*1000);carregarRCM();setInterval(carregarRCM,3600*1000);
 setInterval(carregarIfp,CFG.ATUALIZAR.ifp*1000);
 setInterval(carregarAvisos,CFG.ATUALIZAR.av*1000);
 setInterval(carregarModelos,CFG.ATUALIZAR.mod*1000);
