@@ -316,11 +316,11 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 .eqt{font-size:13px;display:flex;gap:4px;flex-wrap:wrap;align-items:baseline}.eqh{margin-left:auto;color:#94a3b8;font-size:12px}.eqd{font-size:13px;color:#e2e8f0}.eqs{font-size:11px;color:#94a3b8}
 .eqb{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.eqlk{font-size:12px;color:#7dd3fc}.eqpend{font-size:10px;background:#7f1d1d;color:#fecaca;border-radius:4px;padding:1px 5px}
 .eqfecho{display:grid;gap:6px;border-top:1px dashed #334155;padding-top:6px}
-.eqMk{border-radius:50%;background:#64748b;border:2px solid #0b1220;color:#fff;font:700 10px/14px system-ui,sans-serif;text-align:center;box-shadow:0 0 0 1px #94a3b8}
-.eqMk.cur{background:#ea580c;line-height:22px;font-size:10px;box-shadow:0 0 0 2px #fff,0 0 10px 3px rgba(234,88,12,.8);animation:eqPulso 1.6s infinite}
+.eqMk{background:none;border:0}.eqMk span{position:absolute;transform:translate(-50%,-50%);background:var(--c);color:#fff;font:700 10px/1 system-ui,sans-serif;padding:3px 5px;border-radius:9px;border:2px solid #0b1220;white-space:nowrap;opacity:.55;box-shadow:0 0 0 1px #94a3b8}
+.eqMk.cur span{opacity:1;font-size:11px;padding:4px 6px;border-color:#fff;box-shadow:0 0 8px 2px var(--c);animation:eqPulso 1.6s infinite}
 #eqBox [hidden]{display:none!important}
 .eqPin i{position:absolute;left:2px;top:0;width:24px;height:24px;border-radius:50% 50% 50% 0;background:#ea580c;border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.5)}
-@keyframes eqPulso{50%{box-shadow:0 0 0 2px #fff,0 0 2px 1px rgba(234,88,12,.3)}}
+@keyframes eqPulso{50%{box-shadow:0 0 1px 0 var(--c)}}
 body.terreno>*:not(#eqOv):not(#loginOv):not(#usrOv):not(script){display:none!important}
 body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0}
 @media(max-width:560px){.eq2{grid-template-columns:1fr}}
@@ -455,6 +455,7 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
         <span><i style="background:#a78bfa;height:4px;vertical-align:3px"></i>Troço ARPSI (APA)</span>
         <span><i style="background:#0b1220;border:2px solid #a78bfa;border-radius:50%"></i>Cheia histórica (APA)</span>
         <span data-mod="ifprotec">Ocorrências Ifprotec: <i style="background:#38bdf8;border-radius:50%"></i>SMPC <i style="background:#f59e0b;border-radius:50%"></i>Sapadores <i style="background:#f87171;border-radius:50%"></i>Voluntários</span>
+        <span data-mod="equipas">Equipas SMPC: <i style="background:#ea580c;border-radius:4px"></i>EPC <i style="background:#16a34a;border-radius:4px"></i>EMIF <i style="background:#2563eb;border-radius:4px"></i>ERAS</span>
       </div>
       <div class="ctl" style="margin-top:8px">
         <label>Camada oficial (GeoJSON, p. ex. PMEPCB/ARPSI):
@@ -788,6 +789,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')$('usrOv').classList
    Quem tem "equipas" em editar e não vê o mapa do painel (conta EQUIPAS) entra só neste ecrã ("modo terreno").
    Quem só vê "equipas" (CorMPC, SMPC) tem o botão "Equipas" e a camada no mapa. */
 const EQ={reg:[],equipas:[],viaturas:[],dias:7,ok:false,vistos:null,pos:null,map:null,mk:null,circ:null,watch:null,abrir:null,FILA:'smpc_eq_fila',T:null};
+const EQ_TIPOS={EPC:{nome:'Equipa de Proteção Civil',cor:'#ea580c'},EMIF:{nome:'Equipa Municipal de Intervenção Florestal',cor:'#16a34a'},ERAS:{nome:'Equipa de Reconhecimento e Avaliação de Situação',cor:'#2563eb'}};
+const EQ_EQUIPAS=['EPC','EMIF','ERAS1','ERAS2','ERAS3','ERAS4']; // as únicas que se podem escolher no telemóvel
+function eqCod(r){const e=String((r&&r.equipa)||'').trim(),m=e.match(/^ERAS\s*([1-9])/i);
+  return m?'ERAS'+m[1]:/^ERAS|reconhec/i.test(e)?'ERAS':/^EMIF|florest/i.test(e)?'EMIF':/^EPC|prote/i.test(e)?'EPC':e.toUpperCase().slice(0,6)}
+const eqTipo=c=>EQ_TIPOS[String(c).replace(/\d+$/,'')]||{nome:c,cor:'#64748b'};
+const eqNomeCompleto=c=>{const t=eqTipo(c),n=String(c).match(/\d+$/);return t.nome+(n?' '+n[0]:'')};
+const eqSigla=r=>{const c=eqCod(r);return `<b style="color:${eqTipo(c).cor}">${esc(c)}</b>`};
 const eqTerreno=()=>{const s=AUTH.s;return !!(s&&(s.editar||[]).includes('equipas')&&!(s.ver||[]).includes('mapa'))};
 const EQ_TERRENO0=eqTerreno(); // modo com que a página arrancou: no modo terreno não se carregam modelos, satélite, etc.
 const eqVe=()=>temAcesso('equipas'),eqEdita=()=>podeEditar('equipas');
@@ -829,7 +837,7 @@ async function eqCarregar(){
     if(!j.ok)throw new Error(j.erro==='sem_acesso'?'sem permissão':j.erro||'erro');
     const novos=(j.registos||[]).filter(r=>r.estado==='Em curso'&&EQ.vistos&&!EQ.vistos.has(r.id));
     EQ.vistos=new Set((j.registos||[]).map(r=>r.id));
-    if(!EQ_TERRENO0)novos.forEach(r=>mostrarAlerta('Nova ocorrência SMPC',`<b>Nova ocorrência SMPC: ${esc(r.equipa||'')}</b><br>${esc(r.descricao||'')} · início ${eqHM(r.inicio)}${eqFreg(r)?' · '+esc(eqFreg(r)):''}`));
+    if(!EQ_TERRENO0)novos.forEach(r=>mostrarAlerta('Nova ocorrência SMPC',`<b>Nova ocorrência SMPC: ${esc(eqCod(r))}</b> (${esc(eqNomeCompleto(eqCod(r)))})<br>${esc(r.descricao||'')} · início ${eqHM(r.inicio)}${eqFreg(r)?' · '+esc(eqFreg(r)):''}`));
     EQ.reg=j.registos||[];EQ.equipas=j.equipas||[];EQ.viaturas=j.viaturas||[];EQ.ok=true;
     $('eqAtual').textContent='Atualizado às '+fmtHM(new Date());
   }catch(e){if(e.message!=='sessao')$('eqAtual').textContent='Sem ligação ao servidor ('+fmtHM(new Date())+'). A lista pode estar desatualizada.'}
@@ -846,7 +854,7 @@ function eqDesenhar(){
   eqQuadro();
   const l=eqLista(),cur=l.filter(r=>r.estado==='Em curso'),fim=l.filter(r=>r.estado!=='Em curso');
   const card=r=>{const fr=eqFreg(r),ec=r.estado==='Em curso';
-    return `<div class="eqc ${ec?'cur':''}" data-id="${esc(r.id)}"><div class="eqt"><b>${esc(r.equipa||'')}</b>${r.viatura?' · '+esc(r.viatura):''}${r.pend?' <span class="eqpend">por enviar</span>':''}<span class="eqh mono">${eqHM(r.inicio)}${!ec&&r.conclusao?' → '+eqHM(r.conclusao).slice(-5):''}</span></div>
+    return `<div class="eqc ${ec?'cur':''}" data-id="${esc(r.id)}"><div class="eqt">${eqSigla(r)}${r.viatura?' · '+esc(r.viatura):''}${r.pend?' <span class="eqpend">por enviar</span>':''}<span class="eqh mono">${eqHM(r.inicio)}${!ec&&r.conclusao?' → '+eqHM(r.conclusao).slice(-5):''}</span></div>
       <div class="eqd">${esc(r.descricao||'')}</div>
       <div class="eqs">${fr?esc(fr)+' · ':''}${r.lat!=null?(+r.lat).toFixed(5)+', '+(+r.lon).toFixed(5):''}${r.precisao_m?' (±'+Math.round(r.precisao_m)+' m)':''}${!ec&&r.km_fecho!=null&&r.km_fecho!==''?' · <b>'+esc(r.km_fecho)+' km</b>':''}${!ec&&r.observacoes?' · '+esc(r.observacoes):''}</div>
       <div class="eqb">${r.lat!=null?`<a class="eqlk" href="https://www.google.com/maps?q=${+r.lat},${+r.lon}" target="_blank" rel="noopener">Abrir no mapa</a>`:''}${!EQ_TERRENO0&&r.lat!=null?' <button class="sec eqVer" type="button">Ver no painel</button>':''}${ec&&eqEdita()?' <button class="eqConc" type="button">Concluir</button>':''}</div>
@@ -867,7 +875,7 @@ function eqQuadro(){ // quadro "Ocorrências SMPC" no painel: equipa, hora de in
   $('eqResumo').innerHTML=`<b>${nc}</b> em curso · <b>${l.length-nc}</b> concluídas nas últimas 24 h`;
   if(!l.length){q.innerHTML='<div class="vazio">Sem ocorrências das equipas nas últimas 24 h.</div>';return}
   q.innerHTML=l.map((r,i)=>{const ec=r.estado==='Em curso',fr=eqFreg(r);
-    return `<div class="oc" data-i="${i}" title="${esc(r.descricao||'')}" style="${ec?'':'opacity:.6'}"><div class="hr mono">${String(r.inicio||'').slice(11,16)||'--:--'}${diaOc({data:r.inicio})?`<span style="display:block;font-size:9px;color:#64748b">${diaOc({data:r.inicio})}</span>`:''}</div><div><span class="nt" style="color:${ec?'#fb923c':'inherit'}">${esc(r.equipa||'')}</span><div class="es">${fr?esc(fr):'freguesia a calcular'} · ${ec?'em curso':'concluída '+String(r.conclusao||'').slice(11,16)}</div></div></div>`}).join('');
+    return `<div class="oc" data-i="${i}" title="${esc(r.descricao||'')}" style="${ec?'':'opacity:.6'}"><div class="hr mono">${String(r.inicio||'').slice(11,16)||'--:--'}${diaOc({data:r.inicio})?`<span style="display:block;font-size:9px;color:#64748b">${diaOc({data:r.inicio})}</span>`:''}</div><div><span class="nt" style="color:${eqTipo(eqCod(r)).cor}">${esc(eqCod(r))}</span><div class="es">${fr?esc(fr):'freguesia a calcular'} · ${ec?'em curso':'concluída '+String(r.conclusao||'').slice(11,16)}</div></div></div>`}).join('');
   q.querySelectorAll('.oc').forEach(e=>e.onclick=()=>{const r=l[+e.dataset.i];if(r.lat==null)return;try{$('chkEq').checked=true;if(!gEq)eqDesenharMapa();gEq.addTo(mapa);mapa.flyTo([+r.lat,+r.lon],16)}catch(x){}});
 }
 function eqFechoForm(c){
@@ -902,7 +910,9 @@ function eqNovaAbre(){
       $(id+'Txt').style.display=el.value?'none':'';el.style.display=''}else{el.style.display='none';$(id+'Txt').style.display=''}
     if(lista.length&&v&&!lista.includes(v)){el.value='';$(id+'Txt').style.display=''}
     $(id+'Txt').value=lista.includes(v)?'':v};
-  sel('eqEquipa',EQ.equipas.length?EQ.equipas:[],'smpc_eq_equipa');sel('eqViat',EQ.viaturas,'smpc_eq_viat');
+  {const v=eqCod({equipa:LS('smpc_eq_equipa','')});$('eqEquipa').innerHTML=EQ_EQUIPAS.map(c=>`<option value="${c}"${c===v?' selected':''}>${c} · ${esc(eqNomeCompleto(c))}</option>`).join('');
+   $('eqEquipa').style.display='';$('eqEquipaTxt').style.display='none';$('eqEquipaTxt').value=''}
+  sel('eqViat',EQ.viaturas,'smpc_eq_viat');
   $('eqDesc').value='';$('eqIni').value=localNaive(new Date());EQ.pos=null;$('eqPosTxt').textContent='Sem localização.';$('eqReg').disabled=true;
   $('eqNova').hidden=false;$('eqNovaBtn').style.display='none';
   setTimeout(()=>{eqMapaCria();eqGps()},30);
@@ -942,10 +952,10 @@ function eqGps(){
 }
 $('eqGps').onclick=()=>{if(EQ.watch!=null)eqGpsPara();else eqGps()};
 $('eqNovaBtn').onclick=eqNovaAbre;$('eqCanc').onclick=eqNovaFecha;
-['eqEquipa','eqViat'].forEach(id=>$(id).onchange=()=>{$(id+'Txt').style.display=$(id).value?'none':''});
+['eqViat'].forEach(id=>$(id).onchange=()=>{$(id+'Txt').style.display=$(id).value?'none':''});
 $('eqReg').onclick=async ev=>{
   const val=id=>$(id).style.display!=='none'&&$(id).value?$(id).value:$(id+'Txt').value.trim();
-  const equipa=val('eqEquipa'),viatura=val('eqViat'),desc=$('eqDesc').value.trim();
+  const equipa=$('eqEquipa').value,viatura=val('eqViat'),desc=$('eqDesc').value.trim();
   if(!EQ.pos){eqMsg('Falta a localização: use o GPS ou toque no mapa.','err');return}
   if(!equipa){eqMsg('Indique a equipa.','err');return}
   if(desc.length<3){eqMsg('Escreva uma descrição curta da ocorrência.','err');return}
@@ -965,9 +975,9 @@ function eqDesenharMapa(){
   try{if(!gEq){gEq=L.layerGroup();if($('chkEq').checked)gEq.addTo(mapa)}}catch(e){return}
   gEq.clearLayers();
   eqLista().forEach(r=>{if(r.lat==null)return;const ec=r.estado==='Em curso',fr=eqFreg(r);
-    L.marker([+r.lat,+r.lon],{icon:L.divIcon({className:'eqMk'+(ec?' cur':''),html:ec?'EQ':'✓',iconSize:ec?[26,26]:[18,18],iconAnchor:ec?[13,13]:[9,9]}),zIndexOffset:ec?500:0,keyboard:false})
-      .bindPopup(`<b>${esc(r.descricao||'')}</b><br>${esc(r.equipa||'')}${r.viatura?' · '+esc(r.viatura):''}<br>${ec?'Em curso desde '+eqHM(r.inicio):'Concluída: '+eqHM(r.inicio)+' → '+eqHM(r.conclusao)}${fr?'<br>'+esc(fr):''}${!ec&&r.km_fecho!=null&&r.km_fecho!==''?'<br>Km de fecho: '+esc(r.km_fecho):''}${r.observacoes?'<br>Obs.: '+esc(r.observacoes):''}${r.precisao_m?'<br><span style="color:#94a3b8">Localização ±'+Math.round(r.precisao_m)+' m</span>':''}`)
-      .bindTooltip(`${ec?'🟠':'✓'} ${esc(r.equipa||'')}: ${esc(String(r.descricao||'').slice(0,60))}`).addTo(gEq)});
+    L.marker([+r.lat,+r.lon],{icon:L.divIcon({className:'eqMk'+(ec?' cur':''),html:`<span style="--c:${eqTipo(eqCod(r)).cor}">${esc(eqCod(r))}</span>`,iconSize:[0,0],iconAnchor:[0,0]}),zIndexOffset:ec?500:0,keyboard:false})
+      .bindPopup(`<b>${esc(r.descricao||'')}</b><br>${eqSigla(r)} · ${esc(eqNomeCompleto(eqCod(r)))}${r.viatura?' · '+esc(r.viatura):''}<br>${ec?'Em curso desde '+eqHM(r.inicio):'Concluída: '+eqHM(r.inicio)+' → '+eqHM(r.conclusao)}${fr?'<br>'+esc(fr):''}${!ec&&r.km_fecho!=null&&r.km_fecho!==''?'<br>Km de fecho: '+esc(r.km_fecho):''}${r.observacoes?'<br>Obs.: '+esc(r.observacoes):''}${r.precisao_m?'<br><span style="color:#94a3b8">Localização ±'+Math.round(r.precisao_m)+' m</span>':''}`)
+      .bindTooltip(`${esc(eqCod(r))}${ec?'':' (concluída)'}: ${esc(String(r.descricao||'').slice(0,60))}`).addTo(gEq)});
 }
 $('chkEq').onchange=()=>{try{if(!gEq)eqDesenharMapa();$('chkEq').checked?gEq.addTo(mapa):mapa.removeLayer(gEq)}catch(e){}};
 
