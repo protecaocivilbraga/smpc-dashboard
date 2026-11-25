@@ -73,6 +73,24 @@ main{padding:8px 12px 14px;display:grid;gap:8px}
 .irRcm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:12px}.irRcm .rc{border-radius:7px;padding:5px 10px;font-weight:700;color:#0b1220}.irRcm .rl{color:var(--suave)}
 .irTab{border-collapse:collapse;width:100%;font-size:11.5px}.irTab th,.irTab td{padding:3px 5px;border-bottom:1px solid var(--linha);text-align:center;white-space:nowrap}.irTab th{color:var(--suave);font-weight:500}
 .irTab td.ira,.irA{color:#f87171;font-weight:700}.irTab tr.ir3 td{background:#7f1d1d55}.irSeta{display:inline-block;font-size:13px;line-height:1}
+.palco{position:relative;display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:8px;align-items:stretch;margin-bottom:8px}
+#palco #mapa{height:clamp(460px,calc(100vh - 290px),1000px)}
+#palco .card.mapaFull #mapa{height:calc(100vh - 96px)}
+#temas{display:flex;flex-direction:column;gap:6px}
+#temas button{position:relative;text-align:left;background:var(--card);color:var(--texto);border:1px solid var(--linha);border-radius:9px;padding:9px 10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+#temas button small{display:block;font-weight:400;font-size:10.5px;color:var(--suave);margin-top:2px}
+#temas button:hover,#temas button.on{border-color:var(--azul)}#temas button.on{background:#0f2744}
+#temas button[data-n="1"]::after,#temas button[data-n="2"]::after{content:'';position:absolute;top:8px;right:8px;width:10px;height:10px;border-radius:50%;background:#facc15}
+#temas button[data-n="2"]::after{background:#ef4444;animation:temaPulso 1.2s infinite}
+@keyframes temaPulso{50%{opacity:.25}}
+#temaPainel{grid-column:1/-1;background:var(--card);border:1px solid var(--linha);border-radius:10px;display:flex;flex-direction:column}
+#temaPainel[hidden]{display:none}
+#temaPainel .tpH{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--linha)}#temaPainel .tpH button{background:none;border:0;color:var(--suave);font-size:22px;cursor:pointer;line-height:1}
+#temaPainel .tpC{padding:8px;display:none;gap:8px}#temaPainel .tpC.on{display:grid;align-content:start}
+#temaPainel .tpC[data-tema="cheias"].on{grid-template-columns:repeat(auto-fit,minmax(min(520px,100%),1fr));align-items:start}#temaPainel .tpC[data-tema="geral"].on{grid-template-columns:minmax(0,1fr)}
+.kpi.tema{cursor:pointer}.kpi.tema:hover{border-color:var(--azul)}.kpi.al1{border-color:#facc15}.kpi.al2{border-color:#ef4444;animation:kpiPulso 1.6s infinite}@keyframes kpiPulso{50%{box-shadow:0 0 0 3px rgba(239,68,68,.45)}}
+.kpi .s b{color:var(--texto)}
+@media(max-width:1000px){.palco{grid-template-columns:minmax(0,1fr)}#temas{flex-direction:row;flex-wrap:wrap}#temas button{flex:1 1 140px}}
 .mapaInfo{min-height:14px}
 .card.mapaFull{position:fixed;inset:0;z-index:9500;border-radius:0;overflow:auto;max-width:none}
 .card.mapaFull #mapa{height:calc(100vh - 96px)}
@@ -426,6 +444,19 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
 
 <main>
   <section class="kpis" id="kpis" data-mod="kpis"></section>
+  <section class="palco" id="palco">
+    <div id="palcoMapa"></div>
+    <nav id="temas" aria-label="Quadros por tema">
+      <button type="button" data-tema="geral">Geral<small>avisos IPMA · fontes</small></button>
+      <button type="button" data-tema="cheias">Chuva e cheias<small>semáforo · previsão · caudal · inundações</small></button>
+      <button type="button" data-tema="incendios">Incêndios rurais<small>vento · humidade · risco IPMA</small></button>
+      <button type="button" data-tema="ocorrencias">Ocorrências<small>Ifprotec · equipas SMPC</small></button>
+    </nav>
+    <aside id="temaPainel" hidden aria-labelledby="tpTit">
+      <div class="tpH"><b id="tpTit"></b><button type="button" id="tpFecha" title="Fechar (Esc)">×</button></div>
+      <div class="tpC" data-tema="geral"></div><div class="tpC" data-tema="cheias"></div><div class="tpC" data-tema="incendios"></div><div class="tpC" data-tema="ocorrencias"></div>
+    </aside>
+  </section>
 
   <section class="grid">
     <div style="display:grid;gap:8px;min-width:0">
@@ -757,6 +788,7 @@ function aplicarPerfil(){
   try{$('btnBR').classList.toggle('semAcesso',!(AUTH.s&&AUTH.s.admin))}catch(e){}
   try{rpMarcaBotoes()}catch(e){}
   try{eqAplicar()}catch(e){}
+  setTimeout(()=>{try{temaMarca()}catch(e){}},0);
   setTimeout(()=>{try{pmReservado()}catch(e){}},0);
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
@@ -867,6 +899,7 @@ function eqLista(){ // registos do servidor + o que está na fila deste telemóv
 function eqFreg(r){try{return S.freg&&r.lat!=null?freguesiaDe({lat:+r.lat,lon:+r.lon}):''}catch(e){return ''}}
 function eqDesenhar(){
   eqQuadro();
+  if(!EQ_TERRENO0)try{desenharKpis()}catch(e){}
   const l=eqLista(),cur=l.filter(r=>r.estado==='Em curso'),fim=l.filter(r=>r.estado!=='Em curso');
   const card=r=>{const fr=eqFreg(r),ec=r.estado==='Em curso';
     return `<div class="eqc ${ec?'cur':''}" data-id="${esc(r.id)}"><div class="eqt">${eqSigla(r)}${r.viatura?' · '+esc(r.viatura):''}${r.pend?' <span class="eqpend">por enviar</span>':''}<span class="eqh mono">${eqHM(r.inicio)}${!ec&&r.conclusao?' → '+eqHM(r.conclusao).slice(-5):''}</span></div>
@@ -1016,9 +1049,11 @@ function desenharIR(){
     const tx=Math.max(...nn(g('temperature_2m'))),hr=Math.min(...nn(g('relative_humidity_2m'))),vs=g('wind_speed_10m'),vm=Math.max(...nn(vs)),rj=Math.max(...nn(g('wind_gusts_10m')));
     const dir=irDirMedia(vs,g('wind_direction_10m')),p1=h.pressure_msl[idx[idx.length-1]],p0=h.pressure_msl[idx[0]];
     const b30=[a30(tx,30),a30(hr,30,1),a30(vm,30)];
+    if(k<4){const R=IR.acc=k===0?{t:-99,hr:999,v:0,r30:false}:IR.acc;R.t=Math.max(R.t,tx);R.hr=Math.min(R.hr,hr);R.v=Math.max(R.v,vm);R.r30=R.r30||b30.every(Boolean);if(k===3)IR.r24=R}
     const ini=t[idx[0]],dia=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][new Date(ini).getDay()];
     L.push(`<tr class="${b30.every(Boolean)?'ir3':''}"><td style="text-align:left">${dia} ${ini.slice(11,13)}–${String((+ini.slice(11,13)+CFG.BLOCO)%24).padStart(2,'0')}h</td><td class="${b30[0]?'ira':''}">${f(tx)}</td><td class="${b30[1]?'ira':''}">${f(hr)}</td><td>${irSeta(dir)} ${irRumo(dir)}</td><td class="${b30[2]?'ira':''}">${f(vm)}</td><td>${f(rj)}</td><td>${f(p1)} <span style="color:var(--suave)">${p1!=null&&p0!=null?((p1-p0)>=0?'+':'')+(p1-p0).toFixed(1):''}</span></td></tr>`);
   }
+  try{desenharKpis()}catch(e){}
   $('irTab').innerHTML='<tr><th style="text-align:left">Bloco</th><th>T máx (°C)</th><th>HR mín (%)</th><th>Vento de</th><th>Vento médio máx (km/h)</th><th>Rajada máx (km/h)</th><th>Pressão (hPa) e variação</th></tr>'+L.join('');
 }
 
@@ -1027,6 +1062,7 @@ const RCM_NIV={1:['Reduzido','#4ade80'],2:['Moderado','#facc15'],3:['Elevado','#
 async function carregarRCM(){
   try{
     const r=await Promise.all([0,1].map(d=>getJSON(`https://api.ipma.pt/open-data/forecast/meteorology/rcm/rcm-d${d}.json`,20000)));
+    IR.rcm=r.map(j=>j.local&&j.local['0303']&&j.local['0303'].data.rcm);try{desenharKpis()}catch(e){}
     const cel=(j,rot)=>{const v=j.local&&j.local['0303']&&j.local['0303'].data.rcm,n=RCM_NIV[v];
       return n?`<span class="rl">${rot} (${j.dataPrev.slice(8,10)}/${j.dataPrev.slice(5,7)})</span><span class="rc" style="background:${n[1]}${v===5?';color:#fff':''}">${n[0]}</span>`:`<span class="rl">${rot}: sem dados</span>`};
     $('irRcm').innerHTML=`<b>Risco de incêndio rural (IPMA) · concelho de Braga:</b> ${cel(r[0],'hoje')} ${cel(r[1],'amanhã')} <span class="rl">· emitido ${esc(String(r[0].fileDate||'').slice(8,10)+'/'+String(r[0].fileDate||'').slice(5,7)+' '+String(r[0].fileDate||'').slice(11,16))}</span>`;
@@ -1034,6 +1070,40 @@ async function carregarRCM(){
 }
 $('irPonto').innerHTML=Object.keys(CFG.PONTOS).map(n=>`<option>${esc(n)}</option>`).join('');
 $('irPonto').onchange=e=>{IR.ponto=e.target.value;carregarIR()};
+
+/* ---- Temas: o mapa fica grande e os quadros abrem por tema num painel lateral ---- */
+const TEMAS={geral:'Geral',cheias:'Chuva e cheias',incendios:'Incêndios rurais',ocorrencias:'Ocorrências'};
+(function temaMontar(){
+  const g=document.querySelector('section.grid');if(!g)return;
+  $('palcoMapa').appendChild($('mapa').closest('.card'));
+  const para=(t,el)=>{if(el)document.querySelector(`#temaPainel .tpC[data-tema="${t}"]`).appendChild(el)};
+  const card=sel=>document.querySelector(sel);
+  para('geral',card('section.grid .card[data-mod="avisos"]'));
+  ['semaforo','previsao:not(#cardIR)','caudal','freguesias'].forEach(m=>para('cheias',card(`section.grid .card[data-mod="${m.split(':')[0]}"]${m.includes(':')?':'+m.split(':').slice(1).join(':'):''}`)));
+  para('cheias',$('cardPrev'));para('incendios',$('cardIR'));para('ocorrencias',document.querySelector('.parOc'));
+  para('geral',document.querySelector('main > section.card[data-mod="fontes"]'));
+  g.style.display='none';
+})();
+function temaAbre(t,semRolar){
+  const p=$('temaPainel'),aberto=!p.hidden&&p.dataset.tema===t;
+  if(aberto){temaFecha();return}
+  p.hidden=false;p.dataset.tema=t;$('tpTit').textContent=TEMAS[t];
+  p.querySelectorAll('.tpC').forEach(c=>c.classList.toggle('on',c.dataset.tema===t));
+  document.querySelectorAll('#temas button').forEach(b=>b.classList.toggle('on',b.dataset.tema===t));
+  try{localStorage.setItem('smpc_tema',t)}catch(e){}
+  if(!semRolar)setTimeout(()=>p.scrollIntoView({behavior:'smooth',block:'start'}),30);
+}
+function temaFecha(){$('temaPainel').hidden=true;document.querySelectorAll('#temas button').forEach(b=>b.classList.remove('on'));try{localStorage.setItem('smpc_tema','')}catch(e){}}
+function temaMarca(){ // botões sem quadros visíveis para o perfil ficam escondidos; alerta cruzado nos botões
+  const N=temaNiveis();
+  document.querySelectorAll('#temas button').forEach(b=>{const t=b.dataset.tema;
+    const vis=[...document.querySelectorAll(`#temaPainel .tpC[data-tema="${t}"] [data-mod]`)].some(e=>!e.classList.contains('semAcesso')&&!e.closest('.semAcesso'));
+    b.style.display=vis?'':'none';b.dataset.n=N[t]!=null?N[t]:0;
+    b.title=N[t]===2?'Condições elevadas neste tema':N[t]===1?'Condições a acompanhar neste tema':''});
+}
+document.querySelectorAll('#temas button').forEach(b=>b.onclick=()=>temaAbre(b.dataset.tema));
+$('tpFecha').onclick=temaFecha;
+try{const t0=localStorage.getItem('smpc_tema');if(t0&&TEMAS[t0]&&!EQ_TERRENO0)setTimeout(()=>{const b=document.querySelector(`#temas button[data-tema="${t0}"]`);if(b&&b.style.display!=='none')temaAbre(t0,true)},800)}catch(e){}
 /* ---- Mapa: caixa de camadas e ecrã inteiro ---- */
 function camAbre(v){const p=$('camPainel');p.hidden=!v;$('btnCam').setAttribute('aria-expanded',String(!!v))}
 $('btnCam').onclick=()=>camAbre($('camPainel').hidden);$('camFecha').onclick=()=>camAbre(false);
@@ -1650,27 +1720,37 @@ async function carregarRio(){
 function corNivel(n){return['#10b981','#fbbf24','#f43f5e'][n]}
 function dataAtual(){return S.calc&&S.calc[S.ponto]?S.calc[S.ponto]:null}
 function desenharTudo(){try{munMarca()}catch(e){}desenharChuva();desenharBlocos();desenharGraficos();desenharTabela();desenharRisco();desenharKpis();desenharAvisos();desenharPrev();verificarProntidao();ctMarca();anMarca()}
+function temaNiveis(){ // 0 normal, 1 atenção, 2 elevado — chuva/vento e incêndios rurais, todo o ano
+  const C=S.calc&&S.calc['Braga (centro)'];const av=avisosRel();
+  const avN=re=>av.filter(a=>re.test(a.tipo||'')).reduce((m,a)=>Math.max(m,{yellow:1,orange:2,red:2}[a.nivel]||0),0);
+  let ch=avN(/precipita|vento|trovoada/i);
+  if(C){const X=C.blocos;ch=Math.max(ch,Math.max(...X.slice(0,4).map((_,i)=>nivelGeral(X,i))))}
+  let inc=avN(/quente/i);const r=IR.rcm||[];const rm=Math.max(r[0]||0,r[1]||0);inc=Math.max(inc,rm>=4?2:rm===3?1:0);
+  if(IR.r24){if(IR.r24.r30)inc=2;else if(IR.r24.hr<30||IR.r24.v>30)inc=Math.max(inc,1)}
+  return{cheias:ch,incendios:inc};
+}
 function desenharKpis(){
-  const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');
-  const cel=(t,v,s,c)=>`<div class="kpi"><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
+  const C=S.calc&&S.calc['Braga (centro)'];const k=$('kpis');const N=temaNiveis();
+  const cel=(t,v,s,c,tema,al)=>`<div class="kpi${tema?' tema':''}${al?' al'+al:''}"${tema?` data-tema="${tema}" role="button" tabindex="0" title="Abrir os quadros deste tema"`:''}><div class="t">${t}</div><div class="v ${c||''}">${v}</div><div class="s">${s||''}</div></div>`;
   let h='';
-  if(C){
-    const X=C.blocos,n0=nivelGeral(X,0),nmax=Math.max(...X.slice(0,4).map((_,i)=>nivelGeral(X,i)));
-    const a24=sum(X.slice(0,4).map(valChuva)),rmax=Math.max(...X.slice(0,8).map(x=>x.raj90));
-    h+=cel('Nível agora (bloco atual)',NOMEN[n0],`Próximas 24 h: pior nível ${NOMEN[nmax]}`,'c'+n0);
-    h+=cel('Chuva próximas 24 h',a24.toFixed(0)+' mm',S.cen==='p90'?'cenário elevado (P90)':'consenso de 6 modelos');
-    h+=cel('Chuva 48 h',(S.cen==='p90'?C.total48.p90:C.total48.cons).toFixed(0)+' mm',`intervalo entre modelos ${C.total48.min.toFixed(0)} a ${C.total48.max.toFixed(0)}`);
-    h+=cel('Máx. em 24 h consecutivas',C.max24.cons.toFixed(0)+' mm',`${C.max24.min.toFixed(0)} a ${C.max24.max.toFixed(0)} entre modelos`);
-    h+=cel('Rajada máxima (P90)',rmax.toFixed(0)+' km/h','nas próximas 48 h');
-  } else h+=cel('Modelos','…','a carregar');
-  const av=avisosRel();const top=av.reduce((m,a)=>Math.max(m,{yellow:1,orange:2,red:3}[a.nivel]||0),0);
-  h+=cel('Avisos IPMA',av.length||'0',av.length?`mais alto: ${['','amarelo','laranja','vermelho'][top]} · ${av.filter(avVigor).length} em vigor, ${av.filter(a=>!avVigor(a)).length} previstos`:'sem avisos para Braga',top>=2?'c2':top==1?'c1':'c0');
-  const relI=S.ifp.filter(o=>CFG.RELACIONADAS.test(o.natureza||'')).length;
+  if(C){const X=C.blocos,n0=nivelGeral(X,0),nmax=Math.max(...X.slice(0,4).map((_,i)=>nivelGeral(X,i)));
+    h+=cel('Nível agora (bloco atual)',NOMEN[n0],`Próximas 24 h: pior nível ${NOMEN[nmax]}`,'c'+n0,'cheias');
+  } else h+=cel('Nível agora','…','a carregar');
   const nI=S.ifpRes?(S.ifpRes.emCurso!=null?S.ifpRes.emCurso:S.ifp.length):null;
-  h+=!temAcesso('ifprotec')?'':CFG.IFPROTEC?cel('Ocorrências em curso',nI==null?'…':nI,nI==null?'a carregar Ifprotec':`Ifprotec (alerta, despacho, em resolução, em curso) · ${relI} relacionadas com chuva/vento`):cel('Ocorrências em curso','–','Ifprotec por configurar');
-  if(S.rio&&S.rio.daily){const r=S.rio.daily.river_discharge;const hoje=r[0],mx=Math.max(...r),i=r.indexOf(mx);
-    h+=cel('Caudal modelado (pico 7 d)',mx.toFixed(1)+' m³/s',`${S.rio.daily.time[i].slice(8,10)}/${S.rio.daily.time[i].slice(5,7)} · hoje ${hoje.toFixed(1)}`)}
+  const nE=(typeof eqVe==='function'&&eqVe()&&EQ.ok)?eqLista().filter(r=>r.estado==='Em curso').length:null;
+  if(temAcesso('ifprotec')||nE!=null)h+=cel('Ocorrências em curso',`${temAcesso('ifprotec')?(nI==null?'…':nI):''}${nE!=null?`<span style="font-size:14px;color:#fb923c"> ${temAcesso('ifprotec')?'· ':''}${nE} SMPC</span>`:''}`,
+     `${temAcesso('ifprotec')?'Ifprotec (alerta, despacho, em resolução, em curso)':''}${nE!=null?(temAcesso('ifprotec')?' · ':'')+'equipas no terreno':''}`,'','ocorrencias');
+  const av=avisosRel(),avT=av.filter(a=>/precipita|vento|trovoada/i.test(a.tipo||''));
+  if(C){const X=C.blocos,a24=sum(X.slice(0,4).map(valChuva)),rmax=Math.max(...X.slice(0,8).map(x=>x.raj90));
+    let cau='';if(S.rio&&S.rio.daily){const r=S.rio.daily.river_discharge;cau=` · caudal pico <b>${Math.max(...r).toFixed(1)}</b> m³/s`}
+    h+=cel('Chuva e vento',`${a24.toFixed(0)} mm <span style="font-size:13px">em 24 h</span>`,`rajada máx. <b>${rmax.toFixed(0)}</b> km/h (48 h) · chuva 48 h <b>${(S.cen==='p90'?C.total48.p90:C.total48.cons).toFixed(0)}</b> mm${cau} · avisos chuva/vento/trovoada: <b>${avT.length}</b>`,'c'+N.cheias,'cheias',N.cheias);
+  } else h+=cel('Chuva e vento','…','a carregar modelos','', 'cheias');
+  {const r=IR.rcm||[],nm=v=>RCM_NIV[v]?RCM_NIV[v][0]:'–',x=IR.r24;
+   h+=cel('Incêndios rurais',`<span style="font-size:17px">${r[0]?'Risco '+nm(r[0]):'Risco …'}</span>`,
+     `amanhã <b>${nm(r[1])}</b> (IPMA)${x?` · 24 h: HR mín <b>${x.hr.toFixed(0)}</b> % · vento máx <b>${x.v.toFixed(0)}</b> km/h · T máx <b>${x.t.toFixed(0)}</b> °C${x.r30?' · <b style="color:#f87171">regra dos 30</b>':''}`:''}`,'c'+N.incendios,'incendios',N.incendios)}
   k.innerHTML=h;
+  k.querySelectorAll('.kpi.tema').forEach(e=>{e.onclick=()=>temaAbre(e.dataset.tema);e.onkeydown=ev=>{if(ev.key==='Enter')temaAbre(e.dataset.tema)}});
+  try{temaMarca()}catch(e){}
 }
 function desenharBlocos(){
   const C=dataAtual();if(!C){$('blocos').innerHTML='<div class="vazio" style="grid-column:1/-1">A carregar…</div>';return}
