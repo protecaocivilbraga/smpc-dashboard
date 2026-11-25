@@ -860,7 +860,19 @@ function eqAplicar(){
   $('eqNovaBtn').style.display=eqEdita()?'':'none';$('eqPer').style.display=EQ_TERRENO0?'none':'';
   $('eqSessNome').textContent=AUTH.s?AUTH.s.nome:'';
   if(EQ_TERRENO0)$('eqOv').classList.add('on');
-  if(eqVe()&&!EQ.T){EQ.T=setInterval(()=>{eqEnviarFila().then(eqCarregar)},60000);setTimeout(()=>{eqEnviarFila().then(eqCarregar)},0)}
+  if(eqVe()&&!EQ.T){EQ.T=setInterval(()=>{eqEnviarFila().then(eqCarregar)},EQ_TERRENO0?60000:120000);setTimeout(()=>{eqEnviarFila().then(eqCarregar)},0);
+    if(!EQ_TERRENO0){EQ.TV=setInterval(eqVerifica,12000);setTimeout(eqVerifica,0);document.addEventListener('visibilitychange',()=>{if(!document.hidden)eqVerifica()})}}
+}
+
+/* Verificação rápida (12 s): o servidor devolve só um contador de alterações; a lista só é descarregada quando muda.
+   Se o Equipas.gs ainda não tiver eq_versao, fica a lista completa de 2 em 2 minutos e a verificação desliga-se. */
+async function eqVerifica(){
+  if(!AUTH.s||document.hidden||EQ.verOcup)return;EQ.verOcup=true;
+  try{const j=await authPost({acao:'eq_versao',t:AUTH.s.t});
+    if(j&&j.ok){if(EQ.v!=null&&j.v!==EQ.v)await eqCarregar();EQ.v=j.v}
+    else if(j&&j.erro==='sessao')sessaoExpirada();
+    else if(j&&j.erro){clearInterval(EQ.TV);clearInterval(EQ.T);EQ.T=setInterval(()=>{eqEnviarFila().then(eqCarregar)},60000)}
+  }catch(e){}finally{EQ.verOcup=false}
 }
 async function eqPedido(acao,r){ // devolve a resposta do servidor; lança erro só se não houver ligação
   const j=await authPost({acao,t:AUTH.s.t,r});
