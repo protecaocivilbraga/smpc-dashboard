@@ -338,6 +338,20 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #psFecha{background:none!important;border:0;color:#e2e8f0;font-size:24px;line-height:1;padding:0 4px!important}
 #brFecha{background:none!important;border:0;color:#e2e8f0;font-size:24px;line-height:1;padding:0 4px!important}
 #lgMsg,#usrMsg{min-height:18px;margin-top:10px;font-size:12px;color:#fca5a5}#usrMsg.ok{color:#6ee7b7}#usrBox hr{border:0;border-top:1px solid #1e2b47;margin:16px 0 4px}
+#conOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:10003;display:none;align-items:center;justify-content:center}#conOv.on{display:flex}
+#conBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(980px,97vw);height:min(92vh,900px);display:flex;flex-direction:column;overflow:hidden}
+#conBox .rh{display:flex;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid #334155;flex-wrap:wrap}#conBox h3{margin:0;font-size:15px;flex:1 1 auto}
+#conBox #conFecha{background:none;border:0;color:#e2e8f0;font-size:26px;line-height:1;cursor:pointer;padding:0 4px}
+#conBusca{flex:1 1 220px;background:#0b1220;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:8px 10px;font:inherit;font-size:14px;min-width:0}
+#conCorpo{overflow:auto;padding:8px 12px 16px;flex:1}#conEstado{font-size:11px;color:#94a3b8;padding:4px 12px;border-bottom:1px solid #1e293b}
+.conG{margin:8px 0}.conG>summary{cursor:pointer;font-weight:700;font-size:13px;padding:8px 6px;background:#111c33;border-radius:8px;list-style:none;display:flex;justify-content:space-between}
+.conG>summary::-webkit-details-marker{display:none}.conG>summary small{color:#94a3b8;font-weight:400}
+.conL{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;padding:8px 2px;align-items:start}
+.conC{border:1px solid #1e2b47;border-radius:9px;padding:8px 10px;background:#0b1220;display:grid;gap:4px;align-content:start}
+.conC .cn{font-weight:700;font-size:14px}.conC .ce{font-size:12px;color:#94a3b8}.conC .ct{font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;background:#1e293b;color:#cbd5e1;margin-left:6px;white-space:nowrap}
+.conC .ct.rep{background:#14532d;color:#bbf7d0}.conC .ct.sub{background:#3b2f00;color:#fde68a}
+.conTels{display:flex;gap:6px;flex-wrap:wrap}.conTel{display:inline-flex;align-items:center;gap:6px;background:#15803d;color:#fff;text-decoration:none;font-weight:700;font-size:15px;border-radius:8px;padding:8px 12px;min-height:40px}
+.conTel.alt{background:#1e40af}.conMail{font-size:12px;color:#93c5fd;word-break:break-all}.conNota{font-size:11px;color:#94a3b8}
 #eqOv{position:fixed;inset:0;background:rgba(2,6,23,.8);z-index:9990;display:none;align-items:center;justify-content:center}#eqOv.on{display:flex}
 #eqBox{background:#0f172a;border:1px solid #334155;border-radius:12px;width:min(760px,97vw);max-height:92vh;overflow:auto}
 #eqBox .rh{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid #334155;position:sticky;top:0;background:#0f172a;z-index:1001}
@@ -359,7 +373,8 @@ body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-ri
 #eqBox [hidden]{display:none!important}
 .eqPin i{position:absolute;left:2px;top:0;width:24px;height:24px;border-radius:50% 50% 50% 0;background:#ea580c;border:3px solid #fff;transform:rotate(-45deg);box-shadow:0 2px 6px rgba(0,0,0,.5)}
 @keyframes eqPulso{50%{box-shadow:0 0 1px 0 var(--c)}}
-body.terreno>*:not(#eqOv):not(#loginOv):not(#usrOv):not(script){display:none!important}
+body.terreno>*:not(#eqOv):not(#loginOv):not(#usrOv):not(#conOv):not(script){display:none!important}
+body.terreno #conBox{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0}
 body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100dvh;max-height:none;border-radius:0;border:0}
 @media(max-width:560px){.eq2{grid-template-columns:1fr}}
 </style>
@@ -384,6 +399,7 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
     <div id="eqMsg" role="status"></div>
     <div id="eqFilaInfo" class="err" style="display:none"></div>
     <button id="eqNovaBtn" class="eqGrande" type="button">+ Nova ocorrência</button>
+    <button id="eqConBtn" class="sec" type="button" style="display:none;min-height:44px;font-size:15px">📞 Contactos</button>
     <fieldset id="eqNova" hidden><legend>Nova ocorrência</legend>
       <div class="eq2"><label>Equipa<select id="eqEquipa"></select><input id="eqEquipaTxt" maxlength="60" placeholder="Nome da equipa"></label>
       <label>Viatura<select id="eqViat"></select><input id="eqViatTxt" maxlength="30" placeholder="Matrícula ou indicativo"></label></div>
@@ -414,6 +430,7 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
     <button class="btnRel" id="btnRel" data-mod="relatorio" title="Gerar relatório de apoio à decisão (PDF e email)">Relatório</button>
     <button class="btnRel semAcesso" id="btnPer" data-mod="relatorio" title="Relatório de período (6, 12 ou 24 h), uma página: previsão, ocorrências significativas, por freguesia e por tipologia (só CorMPC e SMPC)" style="background:#1e40af">Período</button>
     <button class="btnRel" id="btnMsg" data-mod="mensagens" title="Criar mensagens para a população (SMS/WhatsApp) e para as entidades (WhatsApp)" style="background:#15803d">Mensagens</button>
+    <button class="btnRel semAcesso" id="btnCon" type="button" title="Contactos por grupo: Comissão Municipal, CCOM, ULPC, SMPC, ANEPC, entidades e outros. No telemóvel, toque no número para ligar" style="background:#0f766e">Contactos</button>
     <button class="btnRel" id="btnPos" data-mod="ifprotec" title="Ponto de situação: ocorrências por tipologia e freguesia num período à escolha, e previsão das próximas 12 h" style="background:#0f766e">POSIT</button>
     <button class="btnRel semAcesso" id="btnEq" title="Equipas do SMPC no terreno: ocorrências registadas no telemóvel, com localização, hora e km de fecho" style="background:#c2410c">Equipas</button>
     <button class="btnRel semAcesso" id="btnBR" title="Publicar avisos municipais na aplicação Braga Resiliente (só administrador)" style="background:#0b5cab">Braga Resiliente</button>
@@ -636,6 +653,11 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
     </div>
   </div>
 </div></div>
+<div id="conOv" role="dialog" aria-modal="true" aria-labelledby="conTit"><div id="conBox">
+  <div class="rh"><h3 id="conTit">Contactos</h3><input id="conBusca" type="search" placeholder="Procurar nome, entidade ou função" autocomplete="off"><button id="conEdita" class="sec" type="button" style="display:none">Editar lista</button><button id="conFecha" type="button" title="Fechar (Esc)">×</button></div>
+  <div id="conEstado"></div>
+  <div id="conCorpo"></div>
+</div></div>
 <div id="msgOv" role="dialog" aria-modal="true" aria-labelledby="msgTit"><div id="msgBox">
   <div class="rh"><h3 id="msgTit">Mensagens de aviso (SMS e WhatsApp)</h3><button id="msgFecha" title="Fechar (Esc)">×</button></div>
   <div class="rg">
@@ -820,6 +842,7 @@ function aplicarPerfil(){
   setTimeout(()=>{try{temaMarca()}catch(e){}},0);
   setTimeout(()=>{try{pmReservado()}catch(e){}},0);
   setTimeout(()=>{try{anCarrega()}catch(e){}},0);
+  setTimeout(()=>{try{conCarrega()}catch(e){}},0);
   $('pilUserV').textContent=AUTH.s?AUTH.s.nome:'–';
   try{setTimeout(()=>{try{mapa.invalidateSize()}catch(e){}},50)}catch(e){}
 }
@@ -829,7 +852,7 @@ async function authPost(o){
   if(!r.ok)throw new Error('HTTP '+r.status);return await r.json();
 }
 function loginMostra(msg){$('loginOv').classList.add('on');$('lgMsg').textContent=msg||'';setTimeout(()=>{try{$('lgU').focus()}catch(e){}},50)}
-function sessaoExpirada(){AUTH.s=null;try{localStorage.removeItem('smpc_sessao')}catch(e){}document.querySelectorAll('[data-mod]').forEach(el=>el.classList.add('semAcesso'));loginMostra('A sessão terminou. Entre de novo.')}
+function sessaoExpirada(){AUTH.s=null;try{localStorage.removeItem('smpc_sessao');localStorage.removeItem('smpc_contactos')}catch(e){}document.querySelectorAll('[data-mod]').forEach(el=>el.classList.add('semAcesso'));loginMostra('A sessão terminou. Entre de novo.')}
 $('loginBox').onsubmit=async ev=>{
   ev.preventDefault();const b=$('lgOk');b.disabled=true;b.textContent='A entrar…';$('lgMsg').textContent='';
   try{
@@ -847,7 +870,7 @@ function usrAbre(){
 }
 $('pilUser').onclick=usrAbre;$('pilUser').onkeydown=e=>{if(e.key==='Enter'||e.key===' ')usrAbre()};
 $('usrFecha').onclick=()=>$('usrOv').classList.remove('on');
-$('usrSai').onclick=()=>{AUTH.s=null;try{localStorage.removeItem('smpc_sessao')}catch(e){}location.reload()};
+$('usrSai').onclick=()=>{AUTH.s=null;try{localStorage.removeItem('smpc_sessao');localStorage.removeItem('smpc_contactos')}catch(e){}location.reload()};
 $('usrPw').onclick=async()=>{
   const m=$('usrMsg');m.className='';const n=$('usrNova').value;
   if(n.length<10){m.textContent='A palavra-passe deve ter pelo menos 10 caracteres.';return}
@@ -881,6 +904,43 @@ function eqFilaGrava(f){try{localStorage.setItem(EQ.FILA,JSON.stringify(f))}catc
 function eqId(){const a='abcdefghijkmnopqrstuvwxyz23456789';let s='';const b=new Uint8Array(6);(crypto.getRandomValues?crypto.getRandomValues(b):b.forEach((_,i)=>b[i]=Math.random()*255));b.forEach(x=>s+=a[x%a.length]);return 'EQ-'+Date.now().toString(36)+'-'+s}
 const eqHM=t=>t?String(t).slice(8,10)+'/'+String(t).slice(5,7)+' '+String(t).slice(11,16):'';
 function eqMsg(t,c){const m=$('eqMsg');m.textContent=t||'';m.className=c||''}
+/* ============ Contactos (folha reservada no Drive, servida pelo Contactos.gs conforme o perfil) ============
+   Fica guardada neste navegador para funcionar sem rede (é apagada ao terminar a sessão). */
+const CON={g:null,lido:'',url:'',KEY:'smpc_contactos'};
+const conTelHref=t=>{let d=String(t).replace(/[^\d+]/g,'');if(d.startsWith('00'))d='+'+d.slice(2);if(/^\d{9}$/.test(d))d='+351'+d;return'tel:'+d};
+function conMostraBotoes(){const v=!!(AUTH.s&&CON.g&&CON.g.length);$('btnCon').classList.toggle('semAcesso',!v||EQ_TERRENO0);$('eqConBtn').style.display=v?'':'none'}
+async function conCarrega(){
+  if(!AUTH.s){CON.g=null;conMostraBotoes();return}
+  try{const c=JSON.parse(localStorage.getItem(CON.KEY)||'null');if(c&&c.u===AUTH.s.id){CON.g=c.grupos;CON.lido=c.lido;CON.cache=true}}catch(e){}
+  conMostraBotoes();
+  try{const j=await authPost({acao:'ct_lista',t:AUTH.s.t});
+    if(j&&j.erro==='sessao'){sessaoExpirada();return}
+    if(j&&j.ok){CON.g=j.grupos||[];CON.lido=j.lido||'';CON.url=j.url||'';CON.cache=false;
+      try{localStorage.setItem(CON.KEY,JSON.stringify({u:AUTH.s.id,grupos:CON.g,lido:CON.lido}))}catch(e){}}
+  }catch(e){}
+  conMostraBotoes();if($('conOv').classList.contains('on'))conDesenha();
+}
+function conDesenha(){
+  const q=$('conBusca').value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const nrm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const G=(CON.g||[]).map(g=>({nome:g.nome,c:g.contactos.filter(c=>!q||nrm([c.nome,c.ent,c.fun,c.tipo,c.notas,g.nome].join(' ')).includes(q)||String(c.tel+c.tel2).replace(/\D/g,'').includes(q.replace(/\D/g,'')||'§'))})).filter(g=>g.c.length);
+  const dt=CON.lido?new Date(CON.lido).toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+  $('conEstado').textContent=(CON.cache?'Lista guardada neste aparelho':'Lista atualizada')+(dt?' · lida às '+dt:'')+' · toque num número para ligar'+(CON.cache?' · sem ligação ao servidor':'');
+  $('conEdita').style.display=CON.url?'':'none';
+  if(!G.length){$('conCorpo').innerHTML=`<div class="vazio">${(CON.g||[]).length?'Nenhum contacto encontrado.':'Ainda não há contactos para este perfil.'}</div>`;return}
+  const abre=!!q||G.reduce((n,g)=>n+g.c.length,0)<=60||G.length===1;
+  const tipo=t=>t?`<span class="ct ${/^repres/i.test(t)?'rep':/^subst/i.test(t)?'sub':''}">${esc(t)}</span>`:'';
+  const tel=(t,alt)=>t?`<a class="conTel${alt?' alt':''}" href="${esc(conTelHref(t))}">📞 ${esc(t)}</a>`:'';
+  $('conCorpo').innerHTML=G.map(g=>`<details class="conG" ${abre?'open':''}><summary>${esc(g.nome)} <small>${g.c.length} contacto${g.c.length===1?'':'s'}</small></summary><div class="conL">`+
+    g.c.map(c=>`<div class="conC"><div class="cn">${esc(c.nome||c.ent)}${tipo(c.tipo)}</div>${c.nome&&c.ent||c.fun?`<div class="ce">${esc([c.nome?c.ent:'',c.fun].filter(Boolean).join(' · '))}</div>`:''}<div class="conTels">${tel(c.tel)}${tel(c.tel2,1)}</div>${c.email?`<a class="conMail" href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:''}${c.notas?`<div class="conNota">${esc(c.notas)}</div>`:''}</div>`).join('')+'</div></details>').join('');
+}
+function conAbre(){$('conBusca').value='';conDesenha();$('conOv').classList.add('on');conCarrega()}
+$('btnCon').onclick=conAbre;$('eqConBtn').onclick=conAbre;
+$('conFecha').onclick=()=>$('conOv').classList.remove('on');
+$('conOv').addEventListener('click',e=>{if(e.target.id==='conOv')$('conOv').classList.remove('on')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('conOv').classList.contains('on'))$('conOv').classList.remove('on')});
+$('conBusca').oninput=conDesenha;
+$('conEdita').onclick=()=>{if(CON.url)window.open(CON.url,'_blank','noopener')};
 function eqAplicar(){
   if(eqTerreno()!==EQ_TERRENO0){location.reload();return}
   document.body.classList.toggle('terreno',EQ_TERRENO0);
