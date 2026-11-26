@@ -559,6 +559,12 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
         <p class="aviso-geral" id="propSec"></p>
         <p class="aviso-geral"><span class="pnChip peq" style="background:#22c55e;color:#052e16">Monitorização</span> <span class="pnChip peq" style="background:#facc15;color:#3b2f00">Vigilância</span> <span class="pnChip peq" style="background:#f97316;color:#1c0a00">Alerta</span> <span class="pnChip peq" style="background:#ef4444;color:#fff">Prontidão</span> · Chuva e vento: semáforo multimodelo, chuva acumulada em 24 h, rajada (P90) e avisos do IPMA. Incêndios rurais: risco do IPMA (hoje e amanhã), índice meteorológico (humidade mínima, temperatura máxima, dias seguidos sem chuva e recuperação noturna da humidade), regra dos 30, vento de leste e avisos de tempo quente. Limiares calibrados com as ocorrências do Ifprotec de 2021 a 2026 e a previsão histórica do Open-Meteo.</p>
       </div>
+      <div class="card" data-mod="previsao" id="cardVig">
+        <h2>Prioridades de vigilância <span class="nota">histórico de incêndios rurais por freguesia · SGIF/ICNF 2010-26</span></h2>
+        <div id="vigNota" class="aviso-geral" style="margin:0 0 6px"></div>
+        <div class="tabwrap"><table id="vigTab"></table></div>
+        <p class="aviso-geral">Prioridade 1: 100 ha ou mais de área ardida e 50 ou mais ocorrências entre 2010 e 2026. Prioridade 2: 100 ha ou mais de área ardida, ou 10 ou mais ocorrências desde 2021. A área ardida concentra-se nas freguesias de serra; o número de ocorrências é alto também nas freguesias periurbanas, onde os incêndios são pequenos. Julho e agosto concentram metade das ocorrências; cerca de 4 em cada 10 começam entre as 20 h e as 6 h. As quadrículas com incêndios repetidos estão na camada reservada "Incêndios rurais 2021-26".</p>
+      </div>
       <div class="card" data-mod="previsao" id="cardIR">
         <h2>Meteorologia para incêndios rurais <span class="nota">vento, humidade relativa, temperatura e pressão · modelo de alta resolução (Open-Meteo)</span>
           <select id="irPonto" style="margin-left:auto;background:#0d1526;color:#f8fafc;border:1px solid #1e2b47;border-radius:6px;padding:3px 6px"></select></h2>
@@ -1165,11 +1171,20 @@ function propInc(w){
   if(leste&&hr<45)sobe(Math.max(1,n),'vento de leste/sueste seco');
   return{n,mot,seco,noites:sec.noites,pts:ip.p};
 }
+/* Histórico de incêndios rurais por freguesia (SGIF/ICNF 2010-2026, freguesias anteriores a 2013 agregadas nas atuais).
+   a = área ardida (ha) · o = ocorrências (fogachos, incêndios florestais e agrícolas) · o21 = desde 2021 · n = anos com ocorrências · mx = [ano, ha] do pior ano · p = prioridade */
+const SGIF={"Adaúfe":{"a":147.1,"o":117,"o21":26,"n":17,"mx":[2010,62.4],"p":1},"Braga (São Vicente)":{"a":24.2,"o":39,"o21":8,"n":12,"mx":[2013,15.1],"p":3},"Braga (São Vítor)":{"a":19.3,"o":60,"o21":5,"n":12,"mx":[2011,6.2],"p":3},"Espinho":{"a":84.4,"o":98,"o21":13,"n":16,"mx":[2019,37.6],"p":2},"Esporões":{"a":12.6,"o":32,"o21":1,"n":11,"mx":[2017,4.8],"p":3},"Figueiredo":{"a":118.4,"o":24,"o21":2,"n":8,"mx":[2012,97.1],"p":2},"Gualtar":{"a":39.8,"o":25,"o21":1,"n":7,"mx":[2010,20.1],"p":3},"Lamas":{"a":0.2,"o":3,"o21":0,"n":2,"mx":[2014,0.2],"p":3},"Mire de Tibães":{"a":18.1,"o":14,"o21":1,"n":6,"mx":[2013,14.3],"p":3},"Padim da Graça":{"a":87.9,"o":14,"o21":0,"n":5,"mx":[2011,86.9],"p":3},"Palmeira":{"a":19.9,"o":88,"o21":14,"n":16,"mx":[2011,6.3],"p":2},"Pedralva":{"a":610.9,"o":140,"o21":23,"n":17,"mx":[2011,380.5],"p":1},"Priscos":{"a":16.3,"o":60,"o21":11,"n":14,"mx":[2010,5.2],"p":2},"Ruilhe":{"a":13.4,"o":32,"o21":4,"n":12,"mx":[2011,6.7],"p":3},"Sequeira":{"a":279.4,"o":56,"o21":12,"n":13,"mx":[2016,98.0],"p":1},"Sobreposta":{"a":174.9,"o":54,"o21":4,"n":11,"mx":[2016,67.8],"p":1},"Tadim":{"a":82.9,"o":45,"o21":11,"n":12,"mx":[2011,33.0],"p":2},"Tebosa":{"a":18.0,"o":46,"o21":3,"n":12,"mx":[2018,9.1],"p":3},"UF Arentim e Cunha":{"a":114.9,"o":111,"o21":24,"n":15,"mx":[2018,34.4],"p":1},"UF Braga (Maximinos, Sé e Cividade)":{"a":2.7,"o":26,"o21":2,"n":10,"mx":[2017,2.2],"p":3},"UF Braga (São José de São Lázaro e São João do Souto)":{"a":5.7,"o":49,"o21":8,"n":13,"mx":[2011,4.7],"p":3},"UF Cabreiros e Passos (São Julião)":{"a":20.0,"o":30,"o21":6,"n":14,"mx":[2018,13.1],"p":3},"UF Celeirós, Aveleda e Vimieiro":{"a":8.8,"o":53,"o21":6,"n":15,"mx":[2013,3.4],"p":3},"UF Crespos e Pousada":{"a":21.4,"o":19,"o21":2,"n":10,"mx":[2011,14.0],"p":3},"UF Escudeiros e Penso (Santo Estêvão e São Vicente)":{"a":144.9,"o":69,"o21":10,"n":15,"mx":[2011,72.3],"p":1},"UF Este (São Pedro e São Mamede)":{"a":463.5,"o":112,"o21":16,"n":16,"mx":[2016,333.2],"p":1},"UF Ferreiros e Gondizalves":{"a":4.6,"o":44,"o21":8,"n":16,"mx":[2016,1.2],"p":3},"UF Guisande e Oliveira (São Pedro)":{"a":273.4,"o":58,"o21":8,"n":11,"mx":[2013,226.4],"p":1},"UF Lomar e Arcos":{"a":44.0,"o":68,"o21":12,"n":13,"mx":[2013,30.6],"p":2},"UF Merelim (São Paio), Panoias e Parada de Tibães":{"a":6.8,"o":33,"o21":4,"n":10,"mx":[2018,4.0],"p":3},"UF Merelim (São Pedro) e Frossos":{"a":1.4,"o":8,"o21":2,"n":7,"mx":[2015,1.0],"p":3},"UF Morreira e Trandeiras":{"a":166.1,"o":42,"o21":2,"n":13,"mx":[2011,125.3],"p":2},"UF Nogueira, Fraião e Lamaçães":{"a":9.6,"o":68,"o21":7,"n":12,"mx":[2015,3.4],"p":3},"UF Nogueiró e Tenões":{"a":9.5,"o":26,"o21":4,"n":12,"mx":[2017,8.3],"p":3},"UF Real, Dume e Semelhe":{"a":29.2,"o":44,"o21":12,"n":14,"mx":[2011,21.1],"p":2},"UF Santa Lucrécia de Algeriz e Navarra":{"a":231.6,"o":27,"o21":6,"n":10,"mx":[2017,208.2],"p":2},"UF Vilaça e Fradelos":{"a":47.5,"o":24,"o21":4,"n":9,"mx":[2015,38.2],"p":3}};
+function desenharVig(){
+  const e=$('vigTab');if(!e)return;const r=(()=>{try{return[propInc(0),propInc(1)]}catch(x){return[]}})(),n=Math.max(0,...r.filter(Boolean).map(x=>x.n));
+  $('vigNota').innerHTML=n>=2?`${pnChip(n)} Proposta de nível para incêndios rurais nas próximas 48 h: reforçar a vigilância nas freguesias de <b>prioridade 1</b>${n>=3?' e de <b>prioridade 2</b>':''}, sobretudo à tarde e ao início da noite.`:`${pnChip(n)} Proposta de nível para incêndios rurais nas próximas 48 h. A ordem abaixo serve para distribuir a vigilância e o pré-posicionamento quando o nível subir.`;
+  const L=Object.entries(SGIF).filter(([,v])=>v.p<3).sort((a,b)=>a[1].p-b[1].p||b[1].a-a[1].a);
+  e.innerHTML='<tr><th style="text-align:left">Freguesia</th><th>Prioridade</th><th class="r">Área ardida (ha)</th><th class="r">Ocorrências</th><th class="r">Desde 2021</th><th class="r">Anos com fogo</th><th class="r">Pior ano</th></tr>'+
+    L.map(([f,v])=>`<tr><td>${esc(f)}</td><td><span class="pill p${v.p===1?3:2}">${v.p}</span></td><td class="r"><b>${v.a.toFixed(0)}</b></td><td class="r">${v.o}</td><td class="r">${v.o21}</td><td class="r">${v.n} de 17</td><td class="r">${v.mx[0]} (${v.mx[1].toFixed(0)} ha)</td></tr>`).join('')}
 function desenharProp(){
   const e=$('propTab');if(!e)return;const J=['Próximas 24 h','24 a 48 h','48 a 72 h'];
   const linha=(nome,f)=>`<tr><th style="text-align:left">${nome}</th>${[0,1,2].map(w=>{const r=f(w);return r?`<td>${pnChip(r.n)}<div class="pnMot">${r.mot.length?esc(r.mot.join(' · ')):'sem indicadores acima dos limiares'}</div></td>`:'<td class="pnMot">a carregar…</td>'}).join('')}</tr>`;
   e.innerHTML=`<tr><th></th>${J.map(j=>`<th>${j}</th>`).join('')}</tr>`+linha('Chuva e vento',propChuva)+linha('Incêndios rurais',propInc);
-  try{munMarca()}catch(x){}
+  try{munMarca()}catch(x){}try{desenharVig()}catch(x){}
   const sec=irSecura();$('propSec').innerHTML=sec?`Secura acumulada: <b>${sec.seco}</b> dia(s) seguido(s) sem chuva · <b>${sec.noites}</b> noite(s) seguida(s) com humidade máxima abaixo de ${CFG.PROP.inc.noiteHR} %${sec.completo?'':' (histórico incompleto)'}.`:'';
 }
 /* ---- Temas: o mapa fica grande e os quadros abrem por tema num painel lateral ---- */
@@ -1180,8 +1195,8 @@ const TEMAS={geral:'Geral',cheias:'Chuva e cheias',incendios:'Incêndios rurais'
   const para=(t,el)=>{if(el)document.querySelector(`#temaPainel .tpC[data-tema="${t}"]`).appendChild(el)};
   const card=sel=>document.querySelector(sel);
   para('geral',$('cardProp'));para('geral',card('section.grid .card[data-mod="avisos"]'));
-  ['semaforo','previsao:not(#cardIR)','caudal','freguesias'].forEach(m=>para('cheias',card(`section.grid .card[data-mod="${m.split(':')[0]}"]${m.includes(':')?':'+m.split(':').slice(1).join(':'):''}`)));
-  para('cheias',$('cardPrev'));para('incendios',$('cardIR'));para('ocorrencias',document.querySelector('.parOc'));
+  ['semaforo','previsao:not(#cardIR):not(#cardVig)','caudal','freguesias'].forEach(m=>para('cheias',card(`section.grid .card[data-mod="${m.split(':')[0]}"]${m.includes(':')?':'+m.split(':').slice(1).join(':'):''}`)));
+  para('cheias',$('cardPrev'));para('incendios',$('cardIR'));para('incendios',$('cardVig'));para('ocorrencias',document.querySelector('.parOc'));
   para('geral',document.querySelector('main > section.card[data-mod="fontes"]'));
   g.style.display='none';
 })();
