@@ -1,6 +1,6 @@
 /* Service worker do CCOM Braga: guarda a "casca" da aplicação para abrir depressa e mostrar o último ecrã sem rede.
    Os dados (ocorrências, previsão, avisos) NUNCA ficam em cache aqui: vêm sempre da rede. */
-const V='ccom-v7',CASCA=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
+const V='ccom-v8',CASCA=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CASCA)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{
