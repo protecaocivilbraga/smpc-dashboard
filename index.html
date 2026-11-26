@@ -928,9 +928,10 @@ function conDesenha(){
   $('conEstado').textContent=(CON.cache?'Lista guardada neste aparelho':'Lista atualizada')+(dt?' · lida às '+dt:'')+' · toque num número para ligar'+(CON.cache?' · sem ligação ao servidor':'');
   $('conEdita').style.display=CON.url?'':'none';
   if(!G.length){$('conCorpo').innerHTML=`<div class="vazio">${(CON.g||[]).length?'Nenhum contacto encontrado.':'Ainda não há contactos para este perfil.'}</div>`;return}
+  const abre=!!q||G.reduce((n,g)=>n+g.c.length,0)<=60||G.length===1;
   const tipo=t=>t?`<span class="ct ${/^repres/i.test(t)?'rep':/^subst/i.test(t)?'sub':''}">${esc(t)}</span>`:'';
   const tel=(t,alt)=>t?`<a class="conTel${alt?' alt':''}" href="${esc(conTelHref(t))}">📞 ${esc(t)}</a>`:'';
-  $('conCorpo').innerHTML=G.map(g=>`<details class="conG" open><summary>${esc(g.nome)} <small>${g.c.length} contacto${g.c.length===1?'':'s'}</small></summary><div class="conL">`+
+  $('conCorpo').innerHTML=G.map(g=>`<details class="conG" ${abre?'open':''}><summary>${esc(g.nome)} <small>${g.c.length} contacto${g.c.length===1?'':'s'}</small></summary><div class="conL">`+
     g.c.map(c=>`<div class="conC"><div class="cn">${esc(c.nome||c.ent)}${tipo(c.tipo)}</div>${c.nome&&c.ent||c.fun?`<div class="ce">${esc([c.nome?c.ent:'',c.fun].filter(Boolean).join(' · '))}</div>`:''}<div class="conTels">${tel(c.tel)}${tel(c.tel2,1)}</div>${c.email?`<a class="conMail" href="mailto:${esc(c.email)}">${esc(c.email)}</a>`:''}${c.notas?`<div class="conNota">${esc(c.notas)}</div>`:''}</div>`).join('')+'</div></details>').join('');
 }
 function conAbre(){$('conBusca').value='';conDesenha();$('conOv').classList.add('on');conCarrega()}
