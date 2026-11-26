@@ -557,7 +557,7 @@ body.terreno #eqOv{background:#0f172a}body.terreno #eqBox{width:100vw;height:100
         <h2>Proposta de nível <span class="nota">apoio à decisão · o nível é decidido pelo CorMPC</span></h2>
         <div style="overflow:auto"><table id="propTab" class="propTab"></table></div>
         <p class="aviso-geral" id="propSec"></p>
-        <p class="aviso-geral"><span class="pnChip peq" style="background:#22c55e;color:#052e16">Monitorização</span> <span class="pnChip peq" style="background:#facc15;color:#3b2f00">Vigilância</span> <span class="pnChip peq" style="background:#f97316;color:#1c0a00">Alerta</span> <span class="pnChip peq" style="background:#ef4444;color:#fff">Prontidão</span> · Chuva e vento: semáforo multimodelo, chuva acumulada em 24 h, rajada (P90) e avisos do IPMA. Incêndios rurais: risco do IPMA (hoje e amanhã), regra dos 30, dias seguidos sem chuva, noites com fraca recuperação de humidade, vento de leste e avisos de tempo quente. Limiares iniciais, a afinar com o histórico de ocorrências.</p>
+        <p class="aviso-geral"><span class="pnChip peq" style="background:#22c55e;color:#052e16">Monitorização</span> <span class="pnChip peq" style="background:#facc15;color:#3b2f00">Vigilância</span> <span class="pnChip peq" style="background:#f97316;color:#1c0a00">Alerta</span> <span class="pnChip peq" style="background:#ef4444;color:#fff">Prontidão</span> · Chuva e vento: semáforo multimodelo, chuva acumulada em 24 h, rajada (P90) e avisos do IPMA. Incêndios rurais: risco do IPMA (hoje e amanhã), índice meteorológico (humidade mínima, temperatura máxima, dias seguidos sem chuva e recuperação noturna da humidade), regra dos 30, vento de leste e avisos de tempo quente. Limiares calibrados com as ocorrências do Ifprotec de 2021 a 2026 e a previsão histórica do Open-Meteo.</p>
       </div>
       <div class="card" data-mod="previsao" id="cardIR">
         <h2>Meteorologia para incêndios rurais <span class="nota">vento, humidade relativa, temperatura e pressão · modelo de alta resolução (Open-Meteo)</span>
@@ -757,14 +757,19 @@ const CFG={
   SIG:{meios:2,entidades:1},
   RP_PERFIS:['CORMPC','SMPC'], // quem vê os botões Semanal e Período (o Apps Script também limita o histórico a estes perfis)
 
-  PROP:{ // proposta de nível (Monitorização/Vigilância/Alerta/Prontidão) — limiares iniciais, a afinar com o histórico
-    inc:{secoVig:5,secoAle:10,noiteHR:70,noitesFracas:2,hrVig:40,leste:[45,180],lesteV:15}},
+  PROP:{ // proposta de nível (Monitorização/Vigilância/Alerta/Prontidão)
+    // Incêndios rurais: índice meteorológico em pontos, calibrado com 2021-26 (Ifprotec, Bombeiros Sapadores) e a previsão histórica do Open-Meteo.
+    // Pontos: HR mínima, T máxima e dias seguidos sem chuva (0 a 3 cada) + 1 se houve noite com fraca recuperação da humidade.
+    inc:{hr:[45,35,25],tx:[24,28,33],seco:[5,10,15],niveis:[2,4,7],noiteHR:70,noitesFracas:1,leste:[45,180],lesteV:15}},
   LIM:{ // chuva e vento, escala de quatro níveis (Vigilância / Alerta / Prontidão)
-    vigChuva:10,aleChuva:20,proChuva:30, // mm num bloco de 6 h
-    vigAcc24:30,aleAcc24:50,proAcc24:70, // mm em 24 h
-    vigRaj:60,aleRaj:80,proRaj:100, // rajada P90 (km/h)
+    // Limiares para a chuva e o vento PREVISTOS, calibrados com a previsão histórica do Open-Meteo (2021-26) contra as ocorrências do Ifprotec.
+    // O modelo dá cerca de 78 % da chuva medida na estação de Lomar; na chuva medida, os valores equivalentes são 10/20/30 e 30/50/70.
+    vigChuva:8,aleChuva:15,proChuva:20, // mm num bloco de 6 h
+    vigAcc24:25,aleAcc24:40,proAcc24:55, // mm em 24 h
+    vigRaj:55,aleRaj:70,proRaj:85, // rajada P90 (km/h)
     aleP30:.15,vigCape:.30, // probabilidade de 30 mm/6 h (Alerta) e de instabilidade forte (Vigilância)
-    ant7:100, // chuva dos 7 dias anteriores (mm) a partir da qual a Vigilância por chuva passa a Alerta (solo saturado; Ifprotec 2021-26)
+    ant7:80, // chuva dos 7 dias anteriores (mm, modelo) a partir da qual a Vigilância por chuva passa a Alerta (solo saturado; 100 mm medidos em Lomar)
+    fatorHist:0.8, // os limiares por freguesia (HIST) estão em chuva medida em Lomar; a previsão é comparada com 80 % desse valor
     histDias:30}, // dias com inundação (2021-26) a partir dos quais a freguesia tem suscetibilidade alta
   ATUALIZAR:{ifp:30,av:300,mod:1800,sat:600,rio:10800},
   RELACIONADAS:/inunda|queda de [aá]rvore|movimento de massa|limpeza de via|deslizamento|[aá]gua|vento|estrutura|cheia|galeria|aluimento|desab/i
@@ -1137,6 +1142,11 @@ function irSecura(){ // dias seguidos sem chuva (< 1 mm/dia) até ontem e noites
   for(const dd of ord){const m=Math.max(...dias[dd].hr.filter(v=>v!=null));if(m<CFG.PROP.inc.noiteHR)noites++;else break}
   return{seco,noites,completo:ord.length>=14};
 }
+function incPontos(hr,tx,seco,noites){ // índice meteorológico de perigo de incêndio (0 a 10 pontos)
+  const L=CFG.PROP.inc,d=[];let p=0;
+  const ph=hr<L.hr[2]?3:hr<L.hr[1]?2:hr<L.hr[0]?1:0,pt=tx>=L.tx[2]?3:tx>=L.tx[1]?2:tx>=L.tx[0]?1:0,ps=seco>=L.seco[2]?3:seco>=L.seco[1]?2:seco>=L.seco[0]?1:0,pn=noites>=L.noitesFracas?1:0;
+  if(ph)d.push(`HR mín ${hr.toFixed(0)} %`);if(pt)d.push(`T máx ${tx.toFixed(0)} °C`);if(ps)d.push(`${seco} dias sem chuva`);if(pn)d.push(`${noites} noite(s) com fraca recuperação`);
+  p=ph+pt+ps+pn;return{p,n:p>=L.niveis[2]?3:p>=L.niveis[1]?2:p>=L.niveis[0]?1:0,d}}
 function propInc(w){
   const d=IR.d;if(!d)return null;const h=d.hourly,t=h.time,L=CFG.PROP.inc,mot=[];
   const i0=t.indexOf(localNaive(new Date()).slice(0,13)+':00');if(i0<0)return null;
@@ -1150,13 +1160,10 @@ function propInc(w){
   let n=0;const sobe=(v,x)=>{if(v>n)n=v;if(v>0)mot.push(x)};
   if(rcm)sobe(rcm>=4?3:rcm===3?2:rcm===2?1:0,'risco IPMA '+RCM_NIV[rcm][0]);
   if(avN)sobe(avN>=2?3:2,'aviso '+['','amarelo','laranja','vermelho'][avN]+' de tempo quente');
-  if(r30)sobe((leste||seco>=L.secoAle)?3:2,'regra dos 30 cumprida'+(leste?' com vento de leste':''));
-  else{const c=[tx>30&&`T máx ${tx.toFixed(0)} °C`,hr<30&&`HR mín ${hr.toFixed(0)} %`,vm>30&&`vento ${vm.toFixed(0)} km/h`].filter(Boolean);if(c.length)sobe(c.length>=2?2:1,c.join(', '))}
-  if(seco>=L.secoAle&&sec.noites>=L.noitesFracas&&hr<L.hrVig)sobe(2,`${seco} dias sem chuva e ${sec.noites} noites de fraca recuperação`);
-  else if(seco>=L.secoVig&&hr<L.hrVig+5)sobe(1,`${seco} dias sem chuva`);
-  else if(sec.noites>=L.noitesFracas)sobe(1,`${sec.noites} noites com HR máx abaixo de ${L.noiteHR} %`);
-  if(leste&&hr<L.hrVig)sobe(Math.max(1,n),'vento de leste/sueste seco');
-  return{n,mot,seco,noites:sec.noites};
+  const ip=incPontos(hr,tx,seco,sec.noites);if(ip.n)sobe(ip.n,`índice meteorológico ${ip.p} pontos (${ip.d.join(', ')})`);
+  if(r30)sobe(3,'regra dos 30 cumprida'+(leste?' com vento de leste':''));
+  if(leste&&hr<45)sobe(Math.max(1,n),'vento de leste/sueste seco');
+  return{n,mot,seco,noites:sec.noites,pts:ip.p};
 }
 function desenharProp(){
   const e=$('propTab');if(!e)return;const J=['Próximas 24 h','24 a 48 h','48 a 72 h'];
@@ -1942,7 +1949,7 @@ function desenharRisco(){
       let s=S.susc[i]?S.susc[i].cls:2;const of=(S.oficial&&S.oficial[i])||null;if(of){s=3}else if(S.agua&&s===3){s=2}
       const hh=HIST[f.nome]||{d:0,l:0};if(hh.d>=CFG.LIM.histDias)s=3; // histórico de inundações (Ifprotec 2021-26): freguesia muito afetada
       let r=H+(s===3?1:(s===1?-1:0));r=Math.max(0,Math.min(3,H===0?0:r));
-      const a24=aMax,gat=hh.l>0&&a24>=hh.l;if(gat)r=Math.max(r,1); // chuva em 24 h já atingiu o limiar histórico desta freguesia
+      const a24=aMax,gat=hh.l>0&&a24>=hh.l*CFG.LIM.fatorHist;if(gat)r=Math.max(r,1); // chuva em 24 h já atingiu o limiar histórico desta freguesia
       const inu=ocInundacao(f.nome);if(inu)r=Math.max(r,1);
       const motivo=`${S.hor==='b'?'Precipitação do bloco':'Pior precipitação nas próximas '+S.hor+' h'}: ${NOMEN[H]}; ${of?(of.arpsi?'troço ARPSI da APA; ':'')+(of.evento?'cheia histórica registada pela APA; ':''):''}linhas de água: ${['','densidade baixa','densidade média','densidade alta'][s]}${hh.d?`; histórico SMPC: ${hh.d} dias com inundação (2021-26)${hh.l?`, costuma reagir a partir de ~${hh.l} mm/24 h`:''}`:''}${gat?'; limiar histórico da freguesia atingido':''}${inu?'; ocorrência de inundação em curso':''}`;
       lista.push({nome:f.nome,r,s,H,inu,of,dens:S.susc[i]?.dens,hd:hh.d,hl:hh.l,gat,a24});
