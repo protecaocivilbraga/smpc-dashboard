@@ -15,6 +15,10 @@ Alojamento atual: conta pessoal do administrador. Está prevista a mudança para
 2. O painel grava `avisos.json` no repositório `protecaocivilbraga/protecaocivilbraga.github.io` através da API do GitHub (`PUT /contents/avisos.json`, ramo `main`). A chave do GitHub fica só no `localStorage` do navegador do administrador (constante `BR.REPO` e `BR.KEY` no `index.html` do painel).
 3. O GitHub Pages demora cerca de 1 minuto a publicar. A app lê `avisos.json` ao abrir e ao atualizar (com parâmetro anti-cache) e guarda uma cópia para uso offline. Não há notificações no telemóvel.
 
+## Como a previsão do painel chega à app
+
+O `PrevisaoApp.gs` (Apps Script, fora dos repositórios) calcula de hora a hora a previsão diária com o mesmo método do relatório semanal do painel e grava `previsao.json` neste repositório pela API do GitHub. A chave do GitHub fica nas propriedades do Apps Script (`GH_TOKEN_APP`), com acesso só ao repositório da app. Só grava quando os valores mudam (ou a cada 4 horas). Formato: `{ "gerado": "AAAA-MM-DDTHH:00", "fonte": "…", "modelos": [...], "dias": [ { "data", "n", "mm", "min", "max", "prob", "raj", "tmax", "tmin", "nuv", "wx" } ] }`, com `wx` nos códigos WMO que a app já traduz.
+
 ## Formato de `avisos.json`
 
 ```json
@@ -62,7 +66,8 @@ Identificadores: `cheias`, `incendio`, `calor`, `vento`, `agua`, `apagao`.
 | O quê | Fonte | Notas |
 |---|---|---|
 | Avisos meteorológicos | IPMA, `warnings_www.json`, área `BRG` | Já existia |
-| Previsão para hoje e os 4 dias seguintes | IPMA, `cities/daily/1030300.json` (Braga) | Tipo de tempo, mínima e máxima, probabilidade de chuva, direção e classe do vento. Se o IPMA falhar, usa o Open-Meteo (5 dias, com chuva em mm e rajada) |
+| Previsão para hoje e os 4 dias seguintes (1.ª escolha) | Painel CCOM: `previsao.json` neste repositório, gravado de hora a hora pelo `PrevisaoApp.gs` do Apps Script | Mesmo método do painel (6 conjuntos de modelos, mediana): chuva em mm, probabilidade de pelo menos 1 mm, rajada, mínima e máxima, ícone pela chuva e nebulosidade. A app só o usa com menos de 8 horas. Nunca leva os níveis de prontidão |
+| Previsão (2.ª escolha) | IPMA, `cities/daily/1030300.json` (Braga) | Tipo de tempo, mínima e máxima, probabilidade de chuva, direção e classe do vento. Se também falhar, usa o Open-Meteo (5 dias) |
 | Perigo de incêndio rural, hoje e amanhã | IPMA, `rcm-d0.json` e `rcm-d1.json`, concelho `0303` | Níveis Reduzido a Máximo, com conselho por nível (muito elevado ou máximo: proibidas queimas de amontoados, queimadas e fogueiras em espaço rural, DL 82/2021) |
 
 A app vai buscar estes dados sempre que é aberta ou atualizada e guarda o último resultado no telemóvel para uso sem rede. Os códigos estão em `CFG` no `index.html` da app (`AREA_IPMA`, `IPMA_LOCAL`, `DICO`).
@@ -74,7 +79,7 @@ A app vai buscar estes dados sempre que é aberta ou atualizada e guarda o últi
 
 ## Regras de manutenção
 
-- Qualquer alteração a ficheiros da app obriga a subir a versão `V` em `sw.js` (atual: `braga-v41`), senão os telemóveis ficam com a versão antiga em cache. Ficheiros novos entram na lista `CASCA`.
+- Qualquer alteração a ficheiros da app obriga a subir a versão `V` em `sw.js` (atual: `braga-v42`), senão os telemóveis ficam com a versão antiga em cache. Ficheiros novos entram na lista `CASCA`.
 - Os avisos são **públicos**. Nada de dados pessoais, nada marcado RESERVADO (o briefing CCOS Cávado nunca sai do painel).
 - A app não recolhe dados pessoais: kits e plano ficam no telemóvel.
 
